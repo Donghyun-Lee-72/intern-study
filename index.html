@@ -511,7 +511,7 @@
         <p class="lead">
           이 수업은 AI 모델을 직접 불러와 보고, 답변을 확인하고, 근거가 있는 작은 AI 프로그램을 만들어보는 섹션형 실습입니다.
           처음부터 모든 용어를 알 필요는 없습니다. 웹사이트에서 설명을 읽고, 노트북에서 코드를 실행하고,
-          결과 확인 페이지에서 맞게 실행됐는지 비교하면 됩니다.
+          각 Section 하단의 결과 확인을 열어 맞게 실행됐는지 비교하면 됩니다.
         </p>
         <div class="status-row">
           <span class="chip">처음이면 Section 0부터</span>
@@ -554,7 +554,12 @@
         </div>
         <div class="button-row">
           <a class="button primary" href="downloads/amsl-internship-practice-files.zip" download>실습 파일 ZIP 다운로드</a>
-          <a class="button" href="notebooks/amsl_agentic_ai_live_api_study.ipynb" download>노트북 다운로드</a>
+          <a class="button" href="notebooks/amsl_agentic_ai_live_api_study.ipynb" download>노트북만 다시 다운로드</a>
+        </div>
+        <div class="callout amber">
+          처음 시작할 때는 반드시 실습 ZIP을 먼저 받습니다. 노트북 단독 파일만 내려받아 열면
+          <code>examples/requirements.txt</code>와 예제 데이터가 없어 첫 셀에서 막힐 수 있습니다.
+          노트북 단독 다운로드는 ZIP을 이미 풀어둔 뒤 파일을 다시 받을 때만 사용합니다.
         </div>
 
         <article class="learning-section">
@@ -597,9 +602,12 @@ Copy-Item .env.example .env
 notepad .env
 uv run --python 3.11 --with-requirements requirements.txt python live_openai_smoke.py</code></pre>
             <p>
-              성공하면 노트북을 열고 Section 1부터 실행합니다.
-              웹사이트의 설명을 먼저 읽고, 노트북에서 같은 Section 제목을 찾아 실행하는 방식으로 진행합니다.
+              성공하면 프로젝트 루트 폴더로 돌아가 uv로 Jupyter를 열고 노트북을 실행합니다.
+              이 명령으로 열면 노트북이 <code>examples/requirements.txt</code>와 예제 데이터를 찾을 수 있습니다.
+              VS Code에서 직접 열 경우에도 커널이 수업용 uv/Python 3.11 환경인지 확인합니다.
             </p>
+            <pre><code>cd ..
+uv run --python 3.11 --with-requirements examples/requirements.txt --with notebook jupyter notebook notebooks/amsl_agentic_ai_live_api_study.ipynb</code></pre>
           </div>
           <details class="result-toggle">
             <summary>Section 0 결과 확인</summary>

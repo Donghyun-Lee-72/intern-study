@@ -19,7 +19,7 @@ https://intern-study.donghyunlee.me
 3. 이 ZIP을 압축 해제합니다.
 4. 아래 명령으로 첫 연결 테스트를 합니다.
 5. 웹사이트의 `학습 섹션`을 보면서 노트북 셀을 순서대로 실행합니다.
-6. 실행 후 웹사이트의 `결과 확인`과 비교합니다.
+6. 실행 후 웹사이트 각 Section 하단의 `결과 확인`을 열어 비교합니다.
 7. 마지막 Section 5에서 Linux/WSL2 개발 환경을 별도로 확인합니다.
 
 ## 1. 압축 풀기
@@ -75,8 +75,15 @@ OPENAI_MODEL=gpt-5.4-mini
 uv run --python 3.11 --with-requirements requirements.txt python live_openai_smoke.py
 ```
 
-성공하면 웹사이트의 `학습 섹션` 탭으로 돌아가 Section 1부터 읽고, 노트북에서 해당 셀을 실행합니다.
-실행 결과는 웹사이트의 `결과 확인` 탭과 비교합니다. 문장이 완전히 같을 필요는 없습니다.
+성공하면 프로젝트 루트 폴더로 돌아가 uv로 Jupyter를 엽니다.
+
+```powershell
+cd ..
+uv run --python 3.11 --with-requirements examples/requirements.txt --with notebook jupyter notebook notebooks/amsl_agentic_ai_live_api_study.ipynb
+```
+
+웹사이트의 `학습 섹션`으로 돌아가 Section 1부터 읽고, 노트북에서 같은 Section 셀을 실행합니다.
+실행 결과는 웹사이트 각 Section 하단의 `결과 확인`과 비교합니다. 문장이 완전히 같을 필요는 없습니다.
 정해진 형식, 근거, 답이 없을 때의 처리 방식이 맞는지 확인합니다.
 Section 5 Linux/WSL2는 노트북 셀이 아니라 웹사이트의 마지막 개발 환경 섹션으로 진행합니다.
 
