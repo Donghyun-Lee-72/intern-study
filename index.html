@@ -573,12 +573,11 @@
         </div>
         <div class="button-row">
           <a class="button primary" href="downloads/amsl-internship-practice-files.zip" download>실습 파일 ZIP 다운로드</a>
-          <a class="button" href="notebooks/amsl_agentic_ai_live_api_study.ipynb" download>노트북만 다시 다운로드</a>
         </div>
         <div class="callout amber">
-          처음 시작할 때는 반드시 실습 ZIP을 먼저 받습니다. 노트북 단독 파일만 내려받아 열면
-          <code>examples/requirements.txt</code>와 예제 데이터가 없어 첫 셀에서 막힐 수 있습니다.
-          노트북 단독 다운로드는 ZIP을 이미 풀어둔 뒤 파일을 다시 받을 때만 사용합니다.
+          처음 시작할 때는 실습 ZIP 하나만 받으면 됩니다. ZIP 안에는 루트 <code>requirements.txt</code>와
+          Section 0-5 노트북이 들어 있습니다. 실행용 Python script 묶음은 두지 않고,
+          웹사이트에서 학습하고 ipynb에서 실습하는 구조로 단순화했습니다.
         </div>
 
         <article class="learning-section" id="section-0">
@@ -605,28 +604,28 @@
             </p>
             <p>
               API key는 내 코드가 OpenAI 모델을 사용할 수 있게 해주는 비밀번호 같은 값입니다.
-              key는 웹사이트, 채팅, 제출물, Python 파일 안에 직접 쓰지 않습니다.
-              실습 폴더의 <code>examples/.env</code> 파일에만 넣고, 오류를 질문할 때도 key 값은 공유하지 않습니다.
+              key는 웹사이트나 채팅에는 입력하지 않습니다. 이번 자료에서는 학생이 열어야 할 파일을 줄이기 위해
+              각 노트북의 API key 입력 셀에 직접 붙여넣습니다.
+              단, key가 들어간 노트북은 그대로 공유하지 않고, 제출하거나 화면 공유하기 전에는 key 문자열을 지웁니다.
             </p>
           </div>
           <div class="practice-panel">
             <h4>노트북 실습 전에 실행할 것</h4>
             <p>
-              ZIP을 받은 뒤 압축을 풀고, PowerShell에서 <code>examples</code> 폴더로 들어갑니다.
-              아래 명령은 첫 연결 테스트입니다. 모델이 좋은 답을 하는지 보는 시험이 아니라,
-              SDK, key, 모델 이름, 네트워크, 패키지 설치가 맞는지 확인하는 smoke test입니다.
+              ZIP을 받은 뒤 압축을 풀고, PowerShell에서 압축을 푼 루트 폴더로 들어갑니다.
+              루트 폴더에는 <code>START_HERE.md</code>, <code>requirements.txt</code>, <code>notebooks/</code>가 보여야 합니다.
+              아래 명령으로 uv가 Python 3.11과 수업용 library를 준비한 Jupyter를 엽니다.
             </p>
-            <pre><code>cd amsl-internship-study/examples
-Copy-Item .env.example .env
-notepad .env
-uv run --python 3.11 --with-requirements requirements.txt python live_openai_smoke.py</code></pre>
+            <pre><code>cd amsl-internship-study
+uv --version
+uv run --python 3.11 python --version
+uv run --python 3.11 --with-requirements requirements.txt --with notebook jupyter notebook notebooks</code></pre>
             <p>
-              성공하면 프로젝트 루트 폴더로 돌아가 uv로 Jupyter를 열고 노트북을 실행합니다.
-              이 명령으로 열면 노트북이 <code>examples/requirements.txt</code>와 예제 데이터를 찾을 수 있습니다.
+              Jupyter가 열리면 <code>00_start_here.ipynb</code>부터 실행합니다.
+              이 노트북은 루트 <code>requirements.txt</code>를 찾고, 필요한 package import를 확인하고,
+              API key를 붙여넣은 뒤 첫 연결 테스트를 합니다.
               VS Code에서 직접 열 경우에도 커널이 수업용 uv/Python 3.11 환경인지 확인합니다.
             </p>
-            <pre><code>cd ..
-uv run --python 3.11 --with-requirements examples/requirements.txt --with notebook jupyter notebook notebooks/amsl_agentic_ai_live_api_study.ipynb</code></pre>
           </div>
           <details class="result-toggle">
             <summary>Section 0 결과 확인</summary>
@@ -634,8 +633,9 @@ uv run --python 3.11 --with-requirements examples/requirements.txt --with notebo
               <ul>
                 <li><code>uv --version</code>이 동작합니다.</li>
                 <li><code>uv run --python 3.11 python --version</code>이 Python 3.11 실행 환경을 보여줍니다.</li>
-                <li><code>live_openai_smoke.py</code>가 한국어 연결 성공 메시지를 출력하거나, key가 없을 때 명확한 skip 메시지를 출력합니다.</li>
-                <li><code>.env</code>는 <code>examples</code> 폴더 안에 있고, key는 코드나 채팅에 노출되지 않습니다.</li>
+                <li><code>00_start_here.ipynb</code>가 루트 <code>requirements.txt</code> 위치와 설치 기준 package를 출력합니다.</li>
+                <li>API key 입력 셀에 수업용 key를 붙여넣은 뒤 smoke test가 짧은 한국어 연결 성공 메시지를 출력합니다.</li>
+                <li>key가 들어간 노트북은 채팅, GitHub, 제출물에 그대로 공유하지 않습니다.</li>
                 <li>오류를 질문할 때는 실행한 명령, 현재 폴더, 오류 메시지, 모델명만 공유할 수 있습니다.</li>
               </ul>
             </div>
@@ -688,20 +688,20 @@ uv run --python 3.11 --with-requirements examples/requirements.txt --with notebo
           <div class="practice-panel">
             <h4>ipynb에서 실행할 것</h4>
             <p>
-              노트북의 Section 1 셀을 실행합니다.
+              <code>01_llm_api.ipynb</code>를 열고 위에서 아래로 실행합니다.
               실행 후에는 prompt 안에 역할, 목표, 입력, 제약, 출력 형식이 어디에 들어갔는지 직접 표시해 봅니다.
-              Python 파일로 확인하고 싶을 때는 아래 명령을 <code>examples</code> 폴더에서 실행합니다.
+              이 섹션부터는 실제 API 호출이 있으므로, key 입력 셀을 먼저 실행하고 실패한 셀만 다시 실행합니다.
             </p>
-            <pre><code>uv run --python 3.11 --with-requirements requirements.txt python section1_llm_api.py</code></pre>
+            <pre><code>notebooks/01_llm_api.ipynb</code></pre>
           </div>
           <details class="result-toggle">
             <summary>Section 1 결과 확인</summary>
             <div class="result-toggle-body">
               <ul>
-                <li><code>topic</code>, <code>objective</code>, <code>method</code>, <code>result</code>가 비어 있지 않은지 봅니다.</li>
-                <li><code>evidence</code>의 <code>source_id</code>가 입력 문서 ID와 이어지는지 확인합니다.</li>
-                <li><code>confidence</code>가 0과 1 사이 숫자인지 확인합니다.</li>
-                <li>문서에 없는 구체 metric, validation plan, 일정은 지어내지 않고 <code>not specified</code>로 남는지 봅니다.</li>
+                <li>API onboarding 메모가 두 문장 이하의 한국어 요약으로 출력되는지 봅니다.</li>
+                <li>체크리스트 prompt에서는 bullet 3개가 나오고, 문서에 없는 내용이 추가되지 않는지 확인합니다.</li>
+                <li><code>max_output_tokens</code>가 출력 길이를 제한하는 설정임을 설명할 수 있어야 합니다.</li>
+                <li>prompt에 역할, 목표, 입력, 제약 조건이 어떻게 들어가는지 표시할 수 있어야 합니다.</li>
                 <li>좋은 prompt 요소 5개를 자기 말로 설명할 수 있으면 통과입니다.</li>
               </ul>
             </div>
@@ -754,22 +754,19 @@ uv run --python 3.11 --with-requirements examples/requirements.txt --with notebo
           <div class="practice-panel">
             <h4>ipynb에서 실행할 것</h4>
             <p>
-              노트북의 Section 2 셀을 실행하고, schema 정의, validation 성공/실패, LangChain parser 결과를 순서대로 봅니다.
+              <code>02_structured_output.ipynb</code>를 실행하고, schema 정의, validation 성공/실패, LLM JSON 출력 parse 결과를 순서대로 봅니다.
               validation 실패 예시는 API를 호출하지 않으므로 비용 없이 실행됩니다.
-              Python 파일로 확인하고 싶을 때는 아래 세 명령을 실행합니다.
             </p>
-            <pre><code>uv run --python 3.11 --with-requirements requirements.txt python schema.py
-uv run --python 3.11 --with-requirements requirements.txt python section2_structured_output.py
-uv run --python 3.11 --with-requirements requirements.txt python section2_langchain_contract.py</code></pre>
+            <pre><code>notebooks/02_structured_output.ipynb</code></pre>
           </div>
           <details class="result-toggle">
             <summary>Section 2 결과 확인</summary>
             <div class="result-toggle-body">
               <ul>
-                <li><code>schema.py</code>가 예시 객체를 출력하고 validation error 없이 끝나는지 확인합니다.</li>
-                <li><code>confidence</code>는 0과 1 사이 숫자로 유지되어야 합니다.</li>
+                <li>일부러 틀린 <code>bad_output</code>이 validation error를 출력해야 합니다.</li>
+                <li>올바른 예시는 <code>GroundedAnswer</code> 객체로 변환되어야 합니다.</li>
                 <li><code>evidence</code>는 문자열 목록이 아니라 <code>source_id</code>와 <code>quote</code>를 가진 객체 목록이어야 합니다.</li>
-                <li>Prompt preview, live model text, parsed Pydantic object의 차이를 말할 수 있어야 합니다.</li>
+                <li>LLM이 출력한 JSON text와 Pydantic object의 차이를 말할 수 있어야 합니다.</li>
                 <li>“형식 검증은 사실 검증이 아니다”를 예시와 함께 설명할 수 있으면 통과입니다.</li>
               </ul>
             </div>
@@ -823,21 +820,19 @@ uv run --python 3.11 --with-requirements requirements.txt python section2_langch
           <div class="practice-panel">
             <h4>ipynb에서 실행할 것</h4>
             <p>
-              노트북의 Section 3 셀을 실행하고, 질문별로 어떤 문서가 검색되는지 먼저 봅니다.
+              <code>03_rag.ipynb</code>를 실행하고, 질문별로 어떤 문서가 검색되는지 먼저 봅니다.
               그 다음 모델 답변이 검색된 문서의 quote에서 나왔는지 확인합니다.
-              Python 파일로 확인할 때는 아래 명령을 실행합니다.
             </p>
-            <pre><code>uv run --python 3.11 --with-requirements requirements.txt python section3_rag.py
-uv run --python 3.11 --with-requirements requirements.txt python section3_langchain_rag.py</code></pre>
+            <pre><code>notebooks/03_rag.ipynb</code></pre>
           </div>
           <details class="result-toggle">
             <summary>Section 3 결과 확인</summary>
             <div class="result-toggle-body">
               <ul>
-                <li><code>API onboarding guide에는 무엇이 들어가야 해?</code> 질문은 <code>doc_002_api_onboarding</code>을 근거로 답해야 합니다.</li>
-                <li><code>support ticket routing workflow</code> 질문은 <code>doc_001_support_triage</code>와 uncertain case fallback을 근거로 삼아야 합니다.</li>
-                <li><code>RAG 답변을 신뢰하기 전에 무엇을 확인해야 해?</code> 질문은 source id와 quote 유지, retrieved chunk 적합성을 말해야 합니다.</li>
-                <li><code>pricing 정책은 어디에 있어?</code>처럼 corpus에 없는 질문은 <code>not_answered: true</code>가 되어야 합니다.</li>
+                <li>API onboarding 질문은 <code>api_onboarding</code> 문서를 검색해야 합니다.</li>
+                <li>답변의 <code>quote</code>가 실제 corpus text에 포함되어야 합니다.</li>
+                <li>quote 검증 셀이 <code>evidence quote check passed</code>를 출력해야 합니다.</li>
+                <li>pricing 정책처럼 corpus에 없는 질문은 억지로 답하지 않아야 합니다.</li>
                 <li>검색 결과에 잡혔다는 사실과 최종 답변 근거로 써도 된다는 판단을 구분할 수 있으면 통과입니다.</li>
               </ul>
             </div>
@@ -890,20 +885,19 @@ uv run --python 3.11 --with-requirements requirements.txt python section3_langch
           <div class="practice-panel">
             <h4>ipynb에서 실행할 것</h4>
             <p>
-              노트북의 Section 4 셀을 실행하고, 성공 질문과 답이 없는 질문을 비교합니다.
-              로그를 보면서 retrieval, answer, fact extraction, validation 순서가 남는지 확인합니다.
-              Python 파일로 확인할 때는 아래 명령을 실행합니다.
+              <code>04_workflow.ipynb</code>를 실행하고, 성공 질문, 답이 없는 질문, 사람 검토가 필요한 질문의 route를 비교합니다.
+              dry run에서는 API 없이 검색과 routing만 확인하고, 마지막 live 셀에서 최종 JSON을 만듭니다.
             </p>
-            <pre><code>uv run --python 3.11 --with-requirements requirements.txt python section4_workflow.py</code></pre>
+            <pre><code>notebooks/04_workflow.ipynb</code></pre>
           </div>
           <details class="result-toggle">
             <summary>Section 4 결과 확인</summary>
             <div class="result-toggle-body">
               <ul>
-                <li>최종 출력에 <code>answer_ko</code>, <code>facts</code>, <code>evidence</code>, <code>not_answered</code>, <code>log</code>가 있어야 합니다.</li>
-                <li>성공 케이스에서는 <code>facts</code>가 같은 evidence에서 나와야 합니다.</li>
-                <li>답이 없는 질문에서는 지어낸 답이 아니라 낮은 confidence와 <code>not_answered</code> 정책이 보여야 합니다.</li>
-                <li><code>log</code>가 입력, 검색, 답변 생성, 검증 순서를 설명해야 합니다.</li>
+                <li>dry run에서 질문별 retrieved document와 route가 출력되어야 합니다.</li>
+                <li>최종 출력에 <code>route</code>, <code>answer_ko</code>, <code>evidence</code>, <code>next_action_ko</code>가 있어야 합니다.</li>
+                <li>답이 없는 질문은 <code>not_answered</code>, 애매한 질문은 <code>needs_review</code>로 분기할 수 있어야 합니다.</li>
+                <li>workflow가 검색, 판단, 답변 단계를 분리한다는 점을 설명할 수 있어야 합니다.</li>
                 <li>workflow와 agent의 차이를 “누가 다음 행동을 고르는가”로 설명할 수 있으면 통과입니다.</li>
               </ul>
             </div>
@@ -955,6 +949,7 @@ uv run --python 3.11 --with-requirements requirements.txt python section3_langch
           <div class="practice-panel">
             <h4>특강에서 실행할 것</h4>
             <p>
+              <code>05_linux_wsl.ipynb</code>를 열어 Linux/WSL2 설명을 읽고, Python으로 현재 폴더를 확인하는 셀을 실행합니다.
               아래 명령은 WSL Ubuntu shell에서 실행하는 예시입니다.
               Linux package 설치나 <code>sudo</code>, <code>apt</code>가 필요한 경우에는 먼저 이유를 설명하고 별도로 요청합니다.
               Python library는 Linux에서도 uv로 설치하고 실행합니다.
@@ -987,7 +982,7 @@ uv run --python 3.11 python --version</code></pre>
         <p>
           이 탭은 AI 모델을 쓰기 전에 알아야 할 “키와 사용량” 안내입니다.
           API는 내 코드가 OpenAI 모델에게 요청을 보내고 답을 받는 방식입니다. 요청할 때 사용하는 비밀번호 같은 값이
-          API key입니다. 이 key는 웹사이트에 입력하지 않고, 내 컴퓨터의 <code>.env</code> 파일에만 저장합니다.
+          API key입니다. 이 key는 웹사이트나 채팅에 입력하지 않고, 각 노트북의 API key 입력 셀에만 붙여넣습니다.
         </p>
         <h3>왜 비용이 생기나요?</h3>
         <p>
@@ -1000,8 +995,9 @@ uv run --python 3.11 python --version</code></pre>
           별도로 안내받지 않았다면 개인 OpenAI 계정에 결제수단을 추가할 필요가 없습니다.
         </div>
         <div class="callout blue">
-          수업용 전체 노트북 1회 실행은 정상 경로 기준 약 12회 요청, 약 4,500 token 정도로 측정되었습니다.
-          JSON 형식 수정 재시도, 모델 응답 길이, 재실행 횟수에 따라 더 늘 수 있으므로 여유 있게 1만 token 안팎으로 생각하면 됩니다.
+          Section 0-4 노트북을 한 번씩 정상 실행하면 대략 5-8회 정도의 API 요청이 발생합니다.
+          JSON 형식 수정 재시도, 모델 응답 길이, 재실행 횟수에 따라 더 늘 수 있으므로 여유 있게 실행하고,
+          실패한 셀만 다시 실행합니다. Section 5는 API를 호출하지 않습니다.
         </div>
         <h3>비용 계산은 어떻게 보나요?</h3>
         <p>
@@ -1009,7 +1005,7 @@ uv run --python 3.11 python --version</code></pre>
         </p>
         <pre><code>예상 비용 = input token 수 × input token 단가 + output token 수 × output token 단가</code></pre>
         <ul>
-          <li>mini 계열 모델을 쓰면 학생 1명이 전체 노트북을 한 번 끝까지 실행하는 비용은 작게 유지하는 것을 목표로 합니다.</li>
+          <li>mini 계열 모델을 쓰면 학생 1명이 Section 노트북을 한 번씩 실행하는 비용은 작게 유지하는 것을 목표로 합니다.</li>
           <li>반복 실험, 긴 문서, 여러 번 재실행을 포함하면 비용이 늘어날 수 있습니다.</li>
           <li>정확한 금액은 실제 모델의 input/output token 단가와 재실행 횟수에 따라 달라집니다.</li>
         </ul>
@@ -1024,20 +1020,19 @@ output 비용 = 1,500 / 1,000,000 × 0.80달러 = 0.0012달러
 총 비용     = 0.0018달러</code></pre>
         <p>
           실제 단가는 수업에서 제공받은 모델의 최신 가격표를 기준으로 확인합니다. 예시 단가를 실제 청구액으로 보면 안 됩니다.
-          노트북 마지막 셀에는 input/output token 수를 기록하는 칸이 있습니다.
         </p>
         <h3>비용을 줄이는 규칙</h3>
         <ul>
           <li>긴 PDF 전체를 넣지 않고, 짧은 텍스트 조각으로 실습합니다.</li>
           <li>실습에 넣는 문서 수와 질문 수를 제한합니다.</li>
-          <li>실패한 셀만 다시 실행하고 전체 노트북 재실행은 최소화합니다.</li>
+          <li>실패한 셀만 다시 실행하고 Section 노트북 전체 재실행은 최소화합니다.</li>
           <li>출력 토큰이 불필요하게 길어지지 않도록 답변 형식을 짧고 구조적으로 요청합니다.</li>
         </ul>
         <h3>실습 후 기록할 것</h3>
         <ul>
           <li>사용한 모델명</li>
-          <li>실행한 노트북 섹션</li>
-          <li>대략적인 input/output token 수</li>
+          <li>실행한 Section 노트북 이름</li>
+          <li>성공한 API 호출 수</li>
           <li>실패해서 다시 실행한 셀</li>
         </ul>
       </section>
@@ -1047,7 +1042,7 @@ output 비용 = 1,500 / 1,000,000 × 0.80달러 = 0.0012달러
         <div class="grid">
           <div class="card">
             <h3>키 오류</h3>
-            <p><code>OPENAI_API_KEY</code>가 비어 있거나 잘못된 경우입니다. <code>.env</code>에 키를 한 줄로 넣고 터미널을 다시 엽니다.</p>
+            <p><code>OPENAI_API_KEY</code>가 비어 있거나 잘못된 경우입니다. 현재 노트북의 API key 입력 셀에 수업용 key를 붙여넣고 그 셀부터 다시 실행합니다.</p>
           </div>
           <div class="card">
             <h3>모델 오류</h3>
@@ -1055,7 +1050,7 @@ output 비용 = 1,500 / 1,000,000 × 0.80달러 = 0.0012달러
           </div>
           <div class="card">
             <h3>패키지 오류</h3>
-            <p>먼저 <code>uv run --python 3.11 --with-requirements requirements.txt python live_openai_smoke.py</code>로 실행합니다. 이 방식은 가상환경 활성화가 헷갈려도 필요한 패키지를 함께 사용합니다.</p>
+            <p>루트 폴더에서 <code>uv run --python 3.11 --with-requirements requirements.txt --with notebook jupyter notebook notebooks</code>로 Jupyter를 다시 엽니다. <code>00_start_here.ipynb</code>의 requirements 확인 셀이 통과해야 합니다.</p>
           </div>
           <div class="card">
             <h3>결과가 흔들림</h3>

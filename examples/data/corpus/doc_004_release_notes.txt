@@ -1,1 +1,0 @@
-Release note generators summarize changes, group them by audience, and cite the pull requests or issue IDs that support each statement. They should avoid claiming a feature shipped unless the source notes contain that evidence.

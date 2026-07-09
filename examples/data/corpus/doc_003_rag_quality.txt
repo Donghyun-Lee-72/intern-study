@@ -1,1 +1,0 @@
-Retrieval-augmented generation (RAG) systems should inspect retrieved chunks before trusting an answer. If the retrieved context does not contain the answer, the system should return not_answered instead of inventing details.
