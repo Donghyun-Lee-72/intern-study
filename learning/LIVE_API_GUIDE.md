@@ -50,7 +50,7 @@ OPENAI_MODEL=gpt-5.4-mini
 노트북에서는 `첫 연결 테스트(smoke test)` 섹션을 실행합니다. PowerShell에서는 다음 명령을 실행합니다.
 
 ```powershell
-uv run --python 3.12 --with-requirements requirements.txt python live_openai_smoke.py
+uv run --python 3.11 --with-requirements requirements.txt python live_openai_smoke.py
 ```
 
 정상 예시는 다음과 같습니다.
@@ -68,7 +68,7 @@ OpenAI live API 연결이 정상적으로 작동합니다.
 
 ```powershell
 $env:RUN_LIVE_OPENAI_TESTS="1"
-uv run --python 3.12 --with-requirements requirements.txt python test_live_examples.py
+uv run --python 3.11 --with-requirements requirements.txt python test_live_examples.py
 Remove-Item Env:\RUN_LIVE_OPENAI_TESTS
 ```
 

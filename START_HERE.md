@@ -38,7 +38,7 @@ Documents\amsl-internship-study
 
 ```powershell
 uv --version
-uv run --python 3.12 python --version
+uv run --python 3.11 python --version
 ```
 
 `uv`가 없으면 설치합니다.
@@ -49,7 +49,7 @@ uv --version
 ```
 
 이번 실습에서는 Python을 브라우저에서 따로 다운로드하는 것을 기본 경로로 두지 않습니다.
-`uv run --python 3.12 ...` 명령이 필요한 Python을 준비해 실행합니다.
+`uv run --python 3.11 ...` 명령이 필요한 Python을 준비해 실행합니다.
 처음 실행할 때 Python 다운로드가 한 번 진행될 수 있습니다.
 
 ## 3. API key 설정
@@ -72,7 +72,7 @@ OPENAI_MODEL=gpt-5.4-mini
 ## 4. 첫 연결 테스트
 
 ```powershell
-uv run --python 3.12 --with-requirements requirements.txt python live_openai_smoke.py
+uv run --python 3.11 --with-requirements requirements.txt python live_openai_smoke.py
 ```
 
 성공하면 웹사이트의 `학습 섹션` 탭으로 돌아가 Section 1부터 읽고, 노트북에서 해당 셀을 실행합니다.

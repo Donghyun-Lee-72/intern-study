@@ -8,7 +8,7 @@
 
 - PowerShell에서 현재 폴더를 확인하고 명령을 실행할 수 있습니다.
 - uv를 설치하고 실행할 수 있습니다.
-- uv가 준비한 Python 3.12 실행 환경을 확인할 수 있습니다.
+- uv가 준비한 Python 3.11 실행 환경을 확인할 수 있습니다.
 - 실습 파일 ZIP을 다운로드하고 압축을 풀 수 있습니다.
 - Jupyter Notebook 또는 VS Code Notebook으로 `.ipynb` 파일을 열 수 있습니다.
 - `.env` 파일에 API key와 모델명을 넣을 수 있습니다.
@@ -39,7 +39,7 @@ Anaconda는 이번 과정의 표준 환경으로 쓰지 않습니다. 이미 설
 - 인터넷 연결
 - 최신 브라우저
 - VS Code 또는 Jupyter Notebook
-- uv가 준비하는 Python 3.12 실행 환경
+- uv가 준비하는 Python 3.11 실행 환경
 - 제공받은 OpenAI API key
 - 안내받은 수업용 모델명
 
@@ -49,7 +49,7 @@ PowerShell에서 uv가 보이는지 확인합니다.
 uv --version
 ```
 
-오류가 나면 아래 설치 명령을 먼저 실행합니다. 이번 과정에서는 Python을 브라우저에서 따로 다운로드하는 것을 기본 경로로 두지 않고, uv가 Python 3.12 실행 환경을 준비하게 합니다.
+오류가 나면 아래 설치 명령을 먼저 실행합니다. 이번 과정에서는 Python을 브라우저에서 따로 다운로드하는 것을 기본 경로로 두지 않고, uv가 Python 3.11 실행 환경을 준비하게 합니다.
 
 ## 4. uv가 무엇인가요?
 
@@ -59,14 +59,14 @@ uv는 Python 프로젝트의 가상환경과 패키지를 빠르게 관리해주
 - 패키지는 프로젝트에 필요한 외부 라이브러리입니다.
 - `uv venv`는 가상환경을 만듭니다.
 - `uv run ...`은 가상환경 활성화가 헷갈릴 때도 필요한 패키지와 함께 명령을 실행하게 해줍니다.
-- 이번 실습에서는 대부분 `uv run --python 3.12 --with-requirements requirements.txt ...` 형식을 사용합니다.
+- 이번 실습에서는 대부분 `uv run --python 3.11 --with-requirements requirements.txt ...` 형식을 사용합니다.
 
 uv 설치:
 
 ```powershell
 powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
 uv --version
-uv run --python 3.12 python --version
+uv run --python 3.11 python --version
 ```
 
 설치 직후 `uv` 명령을 찾지 못하면 PowerShell을 새로 열고 다시 확인합니다.
@@ -117,7 +117,7 @@ OPENAI_MODEL=gpt-5.4-mini
 첫 연결 테스트(smoke test)는 “모델이 좋은 답을 하는지”가 아니라 “내 환경에서 API 호출이 가능한지”를 확인합니다.
 
 ```powershell
-uv run --python 3.12 --with-requirements requirements.txt python live_openai_smoke.py
+uv run --python 3.11 --with-requirements requirements.txt python live_openai_smoke.py
 ```
 
 성공하면 다음과 비슷한 메시지가 나옵니다.
@@ -134,10 +134,10 @@ OpenAI live API 연결이 정상적으로 작동합니다.
 
 ```powershell
 cd ..
-uv run --python 3.12 --with-requirements examples/requirements.txt --with notebook jupyter notebook notebooks/amsl_agentic_ai_live_api_study.ipynb
+uv run --python 3.11 --with-requirements examples/requirements.txt --with notebook jupyter notebook notebooks/amsl_agentic_ai_live_api_study.ipynb
 ```
 
-VS Code를 사용한다면 `notebooks/amsl_agentic_ai_live_api_study.ipynb` 파일을 직접 열어도 됩니다. 이 경우 노트북 커널이 수업용 uv/Python 3.12 환경인지 확인합니다. Anaconda나 예전 전역 Python 커널이 선택되어 있으면 패키지 설치와 API 실행 결과가 달라질 수 있습니다.
+VS Code를 사용한다면 `notebooks/amsl_agentic_ai_live_api_study.ipynb` 파일을 직접 열어도 됩니다. 이 경우 노트북 커널이 수업용 uv/Python 3.11 환경인지 확인합니다. Anaconda나 예전 전역 Python 커널이 선택되어 있으면 패키지 설치와 API 실행 결과가 달라질 수 있습니다.
 
 ## 9. Section 0 완료 목표
 
@@ -168,9 +168,9 @@ API key는 공유하지 않습니다. 대신 다음 정보를 공유합니다.
 
 ```text
 OS: Windows 11
-Python: 3.12.4
+Python: 3.11.x
 위치: amsl-internship-study/examples
-명령: uv run --python 3.12 --with-requirements requirements.txt python live_openai_smoke.py
+명령: uv run --python 3.11 --with-requirements requirements.txt python live_openai_smoke.py
 모델: gpt-5.4-mini
 오류: model_not_found ...
 ```

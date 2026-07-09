@@ -18,7 +18,7 @@
 기대 결과:
 
 - `uv --version`이 동작합니다.
-- `uv run --python 3.12 python --version`이 Python 3.12 실행 환경을 보여줍니다.
+- `uv run --python 3.11 python --version`이 Python 3.11 실행 환경을 보여줍니다.
 - `OPENAI_API_KEY`가 없으면 skip 메시지가 나옵니다.
 - key가 유효하면 한국어 한 문장으로 연결 성공 메시지가 나옵니다.
 - 첫 연결 테스트(smoke test)는 모델 품질 평가가 아니라 SDK, key, 모델 이름, 네트워크 연결 확인입니다.
