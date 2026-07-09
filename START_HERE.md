@@ -18,13 +18,13 @@ https://intern-study.donghyunlee.me
 2. 이 ZIP을 압축 해제합니다.
 3. PowerShell에서 압축을 푼 루트 폴더로 이동합니다.
 4. uv로 Python 3.11과 Jupyter를 실행합니다.
-5. `00_start_here.ipynb`에서 `requirements.txt` 확인, package import 확인, API 연결 확인을 합니다.
+5. `00_start_here.ipynb`에서 `requirements.txt` 확인, 패키지 import 확인, API 연결 확인을 합니다.
 6. 웹사이트 설명을 읽으며 `01`부터 `05`까지 노트북을 순서대로 실행합니다.
 7. 각 Section 하단의 `결과 확인`과 실행 결과를 비교합니다.
 
 ## 1. 압축 풀기
 
-다운로드한 zip 파일을 원하는 위치에 압축 해제합니다. 예시는 다음 경로를 기준으로 합니다.
+다운로드한 ZIP 파일을 원하는 위치에 압축 해제합니다. 예시는 다음 경로를 기준으로 합니다.
 
 ```text
 Documents\amsl-internship-study
@@ -69,7 +69,7 @@ uv run --python 3.11 --with-requirements requirements.txt --with notebook jupyte
 ```
 
 브라우저가 열리면 먼저 `00_start_here.ipynb`를 실행합니다.
-이 노트북은 루트 `requirements.txt`를 찾아 읽고, 필요한 Python library가 import되는지 확인합니다.
+이 노트북은 루트 `requirements.txt`를 찾아 읽고, 필요한 Python 패키지가 import되는지 확인합니다.
 
 ## 4. API key 입력
 
@@ -84,8 +84,10 @@ OPENAI_MODEL = "gpt-5.4-mini"
 주의:
 
 - API key는 웹사이트, 채팅, GitHub, 제출물에 붙여넣지 않습니다.
-- key가 들어간 노트북은 그대로 공유하지 않습니다.
-- 제출하거나 화면 공유하기 전에는 key 문자열을 지웁니다.
+- API key가 들어간 노트북은 그대로 공유하지 않습니다.
+- 제출하거나 화면 공유하기 전에는 API key 문자열을 지웁니다.
+- 노트북에 API key를 붙여넣은 뒤 저장하면 API key 문자열이 파일 안에 남을 수 있습니다.
+- 제출, GitHub 업로드, 채팅 공유, 화면 공유 전에는 API key 셀의 문자열을 지우고 Jupyter 출력도 정리합니다.
 - 수업 중 다른 모델명을 안내받으면 `OPENAI_MODEL` 값만 바꿉니다.
 
 ## 5. 실행 순서

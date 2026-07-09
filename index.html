@@ -48,6 +48,31 @@
       text-decoration: underline;
     }
 
+    a:focus-visible,
+    button:focus-visible,
+    summary:focus-visible {
+      outline: 3px solid rgba(29, 78, 216, 0.32);
+      outline-offset: 3px;
+    }
+
+    .skip-link {
+      position: absolute;
+      left: 16px;
+      top: 12px;
+      z-index: 10;
+      transform: translateY(-160%);
+      border-radius: 6px;
+      background: #111827;
+      color: #ffffff;
+      padding: 8px 12px;
+      font-weight: 800;
+    }
+
+    .skip-link:focus {
+      transform: translateY(0);
+      text-decoration: none;
+    }
+
     .wrap {
       width: min(1160px, calc(100% - 32px));
       margin: 0 auto;
@@ -151,6 +176,35 @@
       font-weight: 800;
     }
 
+    .quick-start {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      max-width: 900px;
+      margin: 22px 0 0;
+    }
+
+    .quick-step {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfcfe;
+      padding: 12px;
+    }
+
+    .quick-step strong {
+      display: block;
+      margin-bottom: 4px;
+      color: #0f4f49;
+      font-size: 13px;
+    }
+
+    .quick-step p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
     .shell {
       display: grid;
       grid-template-columns: 230px minmax(0, 1fr);
@@ -189,6 +243,10 @@
     .tab[aria-selected="true"] {
       background: #e6f4f1;
       color: #0f4f49;
+    }
+
+    .tab:focus-visible {
+      outline-offset: 2px;
     }
 
     main {
@@ -392,9 +450,28 @@
     .result-toggle summary {
       cursor: pointer;
       list-style: none;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
       padding: 12px 14px;
       font-weight: 900;
       color: #312e81;
+    }
+
+    .result-toggle summary::after {
+      content: "+";
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 24px;
+      height: 24px;
+      flex: 0 0 auto;
+      border-radius: 999px;
+      background: #eef2ff;
+      color: #312e81;
+      font-size: 16px;
+      line-height: 1;
     }
 
     .result-toggle summary::-webkit-details-marker {
@@ -404,6 +481,10 @@
     .result-toggle[open] summary {
       border-bottom: 1px solid #c7d2fe;
       background: #eef2ff;
+    }
+
+    .result-toggle[open] summary::after {
+      content: "-";
     }
 
     .result-toggle-body {
@@ -511,50 +592,92 @@
       .shell,
       .grid,
       .section-mini-grid,
-      .course-map {
+      .quick-start {
         grid-template-columns: 1fr;
+      }
+
+      .course-map {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
       }
 
       nav {
         position: static;
       }
     }
+
+    @media (max-width: 520px) {
+      .wrap {
+        width: min(100% - 20px, 1160px);
+      }
+
+      .hero {
+        padding: 28px 0 22px;
+      }
+
+      section,
+      .learning-section {
+        padding: 18px;
+      }
+
+      .course-map {
+        grid-template-columns: 1fr;
+      }
+
+      .button {
+        width: 100%;
+      }
+    }
   </style>
 </head>
 <body>
+  <a class="skip-link" href="#materials">본문으로 바로가기</a>
   <header>
     <div class="wrap hero">
       <div>
         <p class="eyebrow">26SU AMSL Internship</p>
         <h1>Agentic AI 실습형 학습 포털</h1>
         <p class="lead">
-          이 수업은 AI 모델을 직접 불러와 보고, 답변을 확인하고, 근거가 있는 작은 AI 프로그램을 만들어보는 섹션형 실습입니다.
+          이 수업은 AI 모델을 직접 불러와 보고, 답변을 확인하고, 근거가 있는 작은 AI 프로그램을 만들어보는 섹션별 실습입니다.
           처음부터 모든 용어를 알 필요는 없습니다. 웹사이트에서 설명을 읽고, 노트북에서 코드를 실행하고,
-          각 Section 하단의 결과 확인을 열어 맞게 실행됐는지 비교하면 됩니다.
+          각 Section 하단의 <code>결과 확인</code>을 열어 맞게 실행됐는지 비교하면 됩니다.
         </p>
         <div class="status-row">
           <span class="chip">처음이면 Section 0부터</span>
-          <span class="chip">Python 기본 문법이면 시작 가능</span>
+          <span class="chip">Python 기본 문법을 알면 시작 가능</span>
           <span class="chip">Windows PowerShell + uv</span>
           <span class="chip">웹사이트는 교재</span>
           <span class="chip">노트북은 실행용</span>
+        </div>
+        <div class="quick-start" aria-label="처음 시작 순서">
+          <div class="quick-step">
+            <strong>1. ZIP 다운로드</strong>
+            <p>실습 파일을 받고 압축을 풉니다.</p>
+          </div>
+          <div class="quick-step">
+            <strong>2. Jupyter 실행</strong>
+            <p><code>uv run ... jupyter notebook notebooks</code></p>
+          </div>
+          <div class="quick-step">
+            <strong>3. Section 0 시작</strong>
+            <p><code>00_start_here.ipynb</code>부터 확인합니다.</p>
+          </div>
         </div>
       </div>
     </div>
   </header>
 
   <div class="wrap shell">
-    <nav aria-label="학습 메뉴">
-      <button class="tab" type="button" data-tab="materials" aria-selected="true">학습 섹션</button>
-      <button class="tab" type="button" data-tab="cost" aria-selected="false">API 키와 비용</button>
-      <button class="tab" type="button" data-tab="trouble" aria-selected="false">오류 해결</button>
+    <nav aria-label="학습 메뉴" role="tablist">
+      <button class="tab" id="tab-materials" type="button" role="tab" data-tab="materials" aria-controls="materials" aria-selected="true">학습 섹션</button>
+      <button class="tab" id="tab-cost" type="button" role="tab" data-tab="cost" aria-controls="cost" aria-selected="false">API 키와 비용</button>
+      <button class="tab" id="tab-trouble" type="button" role="tab" data-tab="trouble" aria-controls="trouble" aria-selected="false">오류 해결</button>
     </nav>
 
     <main>
-      <section id="materials">
+      <section id="materials" role="tabpanel" aria-labelledby="tab-materials">
         <h2>학습 섹션</h2>
         <p>
-          이 페이지가 교재입니다. 설명은 웹사이트에서 읽고, 실행은 ipynb 노트북에서 합니다.
+          이 페이지가 교재입니다. 설명은 웹사이트에서 읽고, 실행은 Jupyter Notebook에서 합니다.
           노트북은 수업 내용을 실행해보는 도구이고, 웹사이트는 왜 그 코드를 실행하는지 이해하는 학습 문서입니다.
           각 Section은 “읽기 → 노트북 실행 → 결과 확인” 순서로 구성되어 있습니다.
         </p>
@@ -576,7 +699,7 @@
         </div>
         <div class="callout amber">
           처음 시작할 때는 실습 ZIP 하나만 받으면 됩니다. ZIP 안에는 루트 <code>requirements.txt</code>와
-          Section 0-5 노트북이 들어 있습니다. 실행용 Python script 묶음은 두지 않고,
+          Section 0-5 노트북이 들어 있습니다. 실행용 Python 스크립트 묶음은 두지 않고,
           웹사이트에서 학습하고 ipynb에서 실습하는 구조로 단순화했습니다.
         </div>
 
@@ -606,7 +729,7 @@
               API key는 내 코드가 OpenAI 모델을 사용할 수 있게 해주는 비밀번호 같은 값입니다.
               key는 웹사이트나 채팅에는 입력하지 않습니다. 이번 자료에서는 학생이 열어야 할 파일을 줄이기 위해
               각 노트북의 API key 입력 셀에 직접 붙여넣습니다.
-              단, key가 들어간 노트북은 그대로 공유하지 않고, 제출하거나 화면 공유하기 전에는 key 문자열을 지웁니다.
+              단, API key가 들어간 노트북은 그대로 공유하지 않고, 제출하거나 화면 공유하기 전에는 API key 문자열과 출력 결과를 지웁니다.
             </p>
           </div>
           <div class="practice-panel">
@@ -614,7 +737,7 @@
             <p>
               ZIP을 받은 뒤 압축을 풀고, PowerShell에서 압축을 푼 루트 폴더로 들어갑니다.
               루트 폴더에는 <code>START_HERE.md</code>, <code>requirements.txt</code>, <code>notebooks/</code>가 보여야 합니다.
-              아래 명령으로 uv가 Python 3.11과 수업용 library를 준비한 Jupyter를 엽니다.
+              아래 명령으로 uv가 Python 3.11과 수업용 패키지를 준비한 Jupyter를 엽니다.
             </p>
             <pre><code>cd amsl-internship-study
 uv --version
@@ -622,20 +745,20 @@ uv run --python 3.11 python --version
 uv run --python 3.11 --with-requirements requirements.txt --with notebook jupyter notebook notebooks</code></pre>
             <p>
               Jupyter가 열리면 <code>00_start_here.ipynb</code>부터 실행합니다.
-              이 노트북은 루트 <code>requirements.txt</code>를 찾고, 필요한 package import를 확인하고,
+              이 노트북은 루트 <code>requirements.txt</code>를 찾고, 필요한 패키지 import를 확인하고,
               API key를 붙여넣은 뒤 첫 연결 테스트를 합니다.
               VS Code에서 직접 열 경우에도 커널이 수업용 uv/Python 3.11 환경인지 확인합니다.
             </p>
           </div>
-          <details class="result-toggle">
+          <details class="result-toggle" open>
             <summary>Section 0 결과 확인</summary>
             <div class="result-toggle-body">
               <ul>
                 <li><code>uv --version</code>이 동작합니다.</li>
                 <li><code>uv run --python 3.11 python --version</code>이 Python 3.11 실행 환경을 보여줍니다.</li>
-                <li><code>00_start_here.ipynb</code>가 루트 <code>requirements.txt</code> 위치와 설치 기준 package를 출력합니다.</li>
-                <li>API key 입력 셀에 수업용 key를 붙여넣은 뒤 smoke test가 짧은 한국어 연결 성공 메시지를 출력합니다.</li>
-                <li>key가 들어간 노트북은 채팅, GitHub, 제출물에 그대로 공유하지 않습니다.</li>
+                <li><code>00_start_here.ipynb</code>가 루트 <code>requirements.txt</code> 위치와 설치 기준 패키지를 출력합니다.</li>
+                <li>API key 입력 셀에 수업용 API key를 붙여넣은 뒤 smoke test(간단 연결 테스트)가 짧은 한국어 연결 성공 메시지를 출력합니다.</li>
+                <li>API key가 들어간 노트북은 채팅, GitHub, 제출물에 그대로 공유하지 않습니다.</li>
                 <li>오류를 질문할 때는 실행한 명령, 현재 폴더, 오류 메시지, 모델명만 공유할 수 있습니다.</li>
               </ul>
             </div>
@@ -647,8 +770,8 @@ uv run --python 3.11 --with-requirements requirements.txt --with notebook jupyte
           <div class="section-meta">
             <span>예상 60-90분</span>
             <span>LLM API</span>
-            <span>Prompt</span>
-            <span>Token 감각</span>
+            <span>prompt</span>
+            <span>token 감각</span>
           </div>
           <div class="lesson-block">
             <h4>핵심 개념</h4>
@@ -660,12 +783,12 @@ uv run --python 3.11 --with-requirements requirements.txt --with notebook jupyte
               결과를 그대로 믿는 대신 구조와 근거를 확인하는 습관이 필요합니다.
             </p>
             <p>
-              Prompt는 모델에게 주는 전체 지시입니다.
+              prompt는 모델에게 주는 전체 지시입니다.
               좋은 prompt에는 역할, 목표, 입력 자료, 제약 조건, 출력 형식, 실패 처리 규칙이 들어갑니다.
               예를 들어 “요약해줘”보다 “아래 기술 노트에서 topic, objective, method, result, limitations, evidence를 JSON 형식으로 추출하고, 없는 정보는 not specified로 남겨라”가 더 좋은 지시입니다.
             </p>
             <p>
-              Token은 모델이 읽고 쓰는 글의 양을 세는 단위입니다.
+              token은 모델이 읽고 쓰는 글의 양을 세는 단위입니다.
               입력 문서가 길수록 비용과 시간이 늘고, 모델이 한 번에 처리할 수 있는 범위도 제한됩니다.
               그래서 긴 문서를 무작정 넣기보다, 필요한 부분을 찾고, 답변을 짧고 구조적으로 받는 설계가 중요합니다.
             </p>
@@ -673,15 +796,13 @@ uv run --python 3.11 --with-requirements requirements.txt --with notebook jupyte
           <div class="lesson-block">
             <h4>이번 Section에서 보는 예시</h4>
             <p>
-              짧은 기술 노트 여러 개를 모델에게 보내고, 각 노트에서 핵심 정보를 추출합니다.
-              수업에서 중요한 것은 멋진 문장으로 요약하는 것이 아니라, 나중에 검증하고 재사용할 수 있는 구조로 정보를 꺼내는 것입니다.
-              <code>topic</code>은 무엇에 대한 문서인지, <code>objective</code>는 목적이 무엇인지,
-              <code>method</code>는 어떤 접근을 쓰는지, <code>result</code>는 어떤 결과가 있는지,
-              <code>evidence</code>는 그 판단을 뒷받침하는 원문 조각이 무엇인지 확인합니다.
+              짧은 기술 노트 여러 개를 모델에게 보내고, 먼저 요약과 체크리스트처럼 사람이 읽는 text 출력을 받아봅니다.
+              수업에서 중요한 것은 멋진 문장으로 요약하는 것이 아니라, prompt 안의 역할, 목표, 입력, 제약, 출력 형식이 결과에 어떤 영향을 주는지 확인하는 것입니다.
+              구조화된 필드 추출은 Section 2에서 Pydantic schema와 함께 다룹니다.
             </p>
             <p>
               특히 문서에 없는 내용을 채워 넣지 않는 태도가 중요합니다.
-              모델이 답을 그럴듯하게 만들 수 있더라도, 입력에 없는 metric이나 validation plan은 <code>not specified</code>로 남겨야 합니다.
+              모델이 답을 그럴듯하게 만들 수 있더라도, 입력에 없는 metric이나 validation plan 같은 정보는 <code>not specified</code>로 남겨야 합니다.
               이 기준은 뒤의 RAG와 workflow에서도 그대로 이어집니다.
             </p>
           </div>
@@ -690,7 +811,7 @@ uv run --python 3.11 --with-requirements requirements.txt --with notebook jupyte
             <p>
               <code>01_llm_api.ipynb</code>를 열고 위에서 아래로 실행합니다.
               실행 후에는 prompt 안에 역할, 목표, 입력, 제약, 출력 형식이 어디에 들어갔는지 직접 표시해 봅니다.
-              이 섹션부터는 실제 API 호출이 있으므로, key 입력 셀을 먼저 실행하고 실패한 셀만 다시 실행합니다.
+              이 섹션부터는 실제 API 호출이 있으므로, API key 입력 셀을 먼저 실행하고 실패한 셀만 다시 실행합니다.
             </p>
             <pre><code>notebooks/01_llm_api.ipynb</code></pre>
           </div>
@@ -727,7 +848,7 @@ uv run --python 3.11 --with-requirements requirements.txt --with notebook jupyte
             <p>
               Pydantic은 Python type hint를 사용해 데이터 구조와 validation 규칙을 정의하는 도구입니다.
               <code>BaseModel</code>은 어떤 필드가 필요한지 정하고, <code>Field</code>는 값의 범위나 설명을 붙입니다.
-              예를 들어 <code>confidence</code>가 0보다 작거나 1보다 크면 validation error가 나야 합니다.
+              예를 들어 <code>confidence</code>가 0보다 작거나 1보다 크면 validation error가 발생해야 합니다.
               이 오류는 실패라기보다 “모델 출력 또는 schema 계약을 다시 봐야 한다”는 디버깅 신호입니다.
             </p>
             <p>
@@ -740,10 +861,9 @@ uv run --python 3.11 --with-requirements requirements.txt --with notebook jupyte
             <h4>LangChain은 여기서 무엇을 하나요?</h4>
             <p>
               LangChain은 LLM application의 부품을 연결하는 프레임워크입니다.
-              이번 Section에서는 LangChain 전체를 깊게 배우지 않고,
-              <code>PromptTemplate</code>, model call, output parser가 각각 어떤 역할을 하는지만 봅니다.
-              <code>PromptTemplate</code>은 입력 문서와 형식 지시문을 합쳐 모델에게 보낼 prompt를 만들고,
-              output parser는 모델이 만든 JSON 문자열을 Pydantic 객체로 바꿉니다.
+              이번 Section에서는 LangChain 전체 chain을 만들기보다,
+              <code>PydanticOutputParser</code>가 Pydantic schema를 읽고 모델에게 줄 형식 지시문을 만드는 역할을 봅니다.
+              모델 호출은 OpenAI API로 직접 실행하고, parser는 모델이 만든 JSON 문자열을 Pydantic 객체로 바꿉니다.
             </p>
             <p>
               LangChain을 쓴다고 답이 자동으로 좋아지지는 않습니다.
@@ -793,13 +913,13 @@ uv run --python 3.11 --with-requirements requirements.txt --with notebook jupyte
               RAG를 쓰는 이유는 모델이 모든 최신 문서와 내부 문서를 기억하고 있다고 가정하지 않기 위해서입니다.
               API onboarding 문서, support workflow 문서, release note 문서처럼 우리 프로젝트 안에 있는 자료를 먼저 찾고,
               그 안에서만 답하게 만들면 근거 없는 답변을 줄일 수 있습니다.
-              하지만 RAG가 hallucination을 완전히 없애지는 못합니다.
+              하지만 RAG가 hallucination(환각)을 완전히 없애지는 못합니다.
               검색된 문서가 틀리거나 질문과 관련이 없으면, 모델은 그 근거로도 틀린 답을 만들 수 있습니다.
             </p>
             <p>
               그래서 RAG에서 가장 먼저 볼 것은 모델 답변이 아니라 retrieved evidence입니다.
               어떤 문서가 검색되었는지, 그 문서가 질문에 직접 답하는지, <code>source_id</code>와 <code>quote</code>가 유지되는지 확인합니다.
-              답이 없는 질문이라면 억지로 답하지 않고 <code>not_answered: true</code>가 되어야 합니다.
+              답이 없는 질문이라면 억지로 답하지 않고 <code>answered: false</code>가 되어야 합니다.
             </p>
           </div>
           <div class="lesson-block">
@@ -843,15 +963,15 @@ uv run --python 3.11 --with-requirements requirements.txt --with notebook jupyte
           <h3>Section 4: 여러 단계를 하나로 연결하기</h3>
           <div class="section-meta">
             <span>예상 60-90분</span>
-            <span>Workflow</span>
+            <span>workflow</span>
             <span>Tool</span>
             <span>Agent-like flow</span>
           </div>
           <div class="lesson-block">
             <h4>핵심 개념</h4>
             <p>
-              Workflow는 여러 단계를 순서대로 연결한 실행 흐름입니다.
-              Section 4에서는 검색, 답변 생성, 사실 추출, schema validation, 로그 기록을 하나로 묶습니다.
+              workflow는 여러 단계를 순서대로 연결한 실행 흐름입니다.
+              Section 4에서는 검색, route 결정, 답변 생성, evidence 유지, schema validation을 하나로 묶습니다.
               여기서 만드는 것은 완전 자율 agent가 아니라 agent-like workflow입니다.
               AI를 사용하지만, 어떤 단계를 어떤 순서로 실행할지는 사람이 명시적으로 정합니다.
             </p>
@@ -873,9 +993,9 @@ uv run --python 3.11 --with-requirements requirements.txt --with notebook jupyte
             <h4>이번 Section의 최종 그림</h4>
             <p>
               질문이 들어오면 먼저 관련 문서를 찾습니다.
-              찾은 문서에서 답변을 만들고, 답변에서 핵심 사실을 구조화합니다.
-              그 구조가 schema에 맞는지 확인하고, 마지막으로 어떤 단계가 실행되었는지 log를 남깁니다.
-              최종 출력에는 <code>answer_ko</code>, <code>facts</code>, <code>evidence</code>, <code>not_answered</code>, <code>log</code>가 함께 있어야 합니다.
+              찾은 문서에서 답변을 만들고, 다음에 무엇을 해야 하는지 정합니다.
+              그 구조가 schema에 맞는지 확인하고, 답변에 사용한 evidence가 유지되는지 봅니다.
+              최종 출력에는 <code>route</code>, <code>answer_ko</code>, <code>evidence</code>, <code>next_action_ko</code>가 함께 있어야 합니다.
             </p>
             <p>
               이 구조는 나중에 더 자율적인 agent로 확장할 수 있습니다.
@@ -952,7 +1072,7 @@ uv run --python 3.11 --with-requirements requirements.txt --with notebook jupyte
               <code>05_linux_wsl.ipynb</code>를 열어 Linux/WSL2 설명을 읽고, Python으로 현재 폴더를 확인하는 셀을 실행합니다.
               아래 명령은 WSL Ubuntu shell에서 실행하는 예시입니다.
               Linux package 설치나 <code>sudo</code>, <code>apt</code>가 필요한 경우에는 먼저 이유를 설명하고 별도로 요청합니다.
-              Python library는 Linux에서도 uv로 설치하고 실행합니다.
+              Python 패키지는 Linux에서도 uv로 설치하고 실행합니다.
             </p>
             <pre><code>pwd
 ls
@@ -977,12 +1097,12 @@ uv run --python 3.11 python --version</code></pre>
         </article>
       </section>
 
-      <section id="cost" hidden>
+      <section id="cost" role="tabpanel" aria-labelledby="tab-cost" hidden>
         <h2>API 키와 예상 비용</h2>
         <p>
           이 탭은 AI 모델을 쓰기 전에 알아야 할 “키와 사용량” 안내입니다.
           API는 내 코드가 OpenAI 모델에게 요청을 보내고 답을 받는 방식입니다. 요청할 때 사용하는 비밀번호 같은 값이
-          API key입니다. 이 key는 웹사이트나 채팅에 입력하지 않고, 각 노트북의 API key 입력 셀에만 붙여넣습니다.
+          API key입니다. 이 API key는 웹사이트나 채팅에 입력하지 않고, 각 노트북의 API key 입력 셀에만 붙여넣습니다.
         </p>
         <h3>왜 비용이 생기나요?</h3>
         <p>
@@ -1037,16 +1157,16 @@ output 비용 = 1,500 / 1,000,000 × 0.80달러 = 0.0012달러
         </ul>
       </section>
 
-      <section id="trouble" hidden>
+      <section id="trouble" role="tabpanel" aria-labelledby="tab-trouble" hidden>
         <h2>문제 해결</h2>
         <div class="grid">
           <div class="card">
             <h3>키 오류</h3>
-            <p><code>OPENAI_API_KEY</code>가 비어 있거나 잘못된 경우입니다. 현재 노트북의 API key 입력 셀에 수업용 key를 붙여넣고 그 셀부터 다시 실행합니다.</p>
+            <p><code>OPENAI_API_KEY</code>가 비어 있거나 잘못된 경우입니다. 현재 노트북의 API key 입력 셀에 수업용 API key를 붙여넣고 그 셀부터 다시 실행합니다.</p>
           </div>
           <div class="card">
             <h3>모델 오류</h3>
-            <p><code>gpt-5.4-mini</code>는 현재 검증된 수업용 기본 모델명입니다. 계정에서 사용할 수 없으면 제공된 저비용 모델명으로 <code>OPENAI_MODEL</code>을 바꿉니다.</p>
+            <p>기본 모델명은 수업에서 제공된 값을 사용합니다. 현재 안내값은 <code>gpt-5.4-mini</code>이며, 계정에서 사용할 수 없으면 제공된 저비용 모델명으로 <code>OPENAI_MODEL</code>만 바꿉니다.</p>
           </div>
           <div class="card">
             <h3>패키지 오류</h3>
@@ -1063,7 +1183,7 @@ output 비용 = 1,500 / 1,000,000 × 0.80달러 = 0.0012달러
 
   <footer>
     <div class="wrap">
-      AMSL Agentic AI Study Portal. API keys stay local; this public page is study guidance for the internship.
+      AMSL Agentic AI Study Portal. API key는 로컬에서만 사용하며, 이 공개 페이지는 인턴십 학습 안내용입니다.
     </div>
   </footer>
 
@@ -1101,6 +1221,24 @@ output 비용 = 1,500 / 1,000,000 × 0.80달러 = 0.0012달러
 
     buttons.forEach((button) => {
       button.addEventListener("click", () => activate(button.dataset.tab));
+      button.addEventListener("keydown", (event) => {
+        const currentIndex = buttons.indexOf(button);
+        let nextIndex = currentIndex;
+        if (event.key === "ArrowDown" || event.key === "ArrowRight") {
+          nextIndex = (currentIndex + 1) % buttons.length;
+        } else if (event.key === "ArrowUp" || event.key === "ArrowLeft") {
+          nextIndex = (currentIndex - 1 + buttons.length) % buttons.length;
+        } else if (event.key === "Home") {
+          nextIndex = 0;
+        } else if (event.key === "End") {
+          nextIndex = buttons.length - 1;
+        } else {
+          return;
+        }
+        event.preventDefault();
+        buttons[nextIndex].focus();
+        activate(buttons[nextIndex].dataset.tab);
+      });
     });
 
     const initial = location.hash.replace("#", "");
