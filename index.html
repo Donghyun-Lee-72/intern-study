@@ -255,6 +255,61 @@
       margin-top: 16px;
     }
 
+    details.section-step {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #ffffff;
+      padding: 0;
+    }
+
+    details.section-step + details.section-step {
+      margin-top: 12px;
+    }
+
+    details.section-step summary {
+      cursor: pointer;
+      list-style: none;
+      padding: 14px 16px;
+    }
+
+    details.section-step summary::-webkit-details-marker {
+      display: none;
+    }
+
+    details.section-step[open] summary {
+      border-bottom: 1px solid var(--line);
+      background: #f8fafc;
+    }
+
+    .section-body {
+      padding: 14px 16px 16px;
+    }
+
+    .section-mini-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .mini-block {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfcfe;
+      padding: 12px;
+    }
+
+    .mini-block h4 {
+      margin: 0 0 7px;
+      font-size: 14px;
+    }
+
+    .mini-block p,
+    .mini-block ul,
+    .mini-block ol {
+      margin-top: 0;
+      margin-bottom: 0;
+    }
+
     .section-step:first-of-type {
       border-top: 0;
       padding-top: 0;
@@ -329,7 +384,8 @@
 
     @media (max-width: 860px) {
       .shell,
-      .grid {
+      .grid,
+      .section-mini-grid {
         grid-template-columns: 1fr;
       }
 
@@ -373,128 +429,214 @@
       <section id="materials">
         <h2>학습 섹션</h2>
         <p>
-          이 탭이 실제 교재입니다. 일정표처럼 날짜로 나누기보다, 준비가 끝난 만큼 Section 0부터 순서대로 진행합니다.
-          각 섹션은 “읽기 → 실행 → 확인 → 정리” 순서로 되어 있고, 노트북의 같은 섹션을 실행한 뒤 결과 확인 기준과 비교합니다.
+          Section을 하나씩 펼쳐서 읽고, 노트북에서 같은 Section을 실행한 뒤, 바로 아래 확인 기준과 비교합니다.
+          별도 문서를 여러 개 오갈 필요 없이 이 화면만 따라가면 됩니다.
         </p>
         <div class="callout blue">
           아직 <code>RAG</code>, <code>Pydantic</code>, <code>LangChain</code>, <code>token</code> 같은 단어를 몰라도 괜찮습니다.
-          지금은 “Section 0에서 준비하기 → Section 1부터 순서대로 실행하기 → 결과 확인과 비교하기”만 기억하면 됩니다.
+          지금은 “준비하기 → AI 호출하기 → 형식 확인하기 → 근거 확인하기 → 단계 연결하기”만 기억하면 됩니다.
           어려운 용어는 필요한 섹션에서 하나씩 설명합니다.
         </div>
-        <h3>핵심 노트북 흐름</h3>
-        <div class="section-step">
-          <div class="section-step-head">
+        <details class="section-step" open>
+          <summary class="section-step-head">
             <h3>Section 0: 시작 전 준비</h3>
             <span>예상 60-90분</span>
-          </div>
-          <ol>
-            <li>이 페이지의 안내를 정독하고, 이 수업이 “AI 호출 → 검증 → 근거 확인 → 단계 연결” 흐름이라는 점을 확인합니다.</li>
-            <li>PowerShell에서 <code>uv --version</code>과 <code>uv run --python 3.12 python --version</code>을 확인합니다.</li>
-            <li>실습 파일 ZIP을 다운로드하고 압축을 풉니다.</li>
-            <li><code>examples/.env</code> 파일을 만들고 제공받은 API key와 모델명을 넣습니다.</li>
-            <li>첫 연결 테스트를 실행하고 성공하면 노트북을 엽니다.</li>
-          </ol>
-          <pre><code>cd amsl-internship-study/examples
+          </summary>
+          <div class="section-body">
+            <div class="section-mini-grid">
+              <div class="mini-block">
+                <h4>핵심개념</h4>
+                <p>이번 수업은 Windows PowerShell과 uv를 기준으로 진행합니다. Python은 직접 따로 설치하기보다 <code>uv run --python 3.12 ...</code>로 실행합니다.</p>
+              </div>
+              <div class="mini-block">
+                <h4>강의자료</h4>
+                <p>웹사이트는 교재, 노트북은 실행용입니다. API key는 웹사이트나 코드에 넣지 않고 <code>examples/.env</code>에만 둡니다.</p>
+              </div>
+              <div class="mini-block">
+                <h4>실습과제</h4>
+                <ol>
+                  <li>ZIP을 받고 압축을 풉니다.</li>
+                  <li><code>.env</code>를 만들고 key/model을 넣습니다.</li>
+                  <li>첫 연결 테스트를 실행합니다.</li>
+                </ol>
+              </div>
+              <div class="mini-block">
+                <h4>결과기준</h4>
+                <ul>
+                  <li><code>uv --version</code>이 동작합니다.</li>
+                  <li><code>uv run --python 3.12 python --version</code>이 동작합니다.</li>
+                  <li>smoke test가 한국어 성공 문장을 출력합니다.</li>
+                </ul>
+              </div>
+            </div>
+            <pre><code>cd amsl-internship-study/examples
 Copy-Item .env.example .env
 notepad .env
 uv run --python 3.12 --with-requirements requirements.txt python live_openai_smoke.py</code></pre>
-          <div class="button-row">
-            <a class="button primary" href="downloads/amsl-internship-practice-files.zip" download>실습 파일 ZIP 다운로드</a>
-            <a class="button" href="notebooks/amsl_agentic_ai_live_api_study.ipynb" download>노트북만 다시 다운로드</a>
-            <a class="button" href="docs.html?doc=quickstart">빠른 실행 명령 보기</a>
-            <a class="button" href="docs.html?doc=troubleshooting">막히면 오류 해결 보기</a>
+            <div class="button-row">
+              <a class="button primary" href="downloads/amsl-internship-practice-files.zip" download>실습 파일 ZIP 다운로드</a>
+              <a class="button" href="notebooks/amsl_agentic_ai_live_api_study.ipynb" download>노트북 다운로드</a>
+            </div>
           </div>
-        </div>
-        <h3>핵심 흐름 이후</h3>
-        <div class="callout">
-          Section 5는 노트북 필수 셀이 아니라, Section 1-4를 마친 뒤 개발 환경을 넓히는 Linux/WSL2 환경 섹션입니다.
-          수업 진행 상황에 따라 마지막에 따로 다룹니다.
-        </div>
-        <div class="section-step">
-          <div class="section-step-head">
+        </details>
+
+        <details class="section-step">
+          <summary class="section-step-head">
             <h3>Section 1: AI에게 요청 보내기</h3>
             <span>예상 60-90분</span>
+          </summary>
+          <div class="section-body">
+            <div class="section-mini-grid">
+              <div class="mini-block">
+                <h4>핵심개념</h4>
+                <p>LLM API는 모델을 함수처럼 호출하는 방법입니다. Prompt에는 역할, 목표, 입력, 제약, 출력 형식이 들어갑니다.</p>
+              </div>
+              <div class="mini-block">
+                <h4>강의자료</h4>
+                <p>모델 출력은 매번 조금 달라질 수 있습니다. 그래서 답변 문장보다 구조, 근거, 모르는 정보 처리 방식을 봅니다.</p>
+              </div>
+              <div class="mini-block">
+                <h4>실습과제</h4>
+                <p>노트북의 Section 1 셀을 실행해 기술 노트에서 <code>topic</code>, <code>objective</code>, <code>method</code>, <code>result</code>, <code>evidence</code>를 뽑습니다.</p>
+              </div>
+              <div class="mini-block">
+                <h4>결과기준</h4>
+                <ul>
+                  <li>입력 문서 ID가 evidence에 유지됩니다.</li>
+                  <li>문서에 없는 내용은 <code>not specified</code>로 남습니다.</li>
+                  <li>좋은 prompt 요소 5개를 설명할 수 있습니다.</li>
+                </ul>
+              </div>
+            </div>
           </div>
-          <ol>
-            <li>API, prompt, token이 무엇인지 가볍게 읽습니다.</li>
-            <li>노트북의 키 설정, 첫 연결 테스트, 기술 노트 구조화 추출 셀을 실행합니다.</li>
-            <li><code>topic</code>, <code>objective</code>, <code>method</code>, <code>result</code>, <code>evidence</code>가 왜 필요한지 확인합니다.</li>
-            <li>좋은 prompt에 들어가야 할 요소를 5개만 적습니다.</li>
-          </ol>
-        </div>
-        <div class="section-step">
-          <div class="section-step-head">
+        </details>
+
+        <details class="section-step">
+          <summary class="section-step-head">
             <h3>Section 2: 답변을 정해진 형식으로 받기</h3>
             <span>예상 60-90분</span>
+          </summary>
+          <div class="section-body">
+            <div class="section-mini-grid">
+              <div class="mini-block">
+                <h4>핵심개념</h4>
+                <p>Structured output은 모델 답변을 정해진 구조로 받는 방식입니다. Pydantic은 타입, 필수 필드, 값 범위를 검사합니다.</p>
+              </div>
+              <div class="mini-block">
+                <h4>강의자료</h4>
+                <p>검증 통과는 “형식이 맞다”는 뜻이지 “사실이다”라는 뜻은 아닙니다. 사실 여부는 evidence와 원문으로 다시 봅니다.</p>
+              </div>
+              <div class="mini-block">
+                <h4>실습과제</h4>
+                <p>노트북의 Section 2 셀을 실행해 Pydantic schema와 LangChain parser가 모델 출력을 어떻게 확인하는지 봅니다.</p>
+              </div>
+              <div class="mini-block">
+                <h4>결과기준</h4>
+                <ul>
+                  <li>필수 필드가 빠지면 validation이 실패합니다.</li>
+                  <li><code>confidence</code>는 0과 1 사이입니다.</li>
+                  <li>형식 검증과 사실 확인의 차이를 설명할 수 있습니다.</li>
+                </ul>
+              </div>
+            </div>
           </div>
-          <ol>
-            <li>Pydantic이 답변의 형식과 범위를 확인하는 도구라는 점을 읽습니다.</li>
-            <li>노트북의 형식 검증 셀과 LangChain parser 셀을 실행합니다.</li>
-            <li>모델 출력이 조금 달라도 정해진 구조로 검증되는지 확인합니다.</li>
-            <li>validation 통과와 사실 확인이 서로 다른 일이라는 점을 한 문단으로 정리합니다.</li>
-          </ol>
-        </div>
-        <div class="section-step">
-          <div class="section-step-head">
+        </details>
+
+        <details class="section-step">
+          <summary class="section-step-head">
             <h3>Section 3: 문서 근거로 답하게 하기</h3>
             <span>예상 90-120분</span>
+          </summary>
+          <div class="section-body">
+            <div class="section-mini-grid">
+              <div class="mini-block">
+                <h4>핵심개념</h4>
+                <p>RAG는 질문과 관련된 문서를 먼저 찾고, 그 근거 안에서 답하게 하는 흐름입니다.</p>
+              </div>
+              <div class="mini-block">
+                <h4>강의자료</h4>
+                <p>검색된 문서가 틀리면 답도 틀릴 수 있습니다. 먼저 retrieved evidence를 보고, 그 다음 모델 답변을 봅니다.</p>
+              </div>
+              <div class="mini-block">
+                <h4>실습과제</h4>
+                <p>노트북의 Section 3 셀을 실행해 source id와 quote가 답변에 유지되는지 확인합니다.</p>
+              </div>
+              <div class="mini-block">
+                <h4>결과기준</h4>
+                <ul>
+                  <li>답변은 검색된 문서의 quote를 근거로 삼습니다.</li>
+                  <li>근거가 없으면 <code>not_answered: true</code>가 됩니다.</li>
+                  <li>keyword 검색과 embedding 검색의 차이를 말할 수 있습니다.</li>
+                </ul>
+              </div>
+            </div>
           </div>
-          <ol>
-            <li>RAG가 “필요한 문서를 먼저 찾고, 그 근거로 답하는 흐름”이라는 점을 읽습니다.</li>
-            <li>노트북의 문서 검색 셀을 실행하고, 어떤 source가 검색되는지 봅니다.</li>
-            <li>답변의 <code>source_id</code>와 <code>quote</code>가 실제 입력 문서에서 왔는지 확인합니다.</li>
-            <li>답이 없는 질문에서 <code>not_answered</code>가 나오는지 확인합니다.</li>
-          </ol>
-        </div>
-        <div class="section-step">
-          <div class="section-step-head">
+        </details>
+
+        <details class="section-step">
+          <summary class="section-step-head">
             <h3>Section 4: 여러 단계를 하나로 연결하기</h3>
             <span>예상 60-90분</span>
+          </summary>
+          <div class="section-body">
+            <div class="section-mini-grid">
+              <div class="mini-block">
+                <h4>핵심개념</h4>
+                <p>Workflow는 검색, 답변 생성, 사실 추출, 검증을 순서대로 연결한 작은 프로그램입니다.</p>
+              </div>
+              <div class="mini-block">
+                <h4>강의자료</h4>
+                <p>초심자 실습에서는 완전 자율 agent보다 고정 workflow가 안전합니다. 각 단계의 입력과 출력이 보여야 디버깅할 수 있습니다.</p>
+              </div>
+              <div class="mini-block">
+                <h4>실습과제</h4>
+                <p>노트북의 Section 4 셀을 실행하고 성공 질문과 실패 질문의 결과를 비교합니다.</p>
+              </div>
+              <div class="mini-block">
+                <h4>결과기준</h4>
+                <ul>
+                  <li><code>answer_ko</code>, <code>facts</code>, <code>evidence</code>, <code>log</code>가 출력됩니다.</li>
+                  <li>facts는 같은 evidence에서 나옵니다.</li>
+                  <li>답이 없는 질문은 낮은 confidence로 처리됩니다.</li>
+                </ul>
+              </div>
+            </div>
           </div>
-          <ol>
-            <li>검색, 답변 생성, 사실 추출, 검증을 하나의 workflow로 연결합니다.</li>
-            <li>최종 출력에 <code>answer_ko</code>, <code>facts</code>, <code>evidence</code>, <code>log</code>가 있는지 확인합니다.</li>
-            <li>사용량 확인 셀을 실행하고 호출 수와 token 수를 기록합니다.</li>
-            <li>작은 변형 질문을 하나 추가하고 성공/실패 처리를 비교합니다.</li>
-          </ol>
-        </div>
-        <div class="section-step">
-          <div class="section-step-head">
+        </details>
+
+        <details class="section-step">
+          <summary class="section-step-head">
             <h3>Section 5: Linux/WSL2 개발 환경 입문</h3>
             <span>예상 90-120분</span>
+          </summary>
+          <div class="section-body">
+            <div class="callout">
+              Section 5는 노트북 필수 셀이 아니라, Section 1-4 이후에 따로 다루는 개발 환경 섹션입니다.
+            </div>
+            <div class="section-mini-grid">
+              <div class="mini-block">
+                <h4>핵심개념</h4>
+                <p>Windows PowerShell과 Linux shell은 서로 다른 실행 환경입니다. WSL2는 Windows 안에서 Linux 개발 공간을 쓰게 해줍니다.</p>
+              </div>
+              <div class="mini-block">
+                <h4>강의자료</h4>
+                <p>Linux에서는 경로, 패키지, Python 위치가 Windows와 다를 수 있습니다. 지금 어느 shell에서 실행 중인지 확인하는 습관이 중요합니다.</p>
+              </div>
+              <div class="mini-block">
+                <h4>실습과제</h4>
+                <p><code>pwd</code>, <code>ls</code>, <code>cd</code>, <code>mkdir</code>, <code>python3 --version</code>을 실행하고 VS Code Remote - WSL 흐름을 확인합니다.</p>
+              </div>
+              <div class="mini-block">
+                <h4>결과기준</h4>
+                <ul>
+                  <li>PowerShell과 WSL Ubuntu shell의 차이를 설명합니다.</li>
+                  <li>Windows 경로와 Linux 경로가 다름을 압니다.</li>
+                  <li>Linux에서도 uv/Python 환경을 만들 수 있음을 확인합니다.</li>
+                </ul>
+              </div>
+            </div>
           </div>
-          <ol>
-            <li>Windows PowerShell과 Linux shell이 서로 다른 실행 환경이라는 점을 이해합니다.</li>
-            <li>WSL2와 Ubuntu가 무엇인지 보고, 설치 흐름과 파일 위치 차이를 확인합니다.</li>
-            <li>기본 명령어 <code>pwd</code>, <code>ls</code>, <code>cd</code>, <code>mkdir</code>, <code>python3 --version</code>을 실행해 봅니다.</li>
-            <li>VS Code Remote - WSL로 Linux 폴더를 여는 흐름을 확인합니다.</li>
-            <li>가능하면 Linux에서도 uv와 Python 실행 확인을 다시 해봅니다.</li>
-          </ol>
-          <div class="button-row">
-            <a class="button primary" href="docs.html?doc=linux">Section 5 상세 자료 보기</a>
-          </div>
-        </div>
-        <h3>상세 자료</h3>
-        <div class="grid">
-          <div class="card">
-            <h3>읽을 자료</h3>
-            <ul class="resource-list">
-              <li><a href="docs.html?doc=concepts">핵심 개념</a></li>
-              <li><a href="docs.html?doc=lecture">강의 노트</a></li>
-              <li><a href="docs.html?doc=practicals">실습 과제</a></li>
-              <li><a href="docs.html?doc=expected">결과 확인 기준</a></li>
-            </ul>
-          </div>
-          <div class="card">
-            <h3>설정과 문제 해결</h3>
-            <ul class="resource-list">
-              <li><a href="docs.html?doc=quickstart">빠른 실행 명령</a></li>
-              <li><a href="docs.html?doc=live">API key와 첫 연결 테스트</a></li>
-              <li><a href="docs.html?doc=troubleshooting">오류 해결</a></li>
-              <li><a href="docs.html?doc=linux">Section 5 Linux/WSL2</a></li>
-            </ul>
-          </div>
-        </div>
+        </details>
       </section>
 
       <section id="cost" hidden>
@@ -610,10 +752,6 @@ output 비용 = 1,500 / 1,000,000 × 0.80달러 = 0.0012달러
           같은 셀을 다시 실행했을 때 표현이 조금 달라질 수 있습니다. 비교 기준은 “정확히 같은 문장”이 아니라
           “같은 구조, 같은 근거, 같은 실패 처리 정책”입니다.
         </div>
-        <div class="button-row">
-          <a class="button primary" href="docs.html?doc=expected">결과 확인 문서 자세히 보기</a>
-          <a class="button" href="docs.html?doc=troubleshooting">결과가 다를 때 확인하기</a>
-        </div>
       </section>
 
       <section id="trouble" hidden>
@@ -636,7 +774,6 @@ output 비용 = 1,500 / 1,000,000 × 0.80달러 = 0.0012달러
             <p>AI 출력은 약간 변할 수 있습니다. 정해진 형식 확인 실습에서는 validation을 통과하는지가 더 중요합니다.</p>
           </div>
         </div>
-        <p><a href="docs.html?doc=troubleshooting">상세 troubleshooting 문서 보기</a></p>
       </section>
     </main>
   </div>
