@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import os
+from pathlib import Path
 from typing import Any
 
 from dotenv import load_dotenv
@@ -10,15 +11,21 @@ from dotenv import load_dotenv
 DEFAULT_MODEL = "gpt-5.4-mini"
 MAX_OUTPUT_TOKENS = 700
 USAGE_LOG: list[dict[str, int | str | None]] = []
+ROOT = Path(__file__).resolve().parent
+
+
+def load_class_env() -> None:
+    load_dotenv()
+    load_dotenv(ROOT / ".env")
 
 
 def configured_model() -> str:
-    load_dotenv()
+    load_class_env()
     return os.getenv("OPENAI_MODEL", DEFAULT_MODEL)
 
 
 def has_api_key() -> bool:
-    load_dotenv()
+    load_class_env()
     return bool(os.getenv("OPENAI_API_KEY"))
 
 

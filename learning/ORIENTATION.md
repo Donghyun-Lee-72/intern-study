@@ -7,8 +7,8 @@
 오리엔테이션이 끝나면 다음을 할 수 있어야 합니다.
 
 - PowerShell에서 현재 폴더를 확인하고 명령을 실행할 수 있습니다.
-- Python 버전을 확인할 수 있습니다.
 - uv를 설치하고 실행할 수 있습니다.
+- uv가 준비한 Python 3.12 실행 환경을 확인할 수 있습니다.
 - 실습 파일 ZIP을 다운로드하고 압축을 풀 수 있습니다.
 - Jupyter Notebook 또는 VS Code Notebook으로 `.ipynb` 파일을 열 수 있습니다.
 - `.env` 파일에 API key와 모델명을 넣을 수 있습니다.
@@ -39,17 +39,17 @@ Anaconda는 이번 과정의 표준 환경으로 쓰지 않습니다. 이미 설
 - 인터넷 연결
 - 최신 브라우저
 - VS Code 또는 Jupyter Notebook
-- Python 3.11 이상
+- uv가 준비하는 Python 3.12 실행 환경
 - 제공받은 OpenAI API key
 - 안내받은 수업용 모델명
 
-PowerShell에서 Python이 보이는지 확인합니다.
+PowerShell에서 uv가 보이는지 확인합니다.
 
 ```powershell
-python --version
+uv --version
 ```
 
-오류가 나면 Python이 설치되어 있지 않거나 PATH가 잡히지 않은 상태입니다. Python 3.11 이상을 설치하고, 설치 화면에서 **Add python.exe to PATH**를 체크한 뒤 PowerShell을 완전히 닫고 새로 열어 다시 확인합니다. Windows의 `앱 실행 별칭`에서 Python 별칭이 켜져 있으면 python.org 설치 파일과 충돌할 수 있으니, 계속 실패하면 `오류 해결` 문서의 Python 항목을 확인합니다.
+오류가 나면 아래 설치 명령을 먼저 실행합니다. 이번 과정에서는 Python을 브라우저에서 따로 다운로드하는 것을 기본 경로로 두지 않고, uv가 Python 3.12 실행 환경을 준비하게 합니다.
 
 ## 4. uv가 무엇인가요?
 
@@ -59,13 +59,14 @@ uv는 Python 프로젝트의 가상환경과 패키지를 빠르게 관리해주
 - 패키지는 프로젝트에 필요한 외부 라이브러리입니다.
 - `uv venv`는 가상환경을 만듭니다.
 - `uv run ...`은 가상환경 활성화가 헷갈릴 때도 필요한 패키지와 함께 명령을 실행하게 해줍니다.
-- 이번 실습에서는 대부분 `uv run --with-requirements requirements.txt ...` 형식을 사용합니다.
+- 이번 실습에서는 대부분 `uv run --python 3.12 --with-requirements requirements.txt ...` 형식을 사용합니다.
 
 uv 설치:
 
 ```powershell
 powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
 uv --version
+uv run --python 3.12 python --version
 ```
 
 설치 직후 `uv` 명령을 찾지 못하면 PowerShell을 새로 열고 다시 확인합니다.
@@ -116,7 +117,7 @@ OPENAI_MODEL=gpt-5.4-mini
 첫 연결 테스트(smoke test)는 “모델이 좋은 답을 하는지”가 아니라 “내 환경에서 API 호출이 가능한지”를 확인합니다.
 
 ```powershell
-uv run --with-requirements requirements.txt python live_openai_smoke.py
+uv run --python 3.12 --with-requirements requirements.txt python live_openai_smoke.py
 ```
 
 성공하면 다음과 비슷한 메시지가 나옵니다.
@@ -129,47 +130,27 @@ OpenAI live API 연결이 정상적으로 작동합니다.
 
 ## 8. 노트북 열기
 
-가장 권장하는 실습 방식은 노트북입니다. `amsl-internship-study` 폴더로 돌아가서 노트북을 엽니다.
+가장 단순한 실습 방식은 uv로 Jupyter를 실행해 노트북을 여는 것입니다. `amsl-internship-study` 폴더로 돌아가서 실행합니다.
 
 ```powershell
 cd ..
-uv run --with notebook jupyter notebook notebooks/amsl_agentic_ai_live_api_study.ipynb
+uv run --python 3.12 --with-requirements examples/requirements.txt --with notebook jupyter notebook notebooks/amsl_agentic_ai_live_api_study.ipynb
 ```
 
-VS Code를 사용한다면 `notebooks/amsl_agentic_ai_live_api_study.ipynb` 파일을 직접 열어도 됩니다.
+VS Code를 사용한다면 `notebooks/amsl_agentic_ai_live_api_study.ipynb` 파일을 직접 열어도 됩니다. 이 경우 노트북 커널이 수업용 uv/Python 3.12 환경인지 확인합니다. Anaconda나 예전 전역 Python 커널이 선택되어 있으면 패키지 설치와 API 실행 결과가 달라질 수 있습니다.
 
-## 9. API 테스트 단계
+## 9. Section 0 완료 목표
 
-API 테스트는 세 단계로 이해하면 됩니다.
+Section 0의 목표는 모든 개념을 완벽히 이해하는 것이 아닙니다. 목표는 각자 로컬 컴퓨터에서 실제 API 호출이 되는 상태를 만드는 것입니다.
 
-### 1단계: 연결 확인
+여기까지 되면 Section 0은 충분합니다.
 
-`live_openai_smoke.py` 또는 노트북의 `첫 연결 테스트(smoke test)` 섹션을 실행합니다. API key, 모델명, 네트워크, 패키지 상태를 확인합니다.
-
-### 2단계: 최소 기능 확인
-
-Section 1~2 셀 또는 아래 스크립트를 실행합니다.
-
-```powershell
-uv run --with-requirements requirements.txt python section1_llm_api.py
-uv run --with-requirements requirements.txt python section2_structured_output.py
-uv run --with-requirements requirements.txt python section2_langchain_contract.py
-```
-
-성공 기준은 “문장이 항상 똑같이 나오는 것”이 아니라, 실행이 끝나고 Pydantic validation이 통과하는 것입니다.
-
-### 3단계: 전체 흐름 확인
-
-자료가 업데이트되었거나 전체 예제가 한 번에 도는지 확인할 때는 `test_live_examples.py`를 사용합니다.
-이 명령은 여러 번의 API 호출을 사용하므로, 일반 실습에서는 첫 연결 테스트와 노트북 실행을 우선합니다.
-
-```powershell
-$env:RUN_LIVE_OPENAI_TESTS="1"
-uv run --with-requirements requirements.txt python test_live_examples.py
-Remove-Item Env:\RUN_LIVE_OPENAI_TESTS
-```
-
-일반 실습에서는 매번 이 파일을 실행할 필요는 없습니다.
+1. 웹사이트에서 Section 0 읽기
+2. 실습 파일 ZIP 다운로드
+3. `.env` 작성
+4. 첫 연결 테스트 성공
+5. 노트북 열기
+6. Section 1을 시작할 준비 완료
 
 ## 10. 오류를 질문할 때
 
@@ -189,20 +170,9 @@ API key는 공유하지 않습니다. 대신 다음 정보를 공유합니다.
 OS: Windows 11
 Python: 3.12.4
 위치: amsl-internship-study/examples
-명령: uv run --with-requirements requirements.txt python live_openai_smoke.py
+명령: uv run --python 3.12 --with-requirements requirements.txt python live_openai_smoke.py
 모델: gpt-5.4-mini
 오류: model_not_found ...
 ```
 
-## 11. 첫날 목표
-
-첫날 목표는 모든 개념을 완벽히 이해하는 것이 아닙니다. 목표는 각자 로컬 컴퓨터에서 실제 API 호출이 되는 상태를 만드는 것입니다.
-
-첫날에 여기까지 되면 충분합니다.
-
-1. 웹사이트에서 Section 0 읽기
-2. 실습 파일 ZIP 다운로드
-3. `.env` 작성
-4. 첫 연결 테스트 성공
-5. 노트북 열기
-6. Section 1 첫 셀 실행
+Section 1-4의 실제 실행 순서는 [실습 과제](PRACTICALS.md)와 [예제 코드 사용법](EXAMPLES.md)을 봅니다.

@@ -50,7 +50,7 @@ OPENAI_MODEL=gpt-5.4-mini
 노트북에서는 `첫 연결 테스트(smoke test)` 섹션을 실행합니다. PowerShell에서는 다음 명령을 실행합니다.
 
 ```powershell
-uv run --with-requirements requirements.txt python live_openai_smoke.py
+uv run --python 3.12 --with-requirements requirements.txt python live_openai_smoke.py
 ```
 
 정상 예시는 다음과 같습니다.
@@ -68,7 +68,7 @@ OpenAI live API 연결이 정상적으로 작동합니다.
 
 ```powershell
 $env:RUN_LIVE_OPENAI_TESTS="1"
-uv run --with-requirements requirements.txt python test_live_examples.py
+uv run --python 3.12 --with-requirements requirements.txt python test_live_examples.py
 Remove-Item Env:\RUN_LIVE_OPENAI_TESTS
 ```
 
@@ -93,7 +93,7 @@ API 호출은 모델에게 입력을 보내고 답변을 받는 요청입니다.
 예상 비용 = input token 수 × input token 단가 + output token 수 × output token 단가
 ```
 
-이번 실습의 전체 노트북 1회 실행은 최근 검증 기준 약 12회 API 호출, 약 4,500 token 정도로 측정되었습니다. 모델 응답 길이와 재실행 횟수에 따라 달라질 수 있으므로 여유 있게 1만 token 안팎으로 생각하면 됩니다.
+이번 실습의 전체 노트북 1회 실행은 정상 경로 기준 약 12회 API 호출, 약 4,500 token 정도로 측정되었습니다. JSON 형식 수정 재시도, 모델 응답 길이, 재실행 횟수에 따라 더 늘 수 있으므로 여유 있게 1만 token 안팎으로 생각하면 됩니다.
 
 정확한 금액은 실제 모델의 최신 가격표에 따라 달라집니다. mini 계열 모델을 쓰면 한 명이 전체 예제를 한 번 도는 비용은 보통 작게 유지됩니다.
 문서의 계산 예시는 계산 방법을 보여주기 위한 가상의 예시이며, 실제 단가는 수업에서 제공받은 모델의 최신 가격표를 기준으로 확인합니다.

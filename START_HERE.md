@@ -15,7 +15,7 @@ https://intern-study.donghyunlee.me
 권장 흐름은 다음과 같습니다.
 
 1. 웹사이트의 `학습 섹션`에서 Section 0을 읽고 준비를 시작합니다.
-2. 내 컴퓨터에서 Python, uv, 노트북 실행 준비를 확인합니다.
+2. 내 컴퓨터에서 uv와 uv가 준비한 Python 실행 환경을 확인합니다.
 3. 이 ZIP을 압축 해제합니다.
 4. 아래 명령으로 첫 연결 테스트를 합니다.
 5. 웹사이트의 `학습 섹션`을 보면서 노트북 셀을 순서대로 실행합니다.
@@ -37,12 +37,9 @@ Documents\amsl-internship-study
 확인:
 
 ```powershell
-python --version
 uv --version
+uv run --python 3.12 python --version
 ```
-
-`python --version`에서 오류가 나면 Python이 설치되어 있지 않거나 PATH가 잡히지 않은 상태입니다.
-Python 3.11 이상을 설치하고, 설치 화면에서 **Add python.exe to PATH**를 체크한 뒤 PowerShell을 새로 열어 다시 확인합니다.
 
 `uv`가 없으면 설치합니다.
 
@@ -50,6 +47,10 @@ Python 3.11 이상을 설치하고, 설치 화면에서 **Add python.exe to PATH
 powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
 uv --version
 ```
+
+이번 실습에서는 Python을 브라우저에서 따로 다운로드하는 것을 기본 경로로 두지 않습니다.
+`uv run --python 3.12 ...` 명령이 필요한 Python을 준비해 실행합니다.
+처음 실행할 때 Python 다운로드가 한 번 진행될 수 있습니다.
 
 ## 3. API key 설정
 
@@ -71,7 +72,7 @@ OPENAI_MODEL=gpt-5.4-mini
 ## 4. 첫 연결 테스트
 
 ```powershell
-uv run --with-requirements requirements.txt python live_openai_smoke.py
+uv run --python 3.12 --with-requirements requirements.txt python live_openai_smoke.py
 ```
 
 성공하면 웹사이트의 `학습 섹션` 탭으로 돌아가 Section 1부터 읽고, 노트북에서 해당 셀을 실행합니다.

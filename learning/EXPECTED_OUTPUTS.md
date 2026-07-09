@@ -11,6 +11,18 @@
 - 답이 없으면 `not_answered: true`를 사용합니다.
 - 실행 결과를 `CONCEPT_GUIDE.md`의 개념과 연결해 설명할 수 있습니다.
 
+## Section 0: 환경 확인
+
+확인 파일: `live_openai_smoke.py`
+
+기대 결과:
+
+- `uv --version`이 동작합니다.
+- `uv run --python 3.12 python --version`이 Python 3.12 실행 환경을 보여줍니다.
+- `OPENAI_API_KEY`가 없으면 skip 메시지가 나옵니다.
+- key가 유효하면 한국어 한 문장으로 연결 성공 메시지가 나옵니다.
+- 첫 연결 테스트(smoke test)는 모델 품질 평가가 아니라 SDK, key, 모델 이름, 네트워크 연결 확인입니다.
+
 ## Section 1: AI에게 요청 보내기
 
 확인 파일: `section1_llm_api.py`
@@ -111,7 +123,7 @@
 - 실패 케이스에서는 `facts`가 `not specified` 중심이고 confidence가 낮습니다.
 - `log`에는 실행 단계가 남습니다.
 
-## Section 5: Linux/WSL2 확인
+## Section 5: Linux/WSL2 환경 확인
 
 기대 결과:
 
@@ -120,14 +132,6 @@
 - Windows 파일 경로와 Linux 파일 경로가 다를 수 있음을 설명합니다.
 - VS Code Remote - WSL로 Linux 폴더를 여는 흐름을 설명합니다.
 - Linux에서도 uv/Python 환경을 만들 수 있음을 확인합니다.
-
-## live_openai_smoke.py
-
-기대 결과:
-
-- `OPENAI_API_KEY`가 없으면 skip 메시지가 나옵니다.
-- key가 유효하면 한국어 한 문장으로 연결 성공 메시지가 나옵니다.
-- 첫 연결 테스트(smoke test)는 모델 품질 평가가 아니라 SDK, key, 모델 이름, 네트워크 연결 확인입니다.
 
 ## test_examples.py
 
@@ -143,7 +147,6 @@
 
 - key 제공 후 실행하면 `all_live_tests_passed`가 출력됩니다.
 - 이어서 `usage_totals`에 호출 수와 input/output/total token 수가 출력됩니다.
-- 여러 source가 검색될 수 있는 질문에서도 `answer_ko`와 `facts`가 같은 대표 evidence를 따릅니다.
 - pricing처럼 corpus에 없는 질문은 `not_answered: true`가 됩니다.
 
 좋은 최종 설명:

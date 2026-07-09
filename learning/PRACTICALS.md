@@ -22,7 +22,7 @@
 목표:
 
 - 웹사이트 학습 섹션의 전체 흐름을 읽습니다.
-- Python, uv, PowerShell 실행 위치를 확인합니다.
+- uv, uv가 준비한 Python 3.12, PowerShell 실행 위치를 확인합니다.
 - 실습 파일 ZIP을 풀고 노트북을 열 준비를 합니다.
 - `examples/.env`에 API key와 모델명을 넣습니다.
 - 첫 연결 테스트(smoke test)를 통과합니다.
@@ -33,20 +33,20 @@
 cd amsl-internship-study/examples
 Copy-Item .env.example .env
 notepad .env
-uv run --with-requirements requirements.txt python live_openai_smoke.py
+uv run --python 3.12 --with-requirements requirements.txt python live_openai_smoke.py
 ```
 
 완료 기준:
 
-- `python --version`과 `uv --version`이 동작합니다.
+- `uv --version`과 `uv run --python 3.12 python --version`이 동작합니다.
 - `live_openai_smoke.py`가 한국어 연결 성공 메시지를 출력합니다.
 - key를 코드, 제출물, 채팅에 직접 붙여 넣지 않습니다.
 
 막히면 볼 문서:
 
-- `QUICKSTART.md`
-- `LIVE_API_GUIDE.md`
-- `TROUBLESHOOTING.md`
+- [빠른 실행 순서](QUICKSTART.md)
+- [API key와 연결 테스트](LIVE_API_GUIDE.md)
+- [오류 해결](TROUBLESHOOTING.md)
 
 ## Section 1: AI에게 요청 보내기
 
@@ -61,7 +61,7 @@ uv run --with-requirements requirements.txt python live_openai_smoke.py
 실행:
 
 ```powershell
-uv run --with-requirements requirements.txt python section1_llm_api.py
+uv run --python 3.12 --with-requirements requirements.txt python section1_llm_api.py
 ```
 
 완료 기준:
@@ -88,9 +88,9 @@ uv run --with-requirements requirements.txt python section1_llm_api.py
 실행:
 
 ```powershell
-uv run --with-requirements requirements.txt python schema.py
-uv run --with-requirements requirements.txt python section2_structured_output.py
-uv run --with-requirements requirements.txt python section2_langchain_contract.py
+uv run --python 3.12 --with-requirements requirements.txt python schema.py
+uv run --python 3.12 --with-requirements requirements.txt python section2_structured_output.py
+uv run --python 3.12 --with-requirements requirements.txt python section2_langchain_contract.py
 ```
 
 완료 기준:
@@ -119,8 +119,8 @@ uv run --with-requirements requirements.txt python section2_langchain_contract.p
 실행:
 
 ```powershell
-uv run --with-requirements requirements.txt python section3_rag.py
-uv run --with-requirements requirements.txt python section3_langchain_rag.py
+uv run --python 3.12 --with-requirements requirements.txt python section3_rag.py
+uv run --python 3.12 --with-requirements requirements.txt python section3_langchain_rag.py
 ```
 
 테스트 질문:
@@ -150,7 +150,7 @@ uv run --with-requirements requirements.txt python section3_langchain_rag.py
 실행:
 
 ```powershell
-uv run --with-requirements requirements.txt python section4_workflow.py
+uv run --python 3.12 --with-requirements requirements.txt python section4_workflow.py
 ```
 
 완료 기준:
@@ -198,7 +198,7 @@ uv --version
 
 상세 자료:
 
-- `LINUX_SPECIAL_CLASS.md`
+- [Section 5 Linux/WSL2](LINUX_SPECIAL_CLASS.md)
 
 ## 추가: 자율 실행 도구 읽기
 

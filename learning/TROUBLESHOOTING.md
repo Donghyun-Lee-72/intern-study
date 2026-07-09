@@ -2,28 +2,9 @@
 
 오류가 나면 먼저 실행한 명령, 현재 폴더, 오류 메시지를 확인합니다. 이번 과정의 기본 터미널은 Windows PowerShell입니다.
 
-## 1. Python 명령이 안 됩니다
+## 1. uv 명령이 안 됩니다
 
-먼저 Python이 보이는지 확인합니다.
-
-```powershell
-python --version
-```
-
-`python` 명령을 찾을 수 없으면 Python 설치 시 **Add python.exe to PATH**가 빠졌을 수 있습니다.
-
-권장 순서:
-
-1. <https://www.python.org/downloads/>에서 Python 3.11 이상을 설치합니다.
-2. 설치 첫 화면에서 **Add python.exe to PATH**를 체크합니다.
-3. 설치가 끝나면 PowerShell을 완전히 닫고 새로 엽니다.
-4. 다시 `python --version`을 실행합니다.
-
-그래도 안 되면 Windows 설정에서 `앱 실행 별칭`을 검색하고, Python 관련 별칭이 python.org 설치와 충돌하지 않는지 확인합니다.
-
-## 2. uv 명령이 안 됩니다
-
-먼저 uv가 설치되어 있는지 확인합니다.
+먼저 uv가 보이는지 확인합니다.
 
 ```powershell
 uv --version
@@ -37,6 +18,20 @@ uv --version
 ```
 
 설치 직후 `uv` 명령을 찾지 못하면 PowerShell을 완전히 닫고 새로 연 뒤 다시 `uv --version`을 실행합니다.
+
+## 2. Python 실행이 안 됩니다
+
+이번 실습에서는 Python을 브라우저에서 따로 다운로드하는 것을 기본 경로로 두지 않습니다. uv가 Python 3.12 실행 환경을 준비해서 실행하게 합니다.
+
+```powershell
+uv run --python 3.12 python --version
+```
+
+처음 실행할 때 Python 다운로드가 한 번 진행될 수 있습니다.
+
+그래도 실패하면 먼저 `uv --version`이 되는지 확인합니다. `python --version`만 단독으로 실행했을 때 실패하는 것은, Windows에 별도 Python이 설치되어 있지 않거나 PATH가 잡히지 않은 상태일 수 있습니다. 이 수업의 기본 실행은 `uv run --python 3.12 ...`입니다.
+
+별도 Python 설치는 스태프가 안내할 때만 진행합니다. 기본 경로에서는 Python을 따로 다운로드하지 말고 `uv run --python 3.12 ...` 실행 결과와 오류 메시지를 공유합니다.
 
 ## 3. 현재 폴더가 틀렸습니다
 
@@ -89,7 +84,7 @@ OPENAI_MODEL=gpt-5.4-mini
 먼저 첫 연결 테스트(smoke test)만 다시 실행합니다.
 
 ```powershell
-uv run --with-requirements requirements.txt python live_openai_smoke.py
+uv run --python 3.12 --with-requirements requirements.txt python live_openai_smoke.py
 ```
 
 ## 6. model not found 오류가 납니다
@@ -109,10 +104,10 @@ uv run --with-requirements requirements.txt python live_openai_smoke.py
 먼저 requirements 기준으로 실행합니다. 이 방식은 패키지 설치와 실행을 한 번에 처리하므로, 가상환경 활성화가 익숙하지 않아도 따라 하기 쉽습니다.
 
 ```powershell
-uv run --with-requirements requirements.txt python live_openai_smoke.py
+uv run --python 3.12 --with-requirements requirements.txt python live_openai_smoke.py
 ```
 
-계속 실패하면 터미널이 `examples` 폴더 안에 있는지 확인하고, ZIP을 새 폴더에 다시 풀어서 같은 명령을 실행합니다. PowerShell에서 activation이 막히는 경우도 있으므로, 처음 실습에서는 activate를 고집하지 말고 `uv run --with-requirements requirements.txt ...` 방식을 사용합니다.
+계속 실패하면 터미널이 `examples` 폴더 안에 있는지 확인하고, ZIP을 새 폴더에 다시 풀어서 같은 명령을 실행합니다. PowerShell에서 activation이 막히는 경우도 있으므로, 처음 실습에서는 activate를 고집하지 말고 `uv run --python 3.12 --with-requirements requirements.txt ...` 방식을 사용합니다.
 
 ## 8. 한글이 깨져 보입니다
 
@@ -183,11 +178,11 @@ API key는 보내지 않습니다. 아래 정보만 공유합니다.
 ```text
 Python: 3.12.4
 위치: amsl-internship-study/examples
-명령: uv run --with-requirements requirements.txt python live_openai_smoke.py
+명령: uv run --python 3.12 --with-requirements requirements.txt python live_openai_smoke.py
 모델: gpt-5.4-mini
 오류: authentication failed ...
 ```
 
 ## 14. Linux 명령어는 어디서 배우나요?
 
-섹션형 기본 수업은 Windows PowerShell 기준으로 진행합니다. Linux, WSL2, bash, VS Code Remote - WSL은 마지막 `LINUX_SPECIAL_CLASS.md`에서 따로 다룹니다.
+섹션형 기본 수업은 Windows PowerShell 기준으로 진행합니다. Linux, WSL2, bash, VS Code Remote - WSL은 마지막 [Section 5 Linux/WSL2](LINUX_SPECIAL_CLASS.md)에서 따로 다룹니다.
