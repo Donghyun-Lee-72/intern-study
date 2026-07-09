@@ -285,6 +285,112 @@
       padding: 14px 16px 16px;
     }
 
+    .course-map {
+      display: grid;
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      gap: 8px;
+      margin: 16px 0 22px;
+    }
+
+    .course-map span {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfcfe;
+      padding: 10px;
+      font-size: 13px;
+      font-weight: 800;
+      text-align: center;
+    }
+
+    .learning-section {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #ffffff;
+      padding: 22px;
+      margin-top: 18px;
+    }
+
+    .learning-section h3 {
+      margin-top: 0;
+      font-size: 22px;
+    }
+
+    .section-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 0 0 16px;
+    }
+
+    .section-meta span {
+      display: inline-flex;
+      align-items: center;
+      min-height: 28px;
+      border: 1px solid #c7d2fe;
+      border-radius: 999px;
+      background: #eef2ff;
+      color: #3730a3;
+      padding: 0 10px;
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .lesson-block {
+      border-top: 1px solid var(--line);
+      padding-top: 16px;
+      margin-top: 16px;
+    }
+
+    .lesson-block:first-of-type {
+      border-top: 0;
+      padding-top: 0;
+    }
+
+    .lesson-block h4 {
+      margin: 0 0 8px;
+      font-size: 17px;
+    }
+
+    .practice-panel {
+      border: 1px solid #bfdbfe;
+      border-radius: 8px;
+      background: #f8fbff;
+      padding: 16px;
+      margin-top: 14px;
+    }
+
+    .practice-panel h4 {
+      margin-top: 0;
+    }
+
+    .result-toggle {
+      border: 1px solid #c7d2fe;
+      border-radius: 8px;
+      background: #f8faff;
+      margin-top: 14px;
+    }
+
+    .result-toggle summary {
+      cursor: pointer;
+      list-style: none;
+      padding: 12px 14px;
+      font-weight: 900;
+      color: #312e81;
+    }
+
+    .result-toggle summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .result-toggle[open] summary {
+      border-bottom: 1px solid #c7d2fe;
+      background: #eef2ff;
+    }
+
+    .result-toggle-body {
+      padding: 14px;
+    }
+
     .section-mini-grid {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -385,7 +491,8 @@
     @media (max-width: 860px) {
       .shell,
       .grid,
-      .section-mini-grid {
+      .section-mini-grid,
+      .course-map {
         grid-template-columns: 1fr;
       }
 
@@ -421,7 +528,6 @@
     <nav aria-label="학습 메뉴">
       <button class="tab" type="button" data-tab="materials" aria-selected="true">학습 섹션</button>
       <button class="tab" type="button" data-tab="cost" aria-selected="false">API 키와 비용</button>
-      <button class="tab" type="button" data-tab="expected" aria-selected="false">결과 확인</button>
       <button class="tab" type="button" data-tab="trouble" aria-selected="false">오류 해결</button>
     </nav>
 
@@ -429,315 +535,423 @@
       <section id="materials">
         <h2>학습 섹션</h2>
         <p>
-          Section을 하나씩 펼쳐서 읽고, 노트북에서 같은 Section을 실행한 뒤, 바로 아래 확인 기준과 비교합니다.
-          별도 문서를 여러 개 오갈 필요 없이 이 화면만 따라가면 됩니다.
+          이 페이지가 교재입니다. 설명은 웹사이트에서 읽고, 실행은 ipynb 노트북에서 합니다.
+          노트북은 수업 내용을 실행해보는 도구이고, 웹사이트는 왜 그 코드를 실행하는지 이해하는 학습 문서입니다.
+          각 Section은 “읽기 → 노트북 실행 → 결과 확인” 순서로 구성되어 있습니다.
         </p>
         <div class="callout blue">
-          아직 <code>RAG</code>, <code>Pydantic</code>, <code>LangChain</code>, <code>token</code> 같은 단어를 몰라도 괜찮습니다.
-          지금은 “준비하기 → AI 호출하기 → 형식 확인하기 → 근거 확인하기 → 단계 연결하기”만 기억하면 됩니다.
-          어려운 용어는 필요한 섹션에서 하나씩 설명합니다.
+          처음부터 <code>RAG</code>, <code>Pydantic</code>, <code>LangChain</code>, <code>agent</code>를 외우지 않습니다.
+          먼저 “AI에게 요청한다 → 답변 형식을 확인한다 → 문서 근거를 붙인다 → 여러 단계를 연결한다”는 흐름을 잡고,
+          각 도구 이름은 필요한 Section에서 하나씩 연결합니다.
         </div>
-        <details class="section-step" open>
-          <summary class="section-step-head">
-            <h3>Section 0: 시작 전 준비</h3>
+        <div class="course-map" aria-label="학습 흐름">
+          <span>0. 환경 준비</span>
+          <span>1. AI 호출</span>
+          <span>2. 형식 검증</span>
+          <span>3. 문서 근거</span>
+          <span>4. Workflow</span>
+          <span>5. Linux 특강</span>
+        </div>
+        <div class="button-row">
+          <a class="button primary" href="downloads/amsl-internship-practice-files.zip" download>실습 파일 ZIP 다운로드</a>
+          <a class="button" href="notebooks/amsl_agentic_ai_live_api_study.ipynb" download>노트북 다운로드</a>
+        </div>
+
+        <article class="learning-section">
+          <h3>Section 0: 처음 보기, 환경 준비, 실행 도구 준비</h3>
+          <div class="section-meta">
             <span>예상 60-90분</span>
-          </summary>
-          <div class="section-body">
-            <div class="section-mini-grid">
-              <div class="mini-block">
-                <h4>핵심개념</h4>
-                <p>Section 0의 목표는 AI 개념을 배우기 전에 “내 컴퓨터에서 같은 명령이 같은 방식으로 실행되는 상태”를 만드는 것입니다.</p>
-                <ul>
-                  <li>PowerShell은 Windows에서 명령을 입력하는 기본 터미널입니다.</li>
-                  <li>uv는 Python 실행 환경과 패키지 설치를 관리하는 도구입니다.</li>
-                  <li>Python은 브라우저에서 따로 받는 것이 아니라 <code>uv run --python 3.11 ...</code>로 실행합니다.</li>
-                  <li>API key는 AI 모델을 호출할 수 있게 해주는 비밀번호 같은 값입니다.</li>
-                </ul>
-              </div>
-              <div class="mini-block">
-                <h4>강의자료</h4>
-                <p>이 과정은 “웹사이트에서 읽기 → 노트북에서 실행 → 결과 기준과 비교” 순서로 진행합니다.</p>
-                <p>웹사이트는 교재이고, 노트북은 실행 도구입니다. API key는 웹사이트나 Python 코드에 직접 쓰지 않고 <code>examples/.env</code> 파일에만 둡니다.</p>
-                <p>smoke test는 모델이 좋은 답을 하는지 평가하는 단계가 아니라, key, model, network, package가 제대로 연결되는지 확인하는 단계입니다.</p>
-              </div>
-              <div class="mini-block">
-                <h4>실습과제</h4>
-                <ol>
-                  <li>실습 ZIP을 다운로드하고 압축을 풉니다.</li>
-                  <li>PowerShell에서 압축을 푼 폴더의 <code>examples</code>로 이동합니다.</li>
-                  <li><code>.env.example</code>을 복사해 <code>.env</code>를 만들고 key/model을 넣습니다.</li>
-                  <li>첫 연결 테스트를 실행합니다.</li>
-                  <li>성공하면 노트북을 열고 Section 1로 넘어갑니다.</li>
-                </ol>
-              </div>
-              <div class="mini-block">
-                <h4>결과기준</h4>
-                <ul>
-                  <li><code>uv --version</code>이 동작합니다.</li>
-                  <li><code>uv run --python 3.11 python --version</code>이 동작합니다.</li>
-                  <li>smoke test가 한국어 성공 문장을 출력합니다.</li>
-                  <li>API key를 채팅, 제출물, 코드에 노출하지 않습니다.</li>
-                  <li>오류가 나면 실행한 명령과 오류 메시지만 공유할 수 있습니다.</li>
-                </ul>
-              </div>
-            </div>
+            <span>웹사이트 정독</span>
+            <span>PowerShell + uv</span>
+            <span>노트북 실행 전 필수</span>
+          </div>
+          <div class="lesson-block">
+            <h4>무엇을 배우나요?</h4>
+            <p>
+              Section 0은 AI 개념을 배우기 전에 모두가 같은 출발선에 서도록 만드는 단계입니다.
+              수업에서 사용할 실행 기준은 Windows PowerShell, uv, Python 3.11, Jupyter Notebook입니다.
+              Python은 브라우저에서 직접 설치하는 것을 기본 경로로 삼지 않습니다.
+              uv가 필요한 Python 실행 환경과 패키지를 준비하고, 우리는 <code>uv run --python 3.11 ...</code> 형식으로 실행합니다.
+            </p>
+            <p>
+              이 방식을 쓰는 이유는 학생마다 이미 설치된 Python, Anaconda, VS Code kernel, PATH 설정이 다를 수 있기 때문입니다.
+              전역 <code>python</code> 명령이 되느냐보다, 수업에서 안내한 uv 명령이 되는지가 기준입니다.
+              따라서 <code>python --version</code>만 실패한다고 바로 Python을 다시 설치하지 않습니다.
+              먼저 <code>uv --version</code>과 <code>uv run --python 3.11 python --version</code>을 확인합니다.
+            </p>
+            <p>
+              API key는 내 코드가 OpenAI 모델을 사용할 수 있게 해주는 비밀번호 같은 값입니다.
+              key는 웹사이트, 채팅, 제출물, Python 파일 안에 직접 쓰지 않습니다.
+              실습 폴더의 <code>examples/.env</code> 파일에만 넣고, 오류를 질문할 때도 key 값은 공유하지 않습니다.
+            </p>
+          </div>
+          <div class="practice-panel">
+            <h4>노트북 실습 전에 실행할 것</h4>
+            <p>
+              ZIP을 받은 뒤 압축을 풀고, PowerShell에서 <code>examples</code> 폴더로 들어갑니다.
+              아래 명령은 첫 연결 테스트입니다. 모델이 좋은 답을 하는지 보는 시험이 아니라,
+              SDK, key, 모델 이름, 네트워크, 패키지 설치가 맞는지 확인하는 smoke test입니다.
+            </p>
             <pre><code>cd amsl-internship-study/examples
 Copy-Item .env.example .env
 notepad .env
 uv run --python 3.11 --with-requirements requirements.txt python live_openai_smoke.py</code></pre>
-            <div class="button-row">
-              <a class="button primary" href="downloads/amsl-internship-practice-files.zip" download>실습 파일 ZIP 다운로드</a>
-              <a class="button" href="notebooks/amsl_agentic_ai_live_api_study.ipynb" download>노트북 다운로드</a>
-            </div>
+            <p>
+              성공하면 노트북을 열고 Section 1부터 실행합니다.
+              웹사이트의 설명을 먼저 읽고, 노트북에서 같은 Section 제목을 찾아 실행하는 방식으로 진행합니다.
+            </p>
           </div>
-        </details>
-
-        <details class="section-step">
-          <summary class="section-step-head">
-            <h3>Section 1: AI에게 요청 보내기</h3>
-            <span>예상 60-90분</span>
-          </summary>
-          <div class="section-body">
-            <div class="section-mini-grid">
-              <div class="mini-block">
-                <h4>핵심개념</h4>
-                <p>LLM API는 AI 모델을 내 코드에서 함수처럼 호출하는 방법입니다. 입력은 prompt이고, 출력은 모델이 생성한 답변입니다.</p>
-                <ul>
-                  <li>Prompt는 모델에게 주는 작업 지시문입니다.</li>
-                  <li>좋은 prompt에는 역할, 목표, 입력 자료, 제약 조건, 출력 형식이 들어갑니다.</li>
-                  <li>Token은 모델이 읽고 쓰는 글의 양을 세는 단위입니다.</li>
-                  <li>같은 prompt라도 모델 답변은 조금씩 달라질 수 있습니다.</li>
-                </ul>
-              </div>
-              <div class="mini-block">
-                <h4>강의자료</h4>
-                <p>Section 1에서는 “AI가 그럴듯한 문장을 만드는 것”보다 “내가 원하는 정보 구조로 답하게 만드는 것”에 집중합니다.</p>
-                <p>기술 노트에서 <code>topic</code>, <code>objective</code>, <code>method</code>, <code>result</code>, <code>evidence</code>를 뽑는 이유는 나중에 검색, 검증, 보고서 작성에 재사용하기 위해서입니다.</p>
-                <p>문서에 없는 내용은 채워 넣지 않고 <code>not specified</code>처럼 모른다고 남기는 것이 더 좋은 답입니다.</p>
-              </div>
-              <div class="mini-block">
-                <h4>실습과제</h4>
-                <ol>
-                  <li>노트북에서 API key/model 설정 셀을 확인합니다.</li>
-                  <li>Section 1 셀을 실행해 첫 live API 응답을 받습니다.</li>
-                  <li>기술 노트에서 핵심 필드가 어떻게 추출되는지 봅니다.</li>
-                  <li>prompt를 읽고 역할, 목표, 입력, 제약, 출력 형식을 표시해 봅니다.</li>
-                </ol>
-                <pre><code>uv run --python 3.11 --with-requirements requirements.txt python section1_llm_api.py</code></pre>
-              </div>
-              <div class="mini-block">
-                <h4>결과기준</h4>
-                <ul>
-                  <li>입력 문서 ID가 evidence에 유지됩니다.</li>
-                  <li>문서에 없는 내용은 <code>not specified</code>로 남습니다.</li>
-                  <li>좋은 prompt 요소 5개를 설명할 수 있습니다.</li>
-                  <li><code>confidence</code>가 0과 1 사이 숫자로 나옵니다.</li>
-                  <li>답변 문장이 조금 달라도 구조가 유지되면 통과로 봅니다.</li>
-                </ul>
-              </div>
+          <details class="result-toggle">
+            <summary>Section 0 결과 확인</summary>
+            <div class="result-toggle-body">
+              <ul>
+                <li><code>uv --version</code>이 동작합니다.</li>
+                <li><code>uv run --python 3.11 python --version</code>이 Python 3.11 실행 환경을 보여줍니다.</li>
+                <li><code>live_openai_smoke.py</code>가 한국어 연결 성공 메시지를 출력하거나, key가 없을 때 명확한 skip 메시지를 출력합니다.</li>
+                <li><code>.env</code>는 <code>examples</code> 폴더 안에 있고, key는 코드나 채팅에 노출되지 않습니다.</li>
+                <li>오류를 질문할 때는 실행한 명령, 현재 폴더, 오류 메시지, 모델명만 공유할 수 있습니다.</li>
+              </ul>
             </div>
-          </div>
-        </details>
+          </details>
+        </article>
 
-        <details class="section-step">
-          <summary class="section-step-head">
-            <h3>Section 2: 답변을 정해진 형식으로 받기</h3>
+        <article class="learning-section">
+          <h3>Section 1: AI에게 요청 보내기</h3>
+          <div class="section-meta">
             <span>예상 60-90분</span>
-          </summary>
-          <div class="section-body">
-            <div class="section-mini-grid">
-              <div class="mini-block">
-                <h4>핵심개념</h4>
-                <p>Structured output은 모델 답변을 자유로운 문장이 아니라 정해진 데이터 구조로 받는 방식입니다.</p>
-                <ul>
-                  <li>Pydantic은 Python type hint를 이용해 데이터 구조를 정의하고 검사합니다.</li>
-                  <li>Validation은 필수 필드, 타입, 값 범위를 확인합니다.</li>
-                  <li>Parser는 모델이 만든 텍스트를 Python 객체로 바꾸는 역할을 합니다.</li>
-                  <li>LangChain은 prompt, model, parser 같은 부품을 연결하는 프레임워크입니다.</li>
-                </ul>
-              </div>
-              <div class="mini-block">
-                <h4>강의자료</h4>
-                <p>중요한 구분은 “형식 검증”과 “사실 검증”입니다. Pydantic validation을 통과했다는 말은 데이터 모양이 맞다는 뜻이지, 내용이 참이라는 뜻은 아닙니다.</p>
-                <p>예를 들어 <code>confidence</code>가 문자열이면 형식 오류이고, 원문에 없는 quote를 넣으면 사실성 오류입니다. Section 2는 먼저 형식을 안정화하고, Section 3에서 근거를 확인합니다.</p>
-                <p>LangChain의 <code>PydanticOutputParser</code>는 모델에게 원하는 JSON 형식을 알려주고, 받은 결과를 schema에 맞춰 해석합니다.</p>
-              </div>
-              <div class="mini-block">
-                <h4>실습과제</h4>
-                <ol>
-                  <li><code>schema.py</code>가 정의하는 필드와 타입을 봅니다.</li>
-                  <li>일부러 잘못된 데이터를 넣었을 때 validation이 실패하는지 확인합니다.</li>
-                  <li>Section 1의 모델 출력이 Pydantic 객체로 바뀌는 흐름을 확인합니다.</li>
-                  <li>LangChain prompt/parser 예제에서 prompt preview, live text, parsed object의 차이를 비교합니다.</li>
-                </ol>
-                <pre><code>uv run --python 3.11 --with-requirements requirements.txt python schema.py
+            <span>LLM API</span>
+            <span>Prompt</span>
+            <span>Token 감각</span>
+          </div>
+          <div class="lesson-block">
+            <h4>핵심 개념</h4>
+            <p>
+              LLM API는 AI 모델을 Python 코드에서 호출하는 인터페이스입니다.
+              채팅창에서 모델에게 말을 거는 것과 비슷하지만, 코드에서는 입력과 출력이 다음 단계로 이어져야 합니다.
+              입력은 prompt와 설정값이고, 출력은 텍스트 또는 구조화된 데이터입니다.
+              같은 prompt라도 모델 버전, 설정값, 입력 길이에 따라 답이 조금씩 달라질 수 있으므로,
+              결과를 그대로 믿는 대신 구조와 근거를 확인하는 습관이 필요합니다.
+            </p>
+            <p>
+              Prompt는 모델에게 주는 전체 지시입니다.
+              좋은 prompt에는 역할, 목표, 입력 자료, 제약 조건, 출력 형식, 실패 처리 규칙이 들어갑니다.
+              예를 들어 “요약해줘”보다 “아래 기술 노트에서 topic, objective, method, result, limitations, evidence를 JSON 형식으로 추출하고, 없는 정보는 not specified로 남겨라”가 더 좋은 지시입니다.
+            </p>
+            <p>
+              Token은 모델이 읽고 쓰는 글의 양을 세는 단위입니다.
+              입력 문서가 길수록 비용과 시간이 늘고, 모델이 한 번에 처리할 수 있는 범위도 제한됩니다.
+              그래서 긴 문서를 무작정 넣기보다, 필요한 부분을 찾고, 답변을 짧고 구조적으로 받는 설계가 중요합니다.
+            </p>
+          </div>
+          <div class="lesson-block">
+            <h4>이번 Section에서 보는 예시</h4>
+            <p>
+              짧은 기술 노트 여러 개를 모델에게 보내고, 각 노트에서 핵심 정보를 추출합니다.
+              수업에서 중요한 것은 멋진 문장으로 요약하는 것이 아니라, 나중에 검증하고 재사용할 수 있는 구조로 정보를 꺼내는 것입니다.
+              <code>topic</code>은 무엇에 대한 문서인지, <code>objective</code>는 목적이 무엇인지,
+              <code>method</code>는 어떤 접근을 쓰는지, <code>result</code>는 어떤 결과가 있는지,
+              <code>evidence</code>는 그 판단을 뒷받침하는 원문 조각이 무엇인지 확인합니다.
+            </p>
+            <p>
+              특히 문서에 없는 내용을 채워 넣지 않는 태도가 중요합니다.
+              모델이 답을 그럴듯하게 만들 수 있더라도, 입력에 없는 metric이나 validation plan은 <code>not specified</code>로 남겨야 합니다.
+              이 기준은 뒤의 RAG와 workflow에서도 그대로 이어집니다.
+            </p>
+          </div>
+          <div class="practice-panel">
+            <h4>ipynb에서 실행할 것</h4>
+            <p>
+              노트북의 Section 1 셀을 실행합니다.
+              실행 후에는 prompt 안에 역할, 목표, 입력, 제약, 출력 형식이 어디에 들어갔는지 직접 표시해 봅니다.
+              Python 파일로 확인하고 싶을 때는 아래 명령을 <code>examples</code> 폴더에서 실행합니다.
+            </p>
+            <pre><code>uv run --python 3.11 --with-requirements requirements.txt python section1_llm_api.py</code></pre>
+          </div>
+          <details class="result-toggle">
+            <summary>Section 1 결과 확인</summary>
+            <div class="result-toggle-body">
+              <ul>
+                <li><code>topic</code>, <code>objective</code>, <code>method</code>, <code>result</code>가 비어 있지 않은지 봅니다.</li>
+                <li><code>evidence</code>의 <code>source_id</code>가 입력 문서 ID와 이어지는지 확인합니다.</li>
+                <li><code>confidence</code>가 0과 1 사이 숫자인지 확인합니다.</li>
+                <li>문서에 없는 구체 metric, validation plan, 일정은 지어내지 않고 <code>not specified</code>로 남는지 봅니다.</li>
+                <li>좋은 prompt 요소 5개를 자기 말로 설명할 수 있으면 통과입니다.</li>
+              </ul>
+            </div>
+          </details>
+        </article>
+
+        <article class="learning-section">
+          <h3>Section 2: 답변을 정해진 형식으로 받기</h3>
+          <div class="section-meta">
+            <span>예상 60-90분</span>
+            <span>Structured output</span>
+            <span>Pydantic</span>
+            <span>LangChain parser</span>
+          </div>
+          <div class="lesson-block">
+            <h4>핵심 개념</h4>
+            <p>
+              자연어 답변은 사람이 읽기에는 좋지만, 프로그램의 다음 단계로 넘기기에는 불안정합니다.
+              필드 이름이 바뀌거나, 값이 빠지거나, 숫자가 문자열로 들어오면 다음 코드가 깨질 수 있습니다.
+              Structured output은 모델 답변을 정해진 구조로 받는 방식이고,
+              이번 수업에서는 Pydantic으로 그 구조를 검사합니다.
+            </p>
+            <p>
+              Pydantic은 Python type hint를 사용해 데이터 구조와 validation 규칙을 정의하는 도구입니다.
+              <code>BaseModel</code>은 어떤 필드가 필요한지 정하고, <code>Field</code>는 값의 범위나 설명을 붙입니다.
+              예를 들어 <code>confidence</code>가 0보다 작거나 1보다 크면 validation error가 나야 합니다.
+              이 오류는 실패라기보다 “모델 출력 또는 schema 계약을 다시 봐야 한다”는 디버깅 신호입니다.
+            </p>
+            <p>
+              중요한 구분이 있습니다. Pydantic validation은 형식을 검사하지만 사실성을 검사하지 않습니다.
+              <code>source_id</code>와 <code>quote</code> 모양이 맞더라도, quote가 실제 원문에 없다면 사실성은 틀린 것입니다.
+              Section 2에서는 형식을 안정화하고, Section 3에서 원문 근거를 확인합니다.
+            </p>
+          </div>
+          <div class="lesson-block">
+            <h4>LangChain은 여기서 무엇을 하나요?</h4>
+            <p>
+              LangChain은 LLM application의 부품을 연결하는 프레임워크입니다.
+              이번 Section에서는 LangChain 전체를 깊게 배우지 않고,
+              <code>PromptTemplate</code>, model call, output parser가 각각 어떤 역할을 하는지만 봅니다.
+              <code>PromptTemplate</code>은 입력 문서와 형식 지시문을 합쳐 모델에게 보낼 prompt를 만들고,
+              output parser는 모델이 만든 JSON 문자열을 Pydantic 객체로 바꿉니다.
+            </p>
+            <p>
+              LangChain을 쓴다고 답이 자동으로 좋아지지는 않습니다.
+              연결 도구는 prompt와 parser를 다루기 쉽게 해주지만,
+              여전히 schema 설계, evidence 확인, 답이 없을 때의 정책은 사람이 정해야 합니다.
+            </p>
+          </div>
+          <div class="practice-panel">
+            <h4>ipynb에서 실행할 것</h4>
+            <p>
+              노트북의 Section 2 셀을 실행하고, schema 정의, validation 성공/실패, LangChain parser 결과를 순서대로 봅니다.
+              Python 파일로 확인하고 싶을 때는 아래 세 명령을 실행합니다.
+            </p>
+            <pre><code>uv run --python 3.11 --with-requirements requirements.txt python schema.py
 uv run --python 3.11 --with-requirements requirements.txt python section2_structured_output.py
 uv run --python 3.11 --with-requirements requirements.txt python section2_langchain_contract.py</code></pre>
-              </div>
-              <div class="mini-block">
-                <h4>결과기준</h4>
-                <ul>
-                  <li>필수 필드가 빠지면 validation이 실패합니다.</li>
-                  <li><code>confidence</code>는 0과 1 사이입니다.</li>
-                  <li>형식 검증과 사실 확인의 차이를 설명할 수 있습니다.</li>
-                  <li><code>evidence</code>는 문자열 목록이 아니라 <code>source_id</code>와 <code>quote</code>를 가진 객체 목록입니다.</li>
-                  <li>LangChain을 쓴다고 자동으로 사실성이 보장되지는 않는다는 점을 이해합니다.</li>
-                </ul>
-              </div>
-            </div>
           </div>
-        </details>
+          <details class="result-toggle">
+            <summary>Section 2 결과 확인</summary>
+            <div class="result-toggle-body">
+              <ul>
+                <li><code>schema.py</code>가 예시 객체를 출력하고 validation error 없이 끝나는지 확인합니다.</li>
+                <li><code>confidence</code>는 0과 1 사이 숫자로 유지되어야 합니다.</li>
+                <li><code>evidence</code>는 문자열 목록이 아니라 <code>source_id</code>와 <code>quote</code>를 가진 객체 목록이어야 합니다.</li>
+                <li>Prompt preview, live model text, parsed Pydantic object의 차이를 말할 수 있어야 합니다.</li>
+                <li>“형식 검증은 사실 검증이 아니다”를 예시와 함께 설명할 수 있으면 통과입니다.</li>
+              </ul>
+            </div>
+          </details>
+        </article>
 
-        <details class="section-step">
-          <summary class="section-step-head">
-            <h3>Section 3: 문서 근거로 답하게 하기</h3>
+        <article class="learning-section">
+          <h3>Section 3: 문서 근거로 답하게 하기</h3>
+          <div class="section-meta">
             <span>예상 90-120분</span>
-          </summary>
-          <div class="section-body">
-            <div class="section-mini-grid">
-              <div class="mini-block">
-                <h4>핵심개념</h4>
-                <p>RAG는 Retrieval-Augmented Generation의 줄임말입니다. 질문에 바로 답하지 않고, 먼저 관련 문서를 찾은 뒤 그 문서를 근거로 답합니다.</p>
-                <ul>
-                  <li>Retrieval은 질문과 관련 있는 문서 조각을 찾는 단계입니다.</li>
-                  <li>Generation은 찾은 근거를 바탕으로 답변을 쓰는 단계입니다.</li>
-                  <li>Evidence는 답변을 뒷받침하는 원문 출처와 인용문입니다.</li>
-                  <li>Chunking은 긴 문서를 작은 조각으로 나누는 과정입니다.</li>
-                </ul>
-              </div>
-              <div class="mini-block">
-                <h4>강의자료</h4>
-                <p>RAG의 첫 확인 대상은 모델 답변이 아니라 검색된 근거입니다. 검색된 문서가 틀리면 모델은 그럴듯하지만 틀린 답을 만들 수 있습니다.</p>
-                <p>이번 실습은 초심자용이라 embedding/vector DB 대신 단어 기반 lexical retrieval로 시작합니다. 구조를 이해한 뒤 실제 프로젝트에서는 embedding similarity와 vector store retriever로 바꿀 수 있습니다.</p>
-                <p>RAG를 쓰면 hallucination이 줄어들 수 있지만 완전히 사라지지는 않습니다. 그래서 <code>source_id</code>, <code>quote</code>, <code>not_answered</code> 정책을 함께 봅니다.</p>
-              </div>
-              <div class="mini-block">
-                <h4>실습과제</h4>
-                <ol>
-                  <li>질문별로 어떤 문서가 검색되는지 먼저 확인합니다.</li>
-                  <li>검색된 문서 안에서 답변에 쓰인 quote를 직접 찾아봅니다.</li>
-                  <li>답이 없는 질문에서 <code>not_answered</code>가 켜지는지 확인합니다.</li>
-                  <li>LangChain 문서 객체와 metadata가 source id를 어떻게 들고 가는지 확인합니다.</li>
-                </ol>
-                <pre><code>uv run --python 3.11 --with-requirements requirements.txt python section3_rag.py
+            <span>RAG</span>
+            <span>Evidence</span>
+            <span>LangChain Document</span>
+          </div>
+          <div class="lesson-block">
+            <h4>핵심 개념</h4>
+            <p>
+              RAG는 Retrieval-Augmented Generation의 줄임말입니다.
+              모델이 기억만으로 바로 답하는 것이 아니라, 먼저 질문과 관련된 문서를 찾고,
+              그 문서 조각을 근거로 답변을 생성하는 패턴입니다.
+              검색 단계가 retrieval이고, 근거를 바탕으로 답을 쓰는 단계가 generation입니다.
+            </p>
+            <p>
+              RAG를 쓰는 이유는 모델이 모든 최신 문서와 내부 문서를 기억하고 있다고 가정하지 않기 위해서입니다.
+              API onboarding 문서, support workflow 문서, release note 문서처럼 우리 프로젝트 안에 있는 자료를 먼저 찾고,
+              그 안에서만 답하게 만들면 근거 없는 답변을 줄일 수 있습니다.
+              하지만 RAG가 hallucination을 완전히 없애지는 못합니다.
+              검색된 문서가 틀리거나 질문과 관련이 없으면, 모델은 그 근거로도 틀린 답을 만들 수 있습니다.
+            </p>
+            <p>
+              그래서 RAG에서 가장 먼저 볼 것은 모델 답변이 아니라 retrieved evidence입니다.
+              어떤 문서가 검색되었는지, 그 문서가 질문에 직접 답하는지, <code>source_id</code>와 <code>quote</code>가 유지되는지 확인합니다.
+              답이 없는 질문이라면 억지로 답하지 않고 <code>not_answered: true</code>가 되어야 합니다.
+            </p>
+          </div>
+          <div class="lesson-block">
+            <h4>Lexical retrieval과 실제 RAG의 차이</h4>
+            <p>
+              이번 실습은 초심자용이라 embedding/vector DB를 바로 쓰지 않습니다.
+              대신 단어가 얼마나 겹치는지 보는 lexical retrieval로 RAG의 구조를 먼저 익힙니다.
+              이 방식은 단순하고 이해하기 쉽지만, 표현이 많이 바뀐 질문에는 약합니다.
+              실제 프로젝트에서는 embedding model이 텍스트를 의미 벡터로 바꾸고,
+              vector store가 유사한 chunk를 찾아주는 방식으로 확장할 수 있습니다.
+            </p>
+            <p>
+              LangChain 예제에서는 <code>Document</code> 객체와 <code>metadata</code>를 봅니다.
+              문서 본문만 들고 다니면 답변 출처를 잃기 쉽기 때문에,
+              <code>metadata.source_id</code>에 문서 ID를 넣어 끝까지 유지합니다.
+            </p>
+          </div>
+          <div class="practice-panel">
+            <h4>ipynb에서 실행할 것</h4>
+            <p>
+              노트북의 Section 3 셀을 실행하고, 질문별로 어떤 문서가 검색되는지 먼저 봅니다.
+              그 다음 모델 답변이 검색된 문서의 quote에서 나왔는지 확인합니다.
+              Python 파일로 확인할 때는 아래 명령을 실행합니다.
+            </p>
+            <pre><code>uv run --python 3.11 --with-requirements requirements.txt python section3_rag.py
 uv run --python 3.11 --with-requirements requirements.txt python section3_langchain_rag.py</code></pre>
-              </div>
-              <div class="mini-block">
-                <h4>결과기준</h4>
-                <ul>
-                  <li>답변은 검색된 문서의 quote를 근거로 삼습니다.</li>
-                  <li>근거가 없으면 <code>not_answered: true</code>가 됩니다.</li>
-                  <li>keyword 검색과 embedding 검색의 차이를 말할 수 있습니다.</li>
-                  <li><code>API onboarding</code> 질문은 onboarding 문서를 근거로 답합니다.</li>
-                  <li>검색 결과에 잡힌 문서와 최종 답변 근거로 쓸 문서를 구분할 수 있습니다.</li>
-                </ul>
-              </div>
-            </div>
           </div>
-        </details>
+          <details class="result-toggle">
+            <summary>Section 3 결과 확인</summary>
+            <div class="result-toggle-body">
+              <ul>
+                <li><code>API onboarding guide에는 무엇이 들어가야 해?</code> 질문은 <code>doc_002_api_onboarding</code>을 근거로 답해야 합니다.</li>
+                <li><code>support ticket routing workflow</code> 질문은 <code>doc_001_support_triage</code>와 uncertain case fallback을 근거로 삼아야 합니다.</li>
+                <li><code>RAG 답변을 신뢰하기 전에 무엇을 확인해야 해?</code> 질문은 source id와 quote 유지, retrieved chunk 적합성을 말해야 합니다.</li>
+                <li><code>pricing 정책은 어디에 있어?</code>처럼 corpus에 없는 질문은 <code>not_answered: true</code>가 되어야 합니다.</li>
+                <li>검색 결과에 잡혔다는 사실과 최종 답변 근거로 써도 된다는 판단을 구분할 수 있으면 통과입니다.</li>
+              </ul>
+            </div>
+          </details>
+        </article>
 
-        <details class="section-step">
-          <summary class="section-step-head">
-            <h3>Section 4: 여러 단계를 하나로 연결하기</h3>
+        <article class="learning-section">
+          <h3>Section 4: 여러 단계를 하나로 연결하기</h3>
+          <div class="section-meta">
             <span>예상 60-90분</span>
-          </summary>
-          <div class="section-body">
-            <div class="section-mini-grid">
-              <div class="mini-block">
-                <h4>핵심개념</h4>
-                <p>Workflow는 여러 단계를 순서대로 연결한 실행 흐름입니다. Section 4에서는 검색, 답변 생성, 사실 추출, 검증, 로그 기록을 하나로 묶습니다.</p>
-                <ul>
-                  <li>Tool은 workflow가 호출할 수 있는 외부 기능입니다.</li>
-                  <li>State는 workflow가 현재 들고 있는 입력, 검색 결과, 중간 출력, 로그입니다.</li>
-                  <li>Agent-like workflow는 AI를 쓰지만 단계 순서는 사람이 고정한 구조입니다.</li>
-                  <li>완전 자율 agent loop는 모델이 다음 행동을 직접 고르는 구조입니다.</li>
-                </ul>
-              </div>
-              <div class="mini-block">
-                <h4>강의자료</h4>
-                <p>초심자 실습에서는 완전 자율 agent보다 고정 workflow가 안전합니다. 각 단계의 입력과 출력이 보여야 어디서 틀렸는지 찾을 수 있기 때문입니다.</p>
-                <p>이번 workflow는 질문을 받으면 관련 문서를 찾고, 근거 기반 답변을 만들고, 답변에서 핵심 사실을 뽑고, schema로 검증한 뒤 실행 로그를 남깁니다.</p>
-                <p>나중에 agent로 확장할 때도 먼저 “어떤 단계가 tool로 분리될 수 있는지”, “무엇은 사람이 고정해야 하는지”를 판단해야 합니다.</p>
-              </div>
-              <div class="mini-block">
-                <h4>실습과제</h4>
-                <ol>
-                  <li>Section 4 셀을 실행해 전체 workflow 결과를 봅니다.</li>
-                  <li>성공 질문과 답이 없는 질문의 차이를 비교합니다.</li>
-                  <li><code>log</code>에서 retrieval, answer, fact extraction, validation 순서를 확인합니다.</li>
-                  <li>작은 변형 질문을 하나 넣고 어디서 결과가 달라지는지 봅니다.</li>
-                </ol>
-                <pre><code>uv run --python 3.11 --with-requirements requirements.txt python section4_workflow.py</code></pre>
-              </div>
-              <div class="mini-block">
-                <h4>결과기준</h4>
-                <ul>
-                  <li><code>answer_ko</code>, <code>facts</code>, <code>evidence</code>, <code>log</code>가 출력됩니다.</li>
-                  <li>facts는 같은 evidence에서 나옵니다.</li>
-                  <li>답이 없는 질문은 낮은 confidence로 처리됩니다.</li>
-                  <li>각 단계가 실패했을 때 전체 workflow가 어디까지 진행됐는지 로그로 볼 수 있습니다.</li>
-                  <li>agent와 workflow의 차이를 “누가 다음 행동을 고르는가”로 설명할 수 있습니다.</li>
-                </ul>
-              </div>
-            </div>
+            <span>Workflow</span>
+            <span>Tool</span>
+            <span>Agent-like flow</span>
           </div>
-        </details>
-
-        <details class="section-step">
-          <summary class="section-step-head">
-            <h3>Section 5: Linux/WSL2 개발 환경 입문</h3>
-            <span>예상 90-120분</span>
-          </summary>
-          <div class="section-body">
-            <div class="callout">
-              Section 5는 노트북 필수 셀이 아니라, Section 1-4 이후에 따로 다루는 개발 환경 섹션입니다.
+          <div class="lesson-block">
+            <h4>핵심 개념</h4>
+            <p>
+              Workflow는 여러 단계를 순서대로 연결한 실행 흐름입니다.
+              Section 4에서는 검색, 답변 생성, 사실 추출, schema validation, 로그 기록을 하나로 묶습니다.
+              여기서 만드는 것은 완전 자율 agent가 아니라 agent-like workflow입니다.
+              AI를 사용하지만, 어떤 단계를 어떤 순서로 실행할지는 사람이 명시적으로 정합니다.
+            </p>
+            <p>
+              초심자에게는 이 방식이 더 안전합니다.
+              완전 자율 agent loop는 모델이 다음 행동을 직접 고르고, 실행 결과를 관찰한 뒤 다시 다음 행동을 고르는 구조입니다.
+              강력하지만 디버깅이 어렵습니다.
+              반면 고정 workflow는 각 단계의 입력과 출력이 보이므로,
+              retrieval이 틀렸는지, 답변 생성이 틀렸는지, schema validation이 틀렸는지 나눠서 확인할 수 있습니다.
+            </p>
+            <p>
+              Tool은 workflow가 호출할 수 있는 외부 기능입니다.
+              이번 실습에서는 검색 함수, tokenization 함수, percentage extraction 같은 작은 Python 함수가 tool에 가깝습니다.
+              좋은 tool은 입력과 출력이 좁고 명확합니다.
+              너무 넓은 <code>analyze_everything</code> 같은 함수보다, 작고 검증 가능한 함수가 workflow를 안정적으로 만듭니다.
+            </p>
+          </div>
+          <div class="lesson-block">
+            <h4>이번 Section의 최종 그림</h4>
+            <p>
+              질문이 들어오면 먼저 관련 문서를 찾습니다.
+              찾은 문서에서 답변을 만들고, 답변에서 핵심 사실을 구조화합니다.
+              그 구조가 schema에 맞는지 확인하고, 마지막으로 어떤 단계가 실행되었는지 log를 남깁니다.
+              최종 출력에는 <code>answer_ko</code>, <code>facts</code>, <code>evidence</code>, <code>not_answered</code>, <code>log</code>가 함께 있어야 합니다.
+            </p>
+            <p>
+              이 구조는 나중에 더 자율적인 agent로 확장할 수 있습니다.
+              다만 지금 단계에서는 “AI가 알아서 다 한다”보다 “어떤 단계는 사람이 고정하고, 어떤 단계만 AI에게 맡긴다”를 구분하는 것이 더 중요합니다.
+            </p>
+          </div>
+          <div class="practice-panel">
+            <h4>ipynb에서 실행할 것</h4>
+            <p>
+              노트북의 Section 4 셀을 실행하고, 성공 질문과 답이 없는 질문을 비교합니다.
+              로그를 보면서 retrieval, answer, fact extraction, validation 순서가 남는지 확인합니다.
+              Python 파일로 확인할 때는 아래 명령을 실행합니다.
+            </p>
+            <pre><code>uv run --python 3.11 --with-requirements requirements.txt python section4_workflow.py</code></pre>
+          </div>
+          <details class="result-toggle">
+            <summary>Section 4 결과 확인</summary>
+            <div class="result-toggle-body">
+              <ul>
+                <li>최종 출력에 <code>answer_ko</code>, <code>facts</code>, <code>evidence</code>, <code>not_answered</code>, <code>log</code>가 있어야 합니다.</li>
+                <li>성공 케이스에서는 <code>facts</code>가 같은 evidence에서 나와야 합니다.</li>
+                <li>답이 없는 질문에서는 지어낸 답이 아니라 낮은 confidence와 <code>not_answered</code> 정책이 보여야 합니다.</li>
+                <li><code>log</code>가 입력, 검색, 답변 생성, 검증 순서를 설명해야 합니다.</li>
+                <li>workflow와 agent의 차이를 “누가 다음 행동을 고르는가”로 설명할 수 있으면 통과입니다.</li>
+              </ul>
             </div>
-            <div class="section-mini-grid">
-              <div class="mini-block">
-                <h4>핵심개념</h4>
-                <p>Section 5는 AI 필수 실습이 아니라 개발 환경 확장 섹션입니다. Windows에서 기본 실습을 끝낸 뒤 Linux/WSL2를 따로 배웁니다.</p>
-                <ul>
-                  <li>Linux는 서버와 연구 코드에서 많이 쓰이는 운영체제 계열입니다.</li>
-                  <li>Ubuntu는 Linux 배포판 중 하나입니다.</li>
-                  <li>WSL2는 Windows 안에서 Ubuntu 같은 Linux 환경을 실행하게 해줍니다.</li>
-                  <li>Terminal, shell, bash는 같은 말이 아니므로 구분해서 봅니다.</li>
-                </ul>
-              </div>
-              <div class="mini-block">
-                <h4>강의자료</h4>
-                <p>Linux에서는 경로 표기, 패키지 설치, Python 위치가 Windows와 다를 수 있습니다. 그래서 “지금 PowerShell인지, WSL Ubuntu shell인지”를 먼저 확인하는 습관이 중요합니다.</p>
-                <p>Windows 경로는 보통 <code>C:\Users\...</code>처럼 보이고, Linux 경로는 <code>/home/...</code>처럼 보입니다. WSL에서는 Windows 파일도 <code>/mnt/c/...</code> 아래에서 볼 수 있습니다.</p>
-                <p>VS Code Remote - WSL은 Windows의 VS Code로 Linux 폴더를 열어 개발할 수 있게 해주는 확장 흐름입니다.</p>
-              </div>
-              <div class="mini-block">
-                <h4>실습과제</h4>
-                <ol>
-                  <li>PowerShell과 WSL Ubuntu shell을 구분합니다.</li>
-                  <li><code>pwd</code>, <code>ls</code>, <code>cd</code>, <code>mkdir</code>로 파일 위치를 확인합니다.</li>
-                  <li>VS Code에서 WSL 폴더를 여는 흐름을 봅니다.</li>
-                  <li>Linux에서도 uv와 Python 실행을 확인합니다.</li>
-                </ol>
-                <pre><code>pwd
+          </details>
+        </article>
+
+        <article class="learning-section">
+          <h3>Section 5: Linux/WSL2 개발 환경 입문</h3>
+          <div class="section-meta">
+            <span>예상 90-120분</span>
+            <span>마지막 특강</span>
+            <span>WSL2</span>
+            <span>개발 환경 확장</span>
+          </div>
+          <div class="callout">
+            Section 5는 Section 1-4의 AI 실습을 막지 않기 위해 마지막에 따로 둔 Linux 특강입니다.
+            기본 수업은 Windows PowerShell + uv로 진행하고, Linux/WSL2는 개발 환경을 넓히는 단계로 다룹니다.
+          </div>
+          <div class="lesson-block">
+            <h4>왜 Linux를 배우나요?</h4>
+            <p>
+              많은 연구 코드, 서버 배포, 오픈소스 예제가 Linux 환경을 기준으로 설명됩니다.
+              Windows만 써도 이번 AI 실습은 진행할 수 있지만, 이후 프로젝트에서 서버에 접속하거나,
+              GitHub README의 bash 명령을 따라 하거나, Docker와 원격 개발 환경을 다루려면 Linux shell 감각이 필요합니다.
+            </p>
+            <p>
+              WSL2는 Windows 안에서 Ubuntu 같은 Linux 환경을 실행하게 해주는 기능입니다.
+              하지만 처음부터 WSL2를 필수로 넣으면 재부팅, Ubuntu 계정 생성, Windows/Linux 경로 차이,
+              VS Code Remote - WSL 연결 같은 환경 문제가 AI 학습을 방해할 수 있습니다.
+              그래서 Section 5에서 별도로 다룹니다.
+            </p>
+          </div>
+          <div class="lesson-block">
+            <h4>꼭 구분해야 할 것</h4>
+            <p>
+              PowerShell과 WSL Ubuntu shell은 서로 다른 실행 환경입니다.
+              Windows 경로는 보통 <code>C:\Users\...</code>처럼 보이고, Linux 경로는 <code>/home/...</code>처럼 보입니다.
+              WSL 안에서 Windows 파일은 <code>/mnt/c/...</code> 아래에 보일 수 있습니다.
+              같은 컴퓨터라도 어느 shell에서 실행했는지에 따라 Python 위치, 설치된 패키지, 현재 폴더가 달라질 수 있습니다.
+            </p>
+            <p>
+              Linux에서 가장 먼저 익힐 명령은 많지 않습니다.
+              <code>pwd</code>는 현재 위치, <code>ls</code>는 파일 목록, <code>cd</code>는 폴더 이동,
+              <code>mkdir</code>은 폴더 생성입니다.
+              오류가 났을 때는 “무슨 명령을 어디에서 실행했는가”가 중요하므로,
+              습관적으로 <code>pwd</code>와 <code>ls</code>를 확인합니다.
+            </p>
+          </div>
+          <div class="practice-panel">
+            <h4>특강에서 실행할 것</h4>
+            <p>
+              아래 명령은 WSL Ubuntu shell에서 실행하는 예시입니다.
+              Linux package 설치나 <code>sudo</code>, <code>apt</code>가 필요한 경우에는 먼저 이유를 설명하고 별도로 요청합니다.
+              Python library는 Linux에서도 uv로 설치하고 실행합니다.
+            </p>
+            <pre><code>pwd
 ls
 cd ~
 mkdir amsl-test
 curl -LsSf https://astral.sh/uv/install.sh | sh
 uv --version
 uv run --python 3.11 python --version</code></pre>
-              </div>
-              <div class="mini-block">
-                <h4>결과기준</h4>
-                <ul>
-                  <li>PowerShell과 WSL Ubuntu shell의 차이를 설명합니다.</li>
-                  <li>Windows 경로와 Linux 경로가 다름을 압니다.</li>
-                  <li>Linux에서도 uv/Python 환경을 만들 수 있음을 확인합니다.</li>
-                  <li>어느 위치에서 명령을 실행했는지 <code>pwd</code>로 확인할 수 있습니다.</li>
-                  <li>Linux 환경 문제가 AI 실습 문제와 섞이지 않도록 분리해서 질문할 수 있습니다.</li>
-                </ul>
-              </div>
-            </div>
           </div>
-        </details>
+          <details class="result-toggle">
+            <summary>Section 5 결과 확인</summary>
+            <div class="result-toggle-body">
+              <ul>
+                <li>PowerShell과 WSL Ubuntu shell이 다른 실행 환경이라는 점을 설명할 수 있어야 합니다.</li>
+                <li><code>pwd</code>, <code>ls</code>, <code>cd</code>가 각각 무엇을 확인하는지 말할 수 있어야 합니다.</li>
+                <li>Windows 경로와 Linux 경로가 다르게 보이는 이유를 이해해야 합니다.</li>
+                <li>VS Code Remote - WSL로 Linux 폴더를 여는 흐름을 설명할 수 있어야 합니다.</li>
+                <li>Linux에서도 uv/Python 실행 환경을 만들 수 있음을 확인하면 통과입니다.</li>
+              </ul>
+            </div>
+          </details>
+        </article>
       </section>
 
       <section id="cost" hidden>
@@ -798,61 +1012,6 @@ output 비용 = 1,500 / 1,000,000 × 0.80달러 = 0.0012달러
           <li>대략적인 input/output token 수</li>
           <li>실패해서 다시 실행한 셀</li>
         </ul>
-      </section>
-
-      <section id="expected" hidden>
-        <h2>결과 확인: 실행 후 무엇을 봐야 하나요?</h2>
-        <p>
-          AI 실습에서는 문장이 매번 완전히 같을 필요가 없습니다. 대신 결과가 정해진 구조를 지키는지,
-          근거가 실제 입력 문서에서 왔는지, 답이 없는 질문을 억지로 지어내지 않는지를 확인합니다.
-          노트북을 실행한 뒤 이 탭과 비교하면 됩니다.
-        </p>
-        <div class="grid">
-          <div class="card">
-            <h3>Section 1: API와 prompt</h3>
-            <ul>
-              <li><code>topic</code>, <code>objective</code>, <code>method</code>, <code>result</code>가 비어 있지 않은지 확인합니다.</li>
-              <li><code>evidence</code>의 <code>source_id</code>가 입력 문서 ID와 같은지 확인합니다.</li>
-              <li><code>confidence</code>가 0과 1 사이 숫자인지 확인합니다.</li>
-            </ul>
-          </div>
-          <div class="card">
-            <h3>Section 2: 형식 확인</h3>
-            <ul>
-              <li>모델 문장이 조금 달라도 정해진 데이터 구조로 바뀌는지 확인합니다.</li>
-              <li>필수 필드가 빠지거나 빈 문자열이면 실패해야 합니다.</li>
-              <li>검증 통과 여부가 “답이 자연스러운가”보다 먼저입니다.</li>
-            </ul>
-          </div>
-          <div class="card">
-            <h3>Section 3: 문서 근거 확인</h3>
-            <ul>
-              <li>답변이 검색된 문서의 문장 또는 chunk를 근거로 삼는지 확인합니다.</li>
-              <li>검색된 문서에 답이 없으면 <code>not_answered</code>가 <code>true</code>가 되어야 합니다.</li>
-              <li>근거 없는 문장이 답변에 섞이면 실패로 봅니다.</li>
-            </ul>
-          </div>
-          <div class="card">
-            <h3>Section 4: 단계 연결 확인</h3>
-            <ul>
-              <li>최종 출력에 <code>answer_ko</code>, <code>facts</code>, <code>evidence</code>, <code>log</code>가 있어야 합니다.</li>
-              <li><code>facts</code> 안의 근거는 앞 단계에서 확인된 evidence 안에서만 나와야 합니다.</li>
-              <li>실행 로그가 입력, 검색, 추출, 검증 순서를 보여야 합니다.</li>
-            </ul>
-          </div>
-          <div class="card">
-            <h3>Section 5: Linux/WSL2 환경 확인</h3>
-            <ul>
-              <li>PowerShell과 WSL Ubuntu shell이 다른 환경이라는 점을 설명할 수 있어야 합니다.</li>
-              <li><code>pwd</code>, <code>ls</code>, <code>cd</code>로 현재 위치와 파일 목록을 확인할 수 있어야 합니다.</li>
-              <li>Windows 파일 경로와 Linux 파일 경로가 다를 수 있음을 알아야 합니다.</li>
-            </ul>
-          </div>
-        </div>
-        <div class="callout blue">
-          같은 셀을 다시 실행했을 때 표현이 조금 달라질 수 있습니다. 비교 기준은 “정확히 같은 문장”이 아니라
-          “같은 구조, 같은 근거, 같은 실패 처리 정책”입니다.
-        </div>
       </section>
 
       <section id="trouble" hidden>
