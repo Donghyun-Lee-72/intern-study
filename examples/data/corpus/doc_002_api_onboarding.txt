@@ -1,0 +1,1 @@
+API onboarding guides should explain authentication, environment variables, rate limits, and a minimal smoke test. API keys must be stored outside source code, and the first live request should use a low-risk prompt that checks connectivity.

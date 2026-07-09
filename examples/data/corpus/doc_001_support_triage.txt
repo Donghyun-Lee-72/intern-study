@@ -1,0 +1,1 @@
+Support triage assistants classify incoming tickets, identify the affected product area, and route each ticket to the right team. A safe triage workflow should include evidence from the ticket text, a confidence score, and a fallback path for uncertain cases.

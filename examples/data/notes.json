@@ -1,0 +1,18 @@
+[
+  {
+    "id": "note_a",
+    "text": "A support operations team piloted a ticket-routing assistant for incoming customer requests. The assistant reads a ticket, identifies the affected product area, assigns a confidence score, and routes uncertain cases to human review. In the pilot queue, manual triage work decreased by 32 percent while escalation errors were tracked for weekly review."
+  },
+  {
+    "id": "note_b",
+    "text": "A documentation team built a retrieval-augmented question answering workflow for internal API guides. The system indexes short documentation chunks, retrieves relevant passages for each question, and requires every answer to include source identifiers. The first evaluation showed better answer traceability, but several broad questions still retrieved irrelevant chunks."
+  },
+  {
+    "id": "note_c",
+    "text": "An engineering productivity group created a release note assistant that reads merged pull request summaries and groups them by audience. The workflow drafts user-facing notes, flags items without issue IDs, and asks a maintainer to approve the final message before publication."
+  },
+  {
+    "id": "note_d",
+    "text": "A team announced an AI automation project that improves operational efficiency. The announcement says the system outperforms the previous process, but it does not specify the input data, evaluation metric, or validation procedure."
+  }
+]

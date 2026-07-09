@@ -1,0 +1,676 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AMSL Agentic AI Study Portal</title>
+  <style>
+    :root {
+      --bg: #f5f7fb;
+      --panel: #ffffff;
+      --text: #111827;
+      --muted: #5b6472;
+      --line: #d8dee8;
+      --line-strong: #b9c2d0;
+      --teal: #0f766e;
+      --blue: #1d4ed8;
+      --amber: #b45309;
+      --soft-teal: #ecfdf5;
+      --soft-blue: #eff6ff;
+      --soft-amber: #fff7ed;
+      --shadow: 0 14px 34px rgba(15, 23, 42, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      color: var(--text);
+      background: var(--bg);
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.62;
+      letter-spacing: 0;
+    }
+
+    a {
+      color: var(--blue);
+      text-decoration: none;
+    }
+
+    a:hover,
+    a:focus {
+      text-decoration: underline;
+    }
+
+    .wrap {
+      width: min(1160px, calc(100% - 32px));
+      margin: 0 auto;
+    }
+
+    header {
+      border-bottom: 1px solid var(--line);
+      background: #ffffff;
+    }
+
+    .hero {
+      padding: 38px 0 30px;
+    }
+
+    .eyebrow {
+      margin: 0 0 8px;
+      color: var(--teal);
+      font-size: 13px;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(30px, 4vw, 48px);
+      line-height: 1.16;
+      letter-spacing: 0;
+    }
+
+    .lead {
+      max-width: 780px;
+      margin: 16px 0 0;
+      color: var(--muted);
+      font-size: 18px;
+    }
+
+    .download-panel {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+      box-shadow: var(--shadow);
+      padding: 20px;
+    }
+
+    .download-panel h2 {
+      margin: 0 0 8px;
+      font-size: 20px;
+    }
+
+    .button-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin: 16px 0 0;
+    }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 42px;
+      padding: 0 14px;
+      border: 1px solid var(--line-strong);
+      border-radius: 7px;
+      background: #ffffff;
+      color: var(--text);
+      font-size: 14px;
+      font-weight: 800;
+      text-decoration: none;
+    }
+
+    .button:hover,
+    .button:focus {
+      text-decoration: none;
+      border-color: var(--blue);
+    }
+
+    .button.primary {
+      border-color: #0f766e;
+      background: #0f766e;
+      color: #ffffff;
+    }
+
+    .status-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 18px 0 0;
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      min-height: 28px;
+      padding: 0 10px;
+      border: 1px solid #b8d8d3;
+      border-radius: 999px;
+      background: #f0fdfa;
+      color: #0f4f49;
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .shell {
+      display: grid;
+      grid-template-columns: 230px minmax(0, 1fr);
+      gap: 22px;
+      padding: 24px 0 56px;
+    }
+
+    nav {
+      position: sticky;
+      top: 14px;
+      align-self: start;
+      display: grid;
+      gap: 6px;
+      padding: 8px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+      box-shadow: var(--shadow);
+    }
+
+    .tab {
+      width: 100%;
+      min-height: 42px;
+      border: 0;
+      border-radius: 6px;
+      padding: 0 12px;
+      background: transparent;
+      color: var(--muted);
+      font: inherit;
+      font-size: 14px;
+      font-weight: 800;
+      text-align: left;
+      cursor: pointer;
+    }
+
+    .tab[aria-selected="true"] {
+      background: #e6f4f1;
+      color: #0f4f49;
+    }
+
+    main {
+      min-width: 0;
+    }
+
+    section {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+      box-shadow: var(--shadow);
+      padding: 26px;
+    }
+
+    section[hidden] {
+      display: none;
+    }
+
+    h2 {
+      margin: 0 0 14px;
+      font-size: 25px;
+      line-height: 1.28;
+      letter-spacing: 0;
+    }
+
+    h3 {
+      margin: 24px 0 10px;
+      font-size: 18px;
+      line-height: 1.35;
+      letter-spacing: 0;
+    }
+
+    p {
+      margin: 0 0 14px;
+    }
+
+    ul,
+    ol {
+      margin: 0 0 16px 20px;
+      padding: 0;
+    }
+
+    li + li {
+      margin-top: 6px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+      margin: 14px 0 18px;
+    }
+
+    .card {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfcfe;
+      padding: 16px;
+    }
+
+    .card h3 {
+      margin-top: 0;
+    }
+
+    .section-step {
+      border-top: 1px solid var(--line);
+      padding-top: 16px;
+      margin-top: 16px;
+    }
+
+    .section-step:first-of-type {
+      border-top: 0;
+      padding-top: 0;
+    }
+
+    .section-step-head {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: baseline;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+
+    .section-step-head h3 {
+      margin: 0;
+    }
+
+    .section-step-head span {
+      color: var(--muted);
+      font-size: 14px;
+      font-weight: 800;
+    }
+
+    .callout {
+      border-left: 4px solid var(--teal);
+      border-radius: 0 8px 8px 0;
+      background: var(--soft-teal);
+      color: #134e4a;
+      padding: 12px 14px;
+      margin: 14px 0 18px;
+    }
+
+    .callout.blue {
+      border-left-color: var(--blue);
+      background: var(--soft-blue);
+      color: #1e3a8a;
+    }
+
+    .callout.amber {
+      border-left-color: var(--amber);
+      background: var(--soft-amber);
+      color: #7c2d12;
+    }
+
+    pre {
+      overflow-x: auto;
+      margin: 14px 0 18px;
+      border-radius: 8px;
+      background: #f1f5f9;
+      color: #111827;
+      padding: 16px;
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    }
+
+    .resource-list li {
+      word-break: break-word;
+    }
+
+    footer {
+      border-top: 1px solid var(--line);
+      background: #ffffff;
+      color: var(--muted);
+      font-size: 13px;
+      padding: 18px 0 24px;
+    }
+
+    @media (max-width: 860px) {
+      .shell,
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      nav {
+        position: static;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap hero">
+      <div>
+        <p class="eyebrow">26SU AMSL Internship</p>
+        <h1>Agentic AI 실습형 학습 포털</h1>
+        <p class="lead">
+          이 수업은 AI 모델을 직접 불러와 보고, 답변을 확인하고, 근거가 있는 작은 AI 프로그램을 만들어보는 섹션형 실습입니다.
+          처음부터 모든 용어를 알 필요는 없습니다. 웹사이트에서 설명을 읽고, 노트북에서 코드를 실행하고,
+          결과 확인 페이지에서 맞게 실행됐는지 비교하면 됩니다.
+        </p>
+        <div class="status-row">
+          <span class="chip">처음이면 Section 0부터</span>
+          <span class="chip">Python 기본 문법이면 시작 가능</span>
+          <span class="chip">Windows PowerShell + uv</span>
+          <span class="chip">웹사이트는 교재</span>
+          <span class="chip">노트북은 실행용</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="wrap shell">
+    <nav aria-label="학습 메뉴">
+      <button class="tab" type="button" data-tab="materials" aria-selected="true">학습 섹션</button>
+      <button class="tab" type="button" data-tab="cost" aria-selected="false">API 키와 비용</button>
+      <button class="tab" type="button" data-tab="expected" aria-selected="false">결과 확인</button>
+      <button class="tab" type="button" data-tab="trouble" aria-selected="false">오류 해결</button>
+    </nav>
+
+    <main>
+      <section id="materials">
+        <h2>학습 섹션</h2>
+        <p>
+          이 탭이 실제 교재입니다. 일정표처럼 날짜로 나누기보다, 준비가 끝난 만큼 Section 0부터 순서대로 진행합니다.
+          각 섹션은 “읽기 → 실행 → 확인 → 정리” 순서로 되어 있고, 노트북의 같은 섹션을 실행한 뒤 결과 확인 기준과 비교합니다.
+        </p>
+        <div class="callout blue">
+          아직 <code>RAG</code>, <code>Pydantic</code>, <code>LangChain</code>, <code>token</code> 같은 단어를 몰라도 괜찮습니다.
+          지금은 “Section 0에서 준비하기 → Section 1부터 순서대로 실행하기 → 결과 확인과 비교하기”만 기억하면 됩니다.
+          어려운 용어는 필요한 섹션에서 하나씩 설명합니다.
+        </div>
+        <h3>섹션별 진행</h3>
+        <div class="section-step">
+          <div class="section-head">
+            <h3>Section 0: 시작 전 준비</h3>
+            <span>예상 60-90분</span>
+          </div>
+          <ol>
+            <li>이 페이지의 안내를 정독하고, 이 수업이 “AI 호출 → 검증 → 근거 확인 → 단계 연결” 흐름이라는 점을 확인합니다.</li>
+            <li>PowerShell에서 <code>python --version</code>과 <code>uv --version</code>을 확인합니다.</li>
+            <li>실습 파일 ZIP을 다운로드하고 압축을 풉니다.</li>
+            <li><code>examples/.env</code> 파일을 만들고 제공받은 API key와 모델명을 넣습니다.</li>
+            <li>첫 연결 테스트를 실행하고 성공하면 노트북을 엽니다.</li>
+          </ol>
+          <pre><code>cd amsl-internship-study/examples
+Copy-Item .env.example .env
+notepad .env
+uv run --with-requirements requirements.txt python live_openai_smoke.py</code></pre>
+          <div class="button-row">
+            <a class="button primary" href="downloads/amsl-internship-practice-files.zip" download>실습 파일 ZIP 다운로드</a>
+            <a class="button" href="notebooks/amsl_agentic_ai_live_api_study.ipynb" download>노트북만 다시 다운로드</a>
+            <a class="button" href="docs.html?doc=quickstart">빠른 실행 명령 보기</a>
+            <a class="button" href="docs.html?doc=troubleshooting">막히면 오류 해결 보기</a>
+          </div>
+        </div>
+        <div class="section-step">
+          <div class="section-head">
+            <h3>Section 1: AI에게 요청 보내기</h3>
+            <span>예상 60-90분</span>
+          </div>
+          <ol>
+            <li>API, prompt, token이 무엇인지 가볍게 읽습니다.</li>
+            <li>노트북의 키 설정, 첫 연결 테스트, 기술 노트 구조화 추출 셀을 실행합니다.</li>
+            <li><code>topic</code>, <code>objective</code>, <code>method</code>, <code>result</code>, <code>evidence</code>가 왜 필요한지 확인합니다.</li>
+            <li>좋은 prompt에 들어가야 할 요소를 5개만 적습니다.</li>
+          </ol>
+        </div>
+        <div class="section-step">
+          <div class="section-head">
+            <h3>Section 2: 답변을 정해진 형식으로 받기</h3>
+            <span>예상 60-90분</span>
+          </div>
+          <ol>
+            <li>Pydantic이 답변의 형식과 범위를 확인하는 도구라는 점을 읽습니다.</li>
+            <li>노트북의 형식 검증 셀과 LangChain parser 셀을 실행합니다.</li>
+            <li>모델 출력이 조금 달라도 정해진 구조로 검증되는지 확인합니다.</li>
+            <li>validation 통과와 사실 확인이 서로 다른 일이라는 점을 한 문단으로 정리합니다.</li>
+          </ol>
+        </div>
+        <div class="section-step">
+          <div class="section-head">
+            <h3>Section 3: 문서 근거로 답하게 하기</h3>
+            <span>예상 90-120분</span>
+          </div>
+          <ol>
+            <li>RAG가 “필요한 문서를 먼저 찾고, 그 근거로 답하는 흐름”이라는 점을 읽습니다.</li>
+            <li>노트북의 문서 검색 셀을 실행하고, 어떤 source가 검색되는지 봅니다.</li>
+            <li>답변의 <code>source_id</code>와 <code>quote</code>가 실제 입력 문서에서 왔는지 확인합니다.</li>
+            <li>답이 없는 질문에서 <code>not_answered</code>가 나오는지 확인합니다.</li>
+          </ol>
+        </div>
+        <div class="section-step">
+          <div class="section-head">
+            <h3>Section 4: 여러 단계를 하나로 연결하기</h3>
+            <span>예상 60-90분</span>
+          </div>
+          <ol>
+            <li>검색, 답변 생성, 사실 추출, 검증을 하나의 workflow로 연결합니다.</li>
+            <li>최종 출력에 <code>answer_ko</code>, <code>facts</code>, <code>evidence</code>, <code>log</code>가 있는지 확인합니다.</li>
+            <li>사용량 확인 셀을 실행하고 호출 수와 token 수를 기록합니다.</li>
+            <li>작은 변형 질문을 하나 추가하고 성공/실패 처리를 비교합니다.</li>
+          </ol>
+        </div>
+        <div class="section-step">
+          <div class="section-head">
+            <h3>Section 5: Linux/WSL2 개발 환경 입문</h3>
+            <span>예상 90-120분</span>
+          </div>
+          <ol>
+            <li>Windows PowerShell과 Linux shell이 서로 다른 실행 환경이라는 점을 이해합니다.</li>
+            <li>WSL2와 Ubuntu가 무엇인지 보고, 설치 흐름과 파일 위치 차이를 확인합니다.</li>
+            <li>기본 명령어 <code>pwd</code>, <code>ls</code>, <code>cd</code>, <code>mkdir</code>, <code>python3 --version</code>을 실행해 봅니다.</li>
+            <li>VS Code Remote - WSL로 Linux 폴더를 여는 흐름을 확인합니다.</li>
+            <li>가능하면 Linux에서도 uv와 Python smoke test를 다시 실행합니다.</li>
+          </ol>
+          <div class="button-row">
+            <a class="button primary" href="docs.html?doc=linux">Section 5 상세 자료 보기</a>
+          </div>
+        </div>
+        <h3>상세 자료</h3>
+        <div class="grid">
+          <div class="card">
+            <h3>읽을 자료</h3>
+            <ul class="resource-list">
+              <li><a href="docs.html?doc=concepts">핵심 개념</a></li>
+              <li><a href="docs.html?doc=lecture">강의 노트</a></li>
+              <li><a href="docs.html?doc=practicals">실습 과제</a></li>
+              <li><a href="docs.html?doc=expected">결과 확인 기준</a></li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>설정과 문제 해결</h3>
+            <ul class="resource-list">
+              <li><a href="docs.html?doc=quickstart">빠른 실행 명령</a></li>
+              <li><a href="docs.html?doc=live">API key와 첫 연결 테스트</a></li>
+              <li><a href="docs.html?doc=troubleshooting">오류 해결</a></li>
+              <li><a href="docs.html?doc=linux">Section 5 Linux/WSL2</a></li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section id="cost" hidden>
+        <h2>API 키와 예상 비용</h2>
+        <p>
+          이 탭은 AI 모델을 쓰기 전에 알아야 할 “키와 사용량” 안내입니다.
+          API는 내 코드가 OpenAI 모델에게 요청을 보내고 답을 받는 방식입니다. 요청할 때 사용하는 비밀번호 같은 값이
+          API key입니다. 이 key는 웹사이트에 입력하지 않고, 내 컴퓨터의 <code>.env</code> 파일에만 저장합니다.
+        </p>
+        <h3>왜 비용이 생기나요?</h3>
+        <p>
+          모델에게 보내는 입력과 모델이 생성하는 출력은 token이라는 사용량 단위로 계산됩니다.
+          처음에는 token을 “AI가 읽고 쓴 글의 양을 세는 단위” 정도로 이해하면 됩니다.
+          글을 많이 보내거나 긴 답변을 많이 받으면 사용량이 늘고, 사용량에 따라 비용이 생깁니다.
+        </p>
+        <div class="callout">
+          이번 수업은 제공받은 수업용 API key를 사용하는 흐름을 기준으로 합니다. 학생 개인 결제카드를 등록하지 않습니다.
+          별도로 안내받지 않았다면 개인 OpenAI 계정에 결제수단을 추가할 필요가 없습니다.
+        </div>
+        <div class="callout blue">
+          수업용 전체 노트북 1회 실행은 최근 검증 기준 약 12회 요청, 약 4,500 token 정도로 측정되었습니다.
+          모델 응답 길이와 재실행 횟수에 따라 달라질 수 있으므로 여유 있게 1만 token 안팎으로 생각하면 됩니다.
+        </div>
+        <h3>비용 계산은 어떻게 보나요?</h3>
+        <p>
+          실제 금액은 사용하는 모델의 최신 가격표에 따라 달라집니다. 기본 계산식은 다음처럼 이해하면 됩니다.
+        </p>
+        <pre><code>예상 비용 = input token 수 × input token 단가 + output token 수 × output token 단가</code></pre>
+        <ul>
+          <li>mini 계열 모델을 쓰면 학생 1명이 전체 노트북을 한 번 끝까지 실행하는 비용은 작게 유지하는 것을 목표로 합니다.</li>
+          <li>반복 실험, 긴 문서, 여러 번 재실행을 포함하면 비용이 늘어날 수 있습니다.</li>
+          <li>정확한 금액은 실제 모델의 input/output token 단가와 재실행 횟수에 따라 달라집니다.</li>
+        </ul>
+        <h3>계산 예시</h3>
+        <p>
+          아래는 계산 방법을 보여주기 위한 가상의 단가 예시입니다.
+          가격표가 input 100만 token당 0.20달러, output 100만 token당 0.80달러라고 가정해 보겠습니다.
+          한 번 실행에서 input 3,000 token, output 1,500 token을 사용했다면 다음처럼 계산합니다.
+        </p>
+        <pre><code>input 비용  = 3,000 / 1,000,000 × 0.20달러 = 0.0006달러
+output 비용 = 1,500 / 1,000,000 × 0.80달러 = 0.0012달러
+총 비용     = 0.0018달러</code></pre>
+        <p>
+          실제 단가는 수업에서 제공받은 모델의 최신 가격표를 기준으로 확인합니다. 예시 단가를 실제 청구액으로 보면 안 됩니다.
+          노트북 마지막 셀에는 input/output token 수를 기록하는 칸이 있습니다.
+        </p>
+        <h3>비용을 줄이는 규칙</h3>
+        <ul>
+          <li>긴 PDF 전체를 넣지 않고, 짧은 텍스트 조각으로 실습합니다.</li>
+          <li>실습에 넣는 문서 수와 질문 수를 제한합니다.</li>
+          <li>실패한 셀만 다시 실행하고 전체 노트북 재실행은 최소화합니다.</li>
+          <li>출력 토큰이 불필요하게 길어지지 않도록 답변 형식을 짧고 구조적으로 요청합니다.</li>
+        </ul>
+        <h3>실습 후 기록할 것</h3>
+        <ul>
+          <li>사용한 모델명</li>
+          <li>실행한 노트북 섹션</li>
+          <li>대략적인 input/output token 수</li>
+          <li>실패해서 다시 실행한 셀</li>
+        </ul>
+      </section>
+
+      <section id="expected" hidden>
+        <h2>결과 확인: 실행 후 무엇을 봐야 하나요?</h2>
+        <p>
+          AI 실습에서는 문장이 매번 완전히 같을 필요가 없습니다. 대신 결과가 정해진 구조를 지키는지,
+          근거가 실제 입력 문서에서 왔는지, 답이 없는 질문을 억지로 지어내지 않는지를 확인합니다.
+          노트북을 실행한 뒤 이 탭과 비교하면 됩니다.
+        </p>
+        <div class="grid">
+          <div class="card">
+            <h3>Section 1: API와 prompt</h3>
+            <ul>
+              <li><code>topic</code>, <code>objective</code>, <code>method</code>, <code>result</code>가 비어 있지 않은지 확인합니다.</li>
+              <li><code>evidence</code>의 <code>source_id</code>가 입력 문서 ID와 같은지 확인합니다.</li>
+              <li><code>confidence</code>가 0과 1 사이 숫자인지 확인합니다.</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>Section 2: 형식 확인</h3>
+            <ul>
+              <li>모델 문장이 조금 달라도 정해진 데이터 구조로 바뀌는지 확인합니다.</li>
+              <li>필수 필드가 빠지거나 빈 문자열이면 실패해야 합니다.</li>
+              <li>검증 통과 여부가 “답이 자연스러운가”보다 먼저입니다.</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>Section 3: 문서 근거 확인</h3>
+            <ul>
+              <li>답변이 검색된 문서의 문장 또는 chunk를 근거로 삼는지 확인합니다.</li>
+              <li>검색된 문서에 답이 없으면 <code>not_answered</code>가 <code>true</code>가 되어야 합니다.</li>
+              <li>근거 없는 문장이 답변에 섞이면 실패로 봅니다.</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>Section 4: 단계 연결 확인</h3>
+            <ul>
+              <li>최종 출력에 <code>answer_ko</code>, <code>facts</code>, <code>evidence</code>, <code>log</code>가 있어야 합니다.</li>
+              <li><code>facts</code> 안의 근거는 앞 단계에서 확인된 evidence 안에서만 나와야 합니다.</li>
+              <li>실행 로그가 입력, 검색, 추출, 검증 순서를 보여야 합니다.</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>Section 5: Linux/WSL2 확인</h3>
+            <ul>
+              <li>PowerShell과 WSL Ubuntu shell이 다른 환경이라는 점을 설명할 수 있어야 합니다.</li>
+              <li><code>pwd</code>, <code>ls</code>, <code>cd</code>로 현재 위치와 파일 목록을 확인할 수 있어야 합니다.</li>
+              <li>Windows 파일 경로와 Linux 파일 경로가 다를 수 있음을 알아야 합니다.</li>
+            </ul>
+          </div>
+        </div>
+        <div class="callout blue">
+          같은 셀을 다시 실행했을 때 표현이 조금 달라질 수 있습니다. 비교 기준은 “정확히 같은 문장”이 아니라
+          “같은 구조, 같은 근거, 같은 실패 처리 정책”입니다.
+        </div>
+        <div class="button-row">
+          <a class="button primary" href="docs.html?doc=expected">결과 확인 문서 자세히 보기</a>
+          <a class="button" href="docs.html?doc=troubleshooting">결과가 다를 때 확인하기</a>
+        </div>
+      </section>
+
+      <section id="trouble" hidden>
+        <h2>문제 해결</h2>
+        <div class="grid">
+          <div class="card">
+            <h3>키 오류</h3>
+            <p><code>OPENAI_API_KEY</code>가 비어 있거나 잘못된 경우입니다. <code>.env</code>에 키를 한 줄로 넣고 터미널을 다시 엽니다.</p>
+          </div>
+          <div class="card">
+            <h3>모델 오류</h3>
+            <p><code>gpt-5.4-mini</code>는 현재 검증된 수업용 기본 모델명입니다. 계정에서 사용할 수 없으면 제공된 저비용 모델명으로 <code>OPENAI_MODEL</code>을 바꿉니다.</p>
+          </div>
+          <div class="card">
+            <h3>패키지 오류</h3>
+            <p>먼저 <code>uv run --with-requirements requirements.txt python live_openai_smoke.py</code>로 실행합니다. 이 방식은 가상환경 활성화가 헷갈려도 필요한 패키지를 함께 사용합니다.</p>
+          </div>
+          <div class="card">
+            <h3>결과가 흔들림</h3>
+            <p>AI 출력은 약간 변할 수 있습니다. 정해진 형식 확인 실습에서는 validation을 통과하는지가 더 중요합니다.</p>
+          </div>
+        </div>
+        <p><a href="docs.html?doc=troubleshooting">상세 troubleshooting 문서 보기</a></p>
+      </section>
+    </main>
+  </div>
+
+  <footer>
+    <div class="wrap">
+      AMSL Agentic AI Study Portal. API keys stay local; this site is for protected distribution and study guidance.
+    </div>
+  </footer>
+
+  <script>
+    const buttons = Array.from(document.querySelectorAll(".tab"));
+    const sections = Array.from(document.querySelectorAll("main section"));
+
+    function activate(id) {
+      buttons.forEach((button) => {
+        button.setAttribute("aria-selected", String(button.dataset.tab === id));
+      });
+      sections.forEach((section) => {
+        section.hidden = section.id !== id;
+      });
+      history.replaceState(null, "", "#" + id);
+    }
+
+    buttons.forEach((button) => {
+      button.addEventListener("click", () => activate(button.dataset.tab));
+    });
+
+    const initial = location.hash.replace("#", "");
+    if (initial && document.getElementById(initial)) {
+      activate(initial);
+    }
+
+    window.addEventListener("hashchange", () => {
+      const id = location.hash.replace("#", "");
+      if (id && document.getElementById(id)) {
+        activate(id);
+      }
+    });
+  </script>
+</body>
+</html>
