@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" href="data:,">
+<title>Section 9 | AMSL Agentic AI Study</title><style>
+:root{--bg:#f5f7fb;--panel:#fff;--text:#111827;--muted:#5b6472;--line:#d8dee8;--teal:#0f766e;--blue:#1d4ed8;--soft:#ecfdf5}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;line-height:1.7}
+a{color:var(--blue)}.wrap{width:min(920px,calc(100% - 32px));margin:auto}header{background:#fff;border-bottom:1px solid var(--line);padding:22px 0}.back{font-weight:800;text-decoration:none}
+main{min-width:0;margin:24px auto 56px;padding:clamp(20px,4vw,42px);background:var(--panel);border:1px solid var(--line);border-radius:10px;box-shadow:0 14px 34px rgba(15,23,42,.08);overflow-wrap:anywhere}
+h1{font-size:clamp(28px,4vw,42px);line-height:1.2;margin:0 0 24px}h2{margin:38px 0 12px;font-size:25px}h3{margin:30px 0 10px;font-size:20px}h4{margin:24px 0 8px}p{margin:0 0 15px}li+li{margin-top:6px}
+pre{max-width:100%;overflow:auto;padding:16px;background:#111827;color:#f8fafc;border-radius:8px;overflow-wrap:normal}code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace}p code,li code{background:#eef2f7;padding:2px 5px;border-radius:4px}
+blockquote{margin:18px 0;padding:14px 18px;border-left:4px solid var(--teal);background:var(--soft)}table{width:100%;max-width:100%;border-collapse:collapse;display:block;overflow:auto}th,td{border:1px solid var(--line);padding:9px;text-align:left}
+.source-note{display:block;margin:14px 0;position:relative}.source-info{border:1px solid var(--line);border-radius:999px;background:#fff;color:var(--blue);font-weight:800;cursor:pointer}.source-card{margin-top:8px;padding:12px;border:1px solid var(--line);border-radius:7px;background:#eff6ff;color:#334155}
+.section-nav{display:flex;justify-content:space-between;gap:12px;margin-top:40px;padding-top:22px;border-top:1px solid var(--line)}.section-nav a{font-weight:800}@media(max-width:640px){.section-nav{flex-direction:column}}
+</style></head>
+<body><header><div class="wrap"><a class="back" href="../index.html#section-9">← 학습 포털</a></div></header>
+<main class="wrap"><h1>Section 9. 근거가 추적되는 Vector RAG 만들기</h1>
+<blockquote>
+<p>예상 시간: 필수 120~150분 / 선택 심화 30~45분<br />
+선수 과정: Section 6~8<br />
+API 비용: 필수 검증은 API 호출 없음. 실제 생성 모델 연결은 선택이며 실행 전 호출 수를 확인합니다.</p>
+</blockquote>
+<h2>이번 Section의 위치</h2>
+<p>Section 6에서는 원문 위치를 보존한 chunk를 만들었고, Section 7~8에서는 질문과 관련된 chunk를 찾고 검색 품질을
+측정했습니다. 이제 검색 결과를 답변으로 연결합니다. 하지만 답변이 자연스럽다는 이유만으로 RAG가 성공한 것은 아닙니다.
+어떤 chunk가 검색되었고, 답변의 인용문이 그 chunk에 실제로 존재하며, 근거가 없을 때 답하지 않았는지를 함께 확인해야 합니다.</p>
+<h3>핵심 질문</h3>
+<blockquote>
+<p>검색 결과를 답변과 검증 가능한 인용으로 어떻게 연결하고, 근거가 부족할 때 어떻게 멈출까요?</p>
+</blockquote>
+<h3>학습 목표</h3>
+<ol>
+<li>ingestion, retrieval, generation, validation을 서로 다른 단계로 설명합니다.</li>
+<li>검색된 <code>source_id</code>와 <code>chunk_id</code>를 답변의 citation에 연결합니다.</li>
+<li>구조화 형식 검증과 사실·근거 검증이 다른 이유를 사례로 설명합니다.</li>
+<li><code>answered</code>, <code>not_answered</code>, <code>needs_review</code> 정책을 적용합니다.</li>
+<li>원래 대화 질문과 retrieval query를 별도로 기록합니다.</li>
+<li>trace만 보고 retrieval 실패와 generation 실패를 구분합니다.</li>
+</ol>
+<h3>이번 Section의 필수선과 발전선</h3>
+<ul>
+<li><strong>필수선:</strong> 제공된 오프라인 trace에서 <code>answered</code>·<code>not_answered</code>·<code>needs_review</code> 세 상태와 citation 검사를 통과시킵니다.</li>
+<li><strong>발전선:</strong> 실제 생성 모델과 복잡한 대화 query rewrite는 선택입니다.</li>
+<li><strong>복습 신호:</strong> Pydantic model이나 함수 반환 타입을 읽기 어렵다면 Section 2의 구조화 출력 예제를 먼저 다시 봅니다.</li>
+</ul>
+<p>이 장에서는 자연스러운 답변 문장보다 단계별 데이터가 더 중요합니다. 시간이 부족하면 prompt를 다듬는 대신 검색된 chunk,
+선택된 상태, citation 검사 결과를 먼저 제출합니다. 이는 RAG 문제를 model 문제로 오진하지 않기 위한 우선순위입니다.</p>
+<h2>1. 시작 전 확인</h2>
+<ul>
+<li>Section 8에서 retriever의 입력과 출력은 무엇이었나요?</li>
+<li><code>source_id</code>와 <code>chunk_id</code>를 둘 다 보존하는 이유를 설명할 수 있나요?</li>
+<li>JSON 형식이 올바른 답변도 내용은 틀릴 수 있을까요?</li>
+<li>corpus에 정답이 없는데 retriever가 top-1을 반환하면 어떻게 해야 할까요?</li>
+</ul>
+<h2>2. RAG를 네 단계로 나누기</h2>
+<p>이 Section의 최소 파이프라인은 다음과 같습니다.</p>
+<pre><code class="language-text">준비된 chunk → retrieve(question) → generate(question, context)
+             → validate(answer, retrieved chunks) → 답변/거부/검토
+</code></pre>
+<ul>
+<li><strong>Ingestion:</strong> 원문을 읽고 추적 가능한 chunk와 index를 만듭니다. 질문마다 반복하지 않습니다.</li>
+<li><strong>Retrieval:</strong> 질문을 받아 후보 근거와 점수를 반환합니다. 답변 문장을 만들지 않습니다.</li>
+<li><strong>Generation:</strong> 질문과 허용된 context만 사용해 구조화된 답을 만듭니다.</li>
+<li><strong>Validation:</strong> citation이 실제 검색 결과를 가리키고 quote가 원문에 존재하는지 검사합니다.</li>
+</ul>
+<p>단계를 분리하면 검색 결과에 정답 chunk가 없었던 실패와, 정답 chunk를 받았지만 모델이 다른 말을 한 실패를 구분할 수
+있습니다. 한 함수가 모든 일을 하고 최종 문자열만 반환하면 이 구분이 어려워집니다.</p>
+<aside class="source-note" data-source="langchain-rag-tutorial">
+  <button type="button" class="source-info" aria-label="RAG 구조 참고자료 보기">ⓘ</button>
+  <div class="source-card" hidden>
+    개념과 현재 API 흐름 확인: LangChain 공식 문서, RAG tutorial (접속일: 2026-07-14).
+    단계 구분, 데이터와 실습 코드는 AMSL 학습자료용으로 독자적으로 작성했습니다.
+  </div>
+</aside>
+
+<h2>3. 단계 사이의 데이터 계약</h2>
+<p>retriever는 최소한 다음 값을 반환합니다.</p>
+<pre><code class="language-text">source_id, chunk_id, page_content, retrieval_score
+</code></pre>
+<p>생성 결과는 자유로운 문자열 대신 다음 세 상태 중 하나와 citation 목록을 반환합니다.</p>
+<pre><code class="language-python">class RagAnswer(BaseModel):
+    status: Literal[&quot;answered&quot;, &quot;not_answered&quot;, &quot;needs_review&quot;]
+    answer: str
+    citations: list[Citation]
+</code></pre>
+<p><code>answered</code>에는 citation이 하나 이상 있어야 합니다. <code>not_answered</code>는 corpus에 필요한 근거가 없다고 판단한 경우이고,
+<code>needs_review</code>는 관련 문서는 찾았지만 충돌·모호함·낮은 신뢰도 때문에 자동 답변을 확정하지 않는 경우입니다.</p>
+<p>Pydantic이 위 schema를 검증해도 “인용문이 원문에 존재한다”거나 “답의 주장이 사실이다”는 보장은 없습니다. schema
+validation은 필드와 형식을 검사하고, evidence validation은 답이 허용된 근거에 연결되는지를 검사합니다.</p>
+<h2>4. Context를 만들 때 source mapping 유지하기</h2>
+<p>모델에게 context를 줄 때 표시 번호를 새로 붙였다면 원래 <code>chunk_id</code>와 mapping을 보존합니다.</p>
+<pre><code class="language-text">[CONTEXT 1 | chunk_id=security-guide:001]
+인증정보가 노출된 것으로 의심되면 ...
+</code></pre>
+<p>답변이 <code>[CONTEXT 1]</code>만 반환해도 실행 코드가 <code>security-guide:001</code>을 복원할 수 있어야 합니다. context 문자열만 합치고
+metadata를 버리면 사용자에게 출처를 보여주거나 quote를 검사하기 어렵습니다. context 순서는 보안 경계가 아니므로,
+모델이 반환한 ID가 실제 retrieved set 안에 있는지도 프로그램으로 확인합니다.</p>
+<h2>5. 인용 검증의 최소선</h2>
+<p>실습의 검증기는 다음 순서로 검사합니다.</p>
+<ol>
+<li><code>answered</code>인데 citation이 비어 있지 않은가?</li>
+<li>citation의 <code>chunk_id</code>가 이번 검색 결과에 있는가?</li>
+<li>citation의 <code>quote</code>가 해당 chunk 본문에 정확히 존재하는가?</li>
+<li>답하지 않은 상태에 확정적인 citation을 잘못 붙이지 않았는가?</li>
+</ol>
+<p>이 검사는 필요한 최소선이지 충분한 사실 검증은 아닙니다. 모델은 원문에 있는 짧은 문장을 인용한 뒤, 그 인용으로
+뒷받침되지 않는 결론을 덧붙일 수 있습니다. 따라서 Section 10에서는 답의 주요 claim 전체가 근거로 지지되는지를 사람이
+검토하는 groundedness rubric을 추가합니다.</p>
+<h2>6. 필수 실습 A: 오프라인 trace 실행</h2>
+<p><code>notebooks/09_traceable_vector_rag.ipynb</code>는 자체 제작한 가상 정책 corpus를 사용합니다. 외부 API를 호출하지 않으며,
+제작용 deterministic retriever와 generator로 단계의 계약을 먼저 확인합니다. 이 대역의 점수는 vector similarity가 아니므로
+검색 품질 결론에는 사용하지 않습니다. Section 8에서 검증한 vector retriever를 같은 함수 계약으로 교체해야 합니다.</p>
+<p>다음 질문을 실행합니다.</p>
+<ul>
+<li>정답 가능: “API key는 어디에 보관해야 하나요?”</li>
+<li>표현 변경: “인증정보 유출이 의심될 때 첫 대응은 무엇인가요?”</li>
+<li>답 없음: “정기 미팅은 매주 월요일 몇 시인가요?”</li>
+<li>애매함: “보안과 관련해 무엇을 준비해야 하나요?”</li>
+</ul>
+<p>각 trace에서 원 질문, retrieval query, retrieved chunk ID, 상태, 답변, validation error를 확인합니다.</p>
+<h2>7. 필수 실습 B: 실패를 일부러 만들기</h2>
+<p>검색된 chunk에 없는 문장을 quote로 넣어 citation validation을 실패시킵니다. assertion을 제거해 통과시키지 말고, 다음 중
+어느 단계의 실패인지 기록합니다.</p>
+<pre><code class="language-text">검색된 chunk가 틀림             → retrieval failure
+올바른 chunk를 받았지만 quote 조작 → generation/validation failure
+근거가 없는데 answered 선택       → answerability policy failure
+형식 자체가 schema와 다름          → structured-output failure
+</code></pre>
+<h2>8. 답 없음과 사람 검토 정책</h2>
+<p>threshold 하나만으로 답변 가능 여부를 완벽히 정할 수 없습니다. 이 실습에서는 평가 가능한 명시적 정책부터 시작합니다.</p>
+<ul>
+<li>예상 근거가 corpus에 없고 질문이 범위 밖이면 <code>not_answered</code></li>
+<li>관련 chunk는 있지만 직접 답하는 문장이 없거나 서로 충돌하면 <code>needs_review</code></li>
+<li>직접 근거가 있고 모든 citation 검사를 통과하면 <code>answered</code></li>
+</ul>
+<p>실제 시스템에서는 이 규칙의 오탐과 누락을 Section 10의 answerable/unanswerable 질문 세트로 측정합니다. 거부가 많다고 항상
+안전한 것도 아닙니다. 답할 수 있는 질문을 계속 거부하면 유용성이 낮아집니다.</p>
+<h2>9. 대화 기록과 retrieval query</h2>
+<p>사용자의 후속 질문 “그 경우에는요?”만 검색하면 무엇을 가리키는지 알 수 없습니다. 반대로 전체 대화 기록을 그대로 검색
+문자열에 붙이면 오래된 주제가 섞이고 개인정보가 불필요하게 전달될 수 있습니다.</p>
+<p>따라서 다음을 별도 필드로 기록합니다.</p>
+<pre><code class="language-text">original_question  사용자가 실제로 한 말
+retrieval_query    검색을 위해 맥락을 보완한 문자열
+</code></pre>
+<p>query rewrite를 모델로 수행한다면 rewrite 자체도 평가 대상입니다. 원 질문에 없던 사실을 추가하거나 의도를 바꿀 수 있기
+때문입니다. 필수 실습에서는 대명사가 있는 경우 직전 사용자 질문만 붙이는 제한된 규칙을 사용합니다.</p>
+<h2>10. 실제 모델 연결은 선택 실습</h2>
+<p>오프라인 검사가 모두 통과한 뒤에만 generator를 실제 구조화 출력 API로 교체합니다. 오프라인 assertion 통과는 데이터
+계약과 validator가 재현된다는 뜻이지, 실제 모델까지 연결된 end-to-end 검사가 끝났다는 뜻은 아닙니다. 노트북은 이 둘을
+각각 <code>오프라인 완료</code>와 <code>LIVE GATE: COMPLETED/NOT COMPLETED</code>로 구분해 표시합니다.</p>
+<p>실행 전 다음을 출력합니다.</p>
+<pre><code class="language-text">model:
+질문 수:
+예상 generation 호출 수:
+재시도 상한:
+</code></pre>
+<p>제공된 gate는 <code>openai==2.44.0</code>의 Responses API <code>responses.parse(..., text_format=RagAnswer)</code>와
+<code>gpt-5.4-mini</code>를 사용합니다. 기본 실행은 비용이 0원이며, <code>RUN_LIVE_API=1</code>과 <code>OPENAI_API_KEY</code>가 모두 있을 때만 정답
+가능·답 없음·애매함의 대표 질문 3개를 재시도 없이 각 1회 호출합니다. 실행 전에 모델, 호출 수, 최대 출력량을 반영한
+예상 예산을 출력합니다. key는 환경변수에서만 읽고 notebook, 출력, trace 파일에 저장하거나 표시하지 않습니다.</p>
+<p>실행 방법은 다음과 같습니다. 두 환경변수 중 하나라도 없으면 프로그램은 성공을 가장하지 않고 live 검사를
+<code>NOT COMPLETED</code>로 보고합니다.</p>
+<pre><code class="language-bash">$env:RUN_LIVE_API = &quot;1&quot;
+$env:OPENAI_API_KEY = &quot;수업용_key&quot;
+uv run --python 3.11 --with-requirements requirements.txt --with notebook jupyter notebook notebooks
+</code></pre>
+<p>세 응답 모두 Pydantic schema, 의도한 answerability 상태, retrieved chunk ID, 원문과 글자까지 같은 exact quote 검사를
+통과해야 <code>COMPLETED</code>입니다. API가 반환한 input/output token usage가 있으면 실제 사용량과 가격표 기반 추정 비용도
+출력합니다. 가격 상수는 2026-07-14 확인 기준인 입력 $0.75/백만 token, 출력 $4.50/백만 token이며, 가격은 바뀔 수
+있으므로 live 실행 전 <a href="https://openai.com/api/pricing/">OpenAI 공식 가격 페이지</a>에서 다시 확인해야 합니다.</p>
+<aside class="source-note" data-source="openai-structured-outputs">
+  <button type="button" class="source-info" aria-label="구조화 출력 참고자료 보기">ⓘ</button>
+  <div class="source-card" hidden>
+    구조화 출력의 지원 범위 확인: OpenAI 공식 문서, Structured model outputs (접속일: 2026-07-14).
+    출력 schema와 검증 정책은 독자적으로 작성했습니다.
+  </div>
+</aside>
+
+<h2>11. 디버깅 순서</h2>
+<ol>
+<li>원문 corpus에 답이 실제로 있는지 확인합니다.</li>
+<li>기대 chunk가 ingestion 결과에 보존되었는지 확인합니다.</li>
+<li>retrieval query와 retrieved ID/score를 확인합니다.</li>
+<li>모델에게 전달한 context가 retrieved set과 일치하는지 확인합니다.</li>
+<li>raw structured output과 schema 오류를 확인합니다.</li>
+<li>citation ID와 exact quote 검사를 확인합니다.</li>
+<li>마지막으로 prompt 또는 모델 변경을 검토합니다.</li>
+</ol>
+<h2>12. 통과 기준과 제출물</h2>
+<ul>
+<li>정답 가능, 답 없음, 애매함 질문이 각각 의도한 상태가 됩니다.</li>
+<li>모든 <code>answered</code> 결과의 quote가 실제 retrieved chunk에 존재합니다.</li>
+<li>조작한 quote가 validator에서 실패합니다.</li>
+<li>원 질문과 retrieval query가 trace에 별도로 남습니다.</li>
+<li>retrieval failure와 generation failure 사례를 하나씩 설명합니다.</li>
+</ul>
+<p>제출물에는 질문별 trace 요약, 실패 하나의 원인 분석, 현재 answerability 정책의 한계, Section 10에서 측정할 가설을
+한 페이지 이내로 정리합니다.</p>
+<h2>13. 선택 심화</h2>
+<ul>
+<li>query rewrite 유무의 retrieval Recall@k 비교</li>
+<li>citation exact match와 정규화 match의 장단점 비교</li>
+<li>서로 충돌하는 두 정책 문서에서 <code>needs_review</code> 처리</li>
+<li>대화 기록 저장 범위와 개인정보 최소화 정책 설계</li>
+</ul>
+<h2>참고자료 및 저작권 안내</h2>
+<p>이 페이지의 설명, 구성, corpus 및 실습 예제는 AMSL 인턴 학습을 위해 독자적으로 작성했습니다. 학습 범위 선정에는
+테디노트의 <em>&lt;랭체인LangChain 노트&gt; - LangChain 한국어 튜토리얼</em>을 참고했으며, 원문 문장·도표·예제 설명을
+전재하거나 변형하지 않았습니다. 해당 자료의 저작권과 이용 조건은 원 저작자에게 있습니다.</p>
+<ul>
+<li>LangChain, “Build a RAG agent with LangChain,” <a href="https://docs.langchain.com/oss/python/langchain/rag">https://docs.langchain.com/oss/python/langchain/rag</a>
+  (접속일: 2026-07-14, 개념 및 API 흐름 참고)</li>
+<li>OpenAI, “Structured model outputs,” <a href="https://platform.openai.com/docs/guides/structured-outputs">https://platform.openai.com/docs/guides/structured-outputs</a>
+  (접속일: 2026-07-14, 기능 범위 참고)</li>
+<li>OpenAI, “API Pricing,” <a href="https://openai.com/api/pricing/">https://openai.com/api/pricing/</a>
+  (접속일: 2026-07-14, <code>gpt-5.4-mini</code> 입력·출력 단가 참고; 실행 전 재확인 필요)</li>
+<li>Pydantic, “Models,” <a href="https://docs.pydantic.dev/latest/concepts/models/">https://docs.pydantic.dev/latest/concepts/models/</a>
+  (접속일: 2026-07-14, schema 검증 동작 참고)</li>
+<li>테디노트, <em>&lt;랭체인LangChain 노트&gt; - LangChain 한국어 튜토리얼</em>, WikiDocs,
+  <a href="https://wikidocs.net/book/14314">https://wikidocs.net/book/14314</a> (접속일: 2026-07-14, 웹 문서 표기 라이선스: CC BY-NC-ND 2.0 KR)</li>
+</ul>
+<p>이 학습자료에는 외부 저장소에서 복사·수정한 코드가 없습니다.</p><nav class="section-nav" aria-label="Section 이동"><a href="08.html">← Section 8</a><a href="10.html">Section 10 →</a></nav></main><script>
+document.querySelectorAll('.source-info').forEach((button)=>{button.addEventListener('click',()=>{const card=button.nextElementSibling;const opening=card.hidden;document.querySelectorAll('.source-card').forEach((item)=>item.hidden=true);card.hidden=!opening;button.setAttribute('aria-expanded',String(opening));});});
+document.addEventListener('keydown',(event)=>{if(event.key==='Escape'){document.querySelectorAll('.source-card').forEach((item)=>item.hidden=true);document.querySelectorAll('.source-info').forEach((item)=>item.setAttribute('aria-expanded','false'));}});
+</script></body></html>

@@ -2,3 +2,4 @@ openai==2.44.0
 pydantic==2.13.4
 langchain-core==1.4.9
 langchain-text-splitters==1.1.2
+numpy==2.4.3

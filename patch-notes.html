@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" href="data:,">
+<title>패치노트 | AMSL Agentic AI Study</title><style>
+:root{--bg:#f5f7fb;--panel:#fff;--text:#111827;--muted:#5b6472;--line:#d8dee8;--teal:#0f766e;--blue:#1d4ed8;--soft:#ecfdf5}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;line-height:1.7}
+a{color:var(--blue)}.wrap{width:min(920px,calc(100% - 32px));margin:auto}header{background:#fff;border-bottom:1px solid var(--line);padding:22px 0}.back{font-weight:800;text-decoration:none}
+main{min-width:0;margin:24px auto 56px;padding:clamp(20px,4vw,42px);background:var(--panel);border:1px solid var(--line);border-radius:10px;box-shadow:0 14px 34px rgba(15,23,42,.08);overflow-wrap:anywhere}
+h1{font-size:clamp(28px,4vw,42px);line-height:1.2;margin:0 0 24px}h2{margin:38px 0 12px;font-size:25px}h3{margin:30px 0 10px;font-size:20px}h4{margin:24px 0 8px}p{margin:0 0 15px}li+li{margin-top:6px}
+pre{max-width:100%;overflow:auto;padding:16px;background:#111827;color:#f8fafc;border-radius:8px;overflow-wrap:normal}code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace}p code,li code{background:#eef2f7;padding:2px 5px;border-radius:4px}
+blockquote{margin:18px 0;padding:14px 18px;border-left:4px solid var(--teal);background:var(--soft)}table{width:100%;max-width:100%;border-collapse:collapse;display:block;overflow:auto}th,td{border:1px solid var(--line);padding:9px;text-align:left}
+.source-note{display:block;margin:14px 0;position:relative}.source-info{border:1px solid var(--line);border-radius:999px;background:#fff;color:var(--blue);font-weight:800;cursor:pointer}.source-card{margin-top:8px;padding:12px;border:1px solid var(--line);border-radius:7px;background:#eff6ff;color:#334155}
+.section-nav{display:flex;justify-content:space-between;gap:12px;margin-top:40px;padding-top:22px;border-top:1px solid var(--line)}.section-nav a{font-weight:800}@media(max-width:640px){.section-nav{flex-direction:column}}
+</style></head>
+<body><header><div class="wrap"><a class="back" href="index.html">← 학습 포털</a></div></header>
+<main class="wrap"><h1>2026-07-15 학습자료 확장 패치노트</h1>
+<p>이번 업데이트는 기존 Section 0~5의 입문 흐름을 유지하면서, 문서 준비부터 Vector RAG, 평가, Tool/Agent, 미니 프로젝트까지 이어지는 Section 6~12를 추가합니다.</p>
+<h2>기존 Section 0~5 변경사항</h2>
+<ul>
+<li>API key 입력 셀은 직접 입력뿐 아니라 <code>OPENAI_API_KEY</code> 환경변수도 사용할 수 있도록 변경했습니다.</li>
+<li>모델명은 <code>OPENAI_MODEL</code> 환경변수로 바꿀 수 있으며, 별도 설정이 없으면 수업 기본 모델을 사용합니다.</li>
+<li>Section 3과 4의 자유 형식 JSON 생성을 OpenAI structured output으로 변경했습니다. 필드 누락이나 이름 변경 때문에 실습이 불규칙하게 실패하는 문제를 줄였습니다.</li>
+<li>Section 4에서는 미리 결정된 workflow route가 모델 응답에서 바뀌지 않는지 검사합니다.</li>
+<li>모든 notebook의 cell ID와 저장된 output을 정리해 새 환경에서 처음부터 실행할 수 있게 했습니다.</li>
+<li><code>START_HERE.md</code>, <code>requirements.txt</code>, 다운로드 ZIP을 전체 과정 기준으로 갱신했습니다.</li>
+</ul>
+<h2>새로 추가된 Section</h2>
+<ul>
+<li><strong>Section 6 — 문서와 chunk:</strong> 긴 문서를 나누고 <code>source_id</code>, <code>chunk_id</code>, 원문 위치를 보존합니다.</li>
+<li><strong>Section 7 — Embedding과 VectorStore:</strong> lexical 검색과 의미 검색을 비교하고 실제 embedding을 선택적으로 검증합니다.</li>
+<li><strong>Section 8 — Retriever 평가:</strong> 작은 gold set으로 Recall@k, threshold, filter와 실패 원인을 점검합니다.</li>
+<li><strong>Section 9 — 추적 가능한 Vector RAG:</strong> 검색·생성·검증을 분리하고 <code>answered</code>, <code>not_answered</code>, <code>needs_review</code> 정책과 exact citation을 검사합니다.</li>
+<li><strong>Section 10 — RAG 평가:</strong> retrieval과 generation을 따로 측정하고 한 설정만 바꾼 baseline/candidate 실험을 수행합니다.</li>
+<li><strong>Section 11 — Tool과 Agent:</strong> tool schema, routing, 종료 조건, 정책 차단과 오류 처리를 통해 제어 가능한 agent 흐름을 학습합니다.</li>
+<li><strong>Section 12 — 미니 프로젝트:</strong> 공통 corpus와 평가 계약으로 baseline을 만든 뒤 각자 한 가지 개선을 측정합니다.</li>
+</ul>
+<h2>사이트와 배포 파일 변경사항</h2>
+<ul>
+<li>메인 학습 지도에 Section 6~12를 추가하고 각 Section의 독립 학습 페이지를 연결했습니다.</li>
+<li>Section 페이지에 이전/다음 이동, 참고자료 <code>ⓘ</code> 카드, 모바일 레이아웃을 추가했습니다.</li>
+<li>ZIP에 notebook 00~12, 확장 실습용 데이터 4개, 갱신된 requirements와 시작 안내를 포함했습니다.</li>
+<li>내부 제작 계획·리뷰·비밀 파일은 공개 저장소 대상에서 제외했습니다.</li>
+</ul>
+<h2>검증 결과</h2>
+<ul>
+<li>배포 ZIP을 새 폴더에 압축 해제한 뒤 notebook 00~12를 순서대로 실행했습니다.</li>
+<li>API가 필요한 기존 Section과 Section 7·9의 live gate를 수업용 프로젝트 key로 실제 검증했습니다.</li>
+<li>notebook schema, 구조화 출력, citation validation, 내부 링크, 외부 참고 링크, 모바일 Chromium 렌더링을 확인했습니다.</li>
+<li>공개 산출물에서 API key literal, 개인 이메일, 개인 절대경로와 비공개 저장소 경로가 없는지 검사했습니다.</li>
+</ul>
+<p>학습자는 기존과 같이 웹사이트에서 설명을 읽고 같은 번호의 notebook을 위에서 아래로 실행하면 됩니다. Section 6부터는 앞 Section의 산출물을 다음 Section의 입력과 평가 기준으로 연결합니다.</p></main></body></html>

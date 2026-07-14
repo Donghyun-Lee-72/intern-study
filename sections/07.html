@@ -1,0 +1,308 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" href="data:,">
+<title>Section 7 | AMSL Agentic AI Study</title><style>
+:root{--bg:#f5f7fb;--panel:#fff;--text:#111827;--muted:#5b6472;--line:#d8dee8;--teal:#0f766e;--blue:#1d4ed8;--soft:#ecfdf5}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;line-height:1.7}
+a{color:var(--blue)}.wrap{width:min(920px,calc(100% - 32px));margin:auto}header{background:#fff;border-bottom:1px solid var(--line);padding:22px 0}.back{font-weight:800;text-decoration:none}
+main{min-width:0;margin:24px auto 56px;padding:clamp(20px,4vw,42px);background:var(--panel);border:1px solid var(--line);border-radius:10px;box-shadow:0 14px 34px rgba(15,23,42,.08);overflow-wrap:anywhere}
+h1{font-size:clamp(28px,4vw,42px);line-height:1.2;margin:0 0 24px}h2{margin:38px 0 12px;font-size:25px}h3{margin:30px 0 10px;font-size:20px}h4{margin:24px 0 8px}p{margin:0 0 15px}li+li{margin-top:6px}
+pre{max-width:100%;overflow:auto;padding:16px;background:#111827;color:#f8fafc;border-radius:8px;overflow-wrap:normal}code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace}p code,li code{background:#eef2f7;padding:2px 5px;border-radius:4px}
+blockquote{margin:18px 0;padding:14px 18px;border-left:4px solid var(--teal);background:var(--soft)}table{width:100%;max-width:100%;border-collapse:collapse;display:block;overflow:auto}th,td{border:1px solid var(--line);padding:9px;text-align:left}
+.source-note{display:block;margin:14px 0;position:relative}.source-info{border:1px solid var(--line);border-radius:999px;background:#fff;color:var(--blue);font-weight:800;cursor:pointer}.source-card{margin-top:8px;padding:12px;border:1px solid var(--line);border-radius:7px;background:#eff6ff;color:#334155}
+.section-nav{display:flex;justify-content:space-between;gap:12px;margin-top:40px;padding-top:22px;border-top:1px solid var(--line)}.section-nav a{font-weight:800}@media(max-width:640px){.section-nav{flex-direction:column}}
+</style></head>
+<body><header><div class="wrap"><a class="back" href="../index.html#section-7">← 학습 포털</a></div></header>
+<main class="wrap"><h1>Section 7. Embedding과 VectorStore로 의미 검색하기</h1>
+<blockquote>
+<p>예상 시간: 필수 120~150분 / 선택 심화 30~60분<br />
+선수 과정: Section 6<br />
+API 비용: 필수 offline 실습은 없음 / 실제 embedding 선택 실습은 호출 전 문서·질문 수 확인</p>
+</blockquote>
+<h2>이번 Section의 위치</h2>
+<p>Section 3의 lexical retrieval은 질문과 문서에서 겹치는 단어를 찾았습니다. Section 6에서는 긴 문서를 chunk로 나누고
+<code>source_id</code>, <code>chunk_id</code>, 원문 위치를 보존했습니다. 이제 각 chunk를 숫자 벡터로 바꾸고, 질문과 의미상 가까운 chunk를
+찾습니다.</p>
+<p>이번 목표는 특정 Vector DB 제품을 익히는 것이 아닙니다. 다음 네 단계를 분리해 이해하는 것이 핵심입니다.</p>
+<p><code>text → embedding vector → similarity 계산 → 관련 chunk 반환</code></p>
+<h3>핵심 질문</h3>
+<blockquote>
+<p>질문과 문서에 같은 단어가 거의 없어도 관련 내용을 찾을 수 있는 이유는 무엇이며, 그 결과를 어디까지 믿어야 할까요?</p>
+</blockquote>
+<h3>학습 목표</h3>
+<ol>
+<li>embedding을 텍스트의 비교 가능한 특성을 담은 숫자 배열로 설명합니다.</li>
+<li>query와 document가 같은 embedding 공간에서 비교되어야 하는 이유를 설명합니다.</li>
+<li>cosine similarity를 방향의 유사성이라는 수준에서 계산하고 해석합니다.</li>
+<li>Section 6의 chunk를 in-memory VectorStore에 저장하고 top-k 검색을 수행합니다.</li>
+<li>lexical 검색과 vector 검색의 성공·실패 사례를 비교합니다.</li>
+<li>similarity가 높다는 사실과 답이 맞다는 사실을 구분합니다.</li>
+</ol>
+<h3>이번 Section의 필수선과 발전선</h3>
+<ul>
+<li><strong>필수선:</strong> 2차원 예제로 cosine similarity를 계산하고, 같은 질문에 lexical/vector 검색 결과가 달라지는 이유를 설명합니다.</li>
+<li><strong>발전선:</strong> 실제 embedding API, 영구 VectorStore, 여러 모델 비교는 선택입니다.</li>
+<li><strong>복습 신호:</strong> 벡터의 내적·크기 또는 Python의 <code>list[float]</code>가 낯설다면 공식보다 먼저 본문의 숫자 예제를 따라갑니다.</li>
+</ul>
+<p>AI 전공 과목에서 embedding을 이미 배웠더라도 이 장을 건너뛰지는 않습니다. 목적은 수학을 다시 배우는 것이 아니라
+<strong>모델·분할 설정·corpus 버전이 index와 함께 관리되어야 한다는 구현 계약</strong>을 익히는 데 있습니다. 선형대수 증명은
+이 과정의 통과 조건이 아닙니다.</p>
+<h2>1. 선수지식 확인</h2>
+<ul>
+<li>Python의 <code>list[float]</code>가 어떤 값인지 설명할 수 있나요?</li>
+<li>두 점 사이의 거리가 가까우면 항상 같은 의미라고 말할 수 있을까요?</li>
+<li>Section 6의 <code>source_id</code>와 <code>chunk_id</code>가 검색 결과에도 남아야 하는 이유는 무엇인가요?</li>
+<li>질문에 답하는 문서가 corpus에 없다면 vector 검색은 무엇을 반환할까요?</li>
+</ul>
+<h2>2. Embedding은 무엇인가요?</h2>
+<p>Embedding model은 텍스트를 고정된 길이의 숫자 배열로 변환합니다. 이 벡터의 개별 숫자를 사람이 “첫 번째 값은 보안,
+두 번째 값은 비용”처럼 직접 해석하지는 않습니다. 대신 같은 model로 만든 벡터끼리 거리를 비교하여 텍스트 사이의
+관련성을 추정합니다.</p>
+<pre><code class="language-text">&quot;API key를 공개하면 안 됩니다&quot;  → [ 0.12, -0.41, ... ]
+&quot;비밀 키를 저장소에 올려도 되나요?&quot; → [ 0.09, -0.37, ... ]
+</code></pre>
+<p>두 문장은 같은 단어가 많지 않지만, 적절한 embedding model에서는 가까운 방향의 벡터가 될 수 있습니다. 이것이
+lexical retrieval이 놓친 표현 차이를 semantic retrieval이 찾을 수 있는 이유입니다.</p>
+<aside class="source-note" data-source="openai-embeddings-guide">
+  <button type="button" class="source-info" aria-label="Embedding 참고자료 보기">ⓘ</button>
+  <div class="source-card" hidden>
+    개념 및 API 확인: OpenAI 공식 문서, Embeddings guide와 API reference (접속일: 2026-07-14).
+    설명과 실습 문장은 AMSL 학습자료용으로 독자적으로 작성했습니다.
+  </div>
+</aside>
+
+<h3>기억해야 할 제한</h3>
+<ul>
+<li>embedding은 사실 판정기가 아니라 유사성 계산을 위한 표현입니다.</li>
+<li>가까운 문서가 질문에 직접 답하지 않을 수 있습니다.</li>
+<li>corpus에 정답이 없어도 검색기는 가장 가까운 항목을 반환할 수 있습니다.</li>
+<li>다른 embedding model이 만든 벡터는 차원과 공간이 다를 수 있으므로 그대로 섞지 않습니다.</li>
+<li>model을 바꾸면 기존 문서 index도 같은 model로 다시 만드는 것이 원칙입니다.</li>
+</ul>
+<h2>3. 작은 2차원 예제로 cosine similarity 보기</h2>
+<p>실제 embedding은 차원이 크지만, 먼저 두 개의 숫자만 있는 벡터로 계산 흐름을 봅니다.</p>
+<pre><code class="language-python">from math import sqrt
+
+
+def cosine_similarity(a: list[float], b: list[float]) -&gt; float:
+    assert len(a) == len(b)
+    dot = sum(x * y for x, y in zip(a, b))
+    norm_a = sqrt(sum(x * x for x in a))
+    norm_b = sqrt(sum(y * y for y in b))
+    if norm_a == 0 or norm_b == 0:
+        raise ValueError(&quot;zero vector의 cosine similarity는 정의할 수 없습니다.&quot;)
+    return dot / (norm_a * norm_b)
+</code></pre>
+<pre><code class="language-python">query = [1.0, 0.0]
+same_direction = [0.8, 0.1]
+different_direction = [0.1, 0.9]
+
+print(cosine_similarity(query, same_direction))
+print(cosine_similarity(query, different_direction))
+</code></pre>
+<p>Cosine similarity는 벡터의 크기보다 방향이 얼마나 비슷한지를 봅니다. 일반적으로 값이 클수록 가깝다고 해석하지만,
+점수 범위와 의미는 VectorStore의 distance 전략에 따라 달라질 수 있습니다. 서로 다른 library의 <code>score</code>를 이름만 보고
+같은 척도로 비교하지 않습니다.</p>
+<h2>4. Indexing과 querying을 분리하기</h2>
+<p>문서와 질문을 embedding하는 시점은 다릅니다.</p>
+<h3>Indexing</h3>
+<ol>
+<li>문서를 load하고 chunk로 나눕니다.</li>
+<li>각 chunk를 embedding합니다.</li>
+<li>vector와 <code>page_content</code>, metadata를 함께 저장합니다.</li>
+</ol>
+<p>문서가 바뀌지 않았다면 매 질문마다 이 단계를 반복할 필요는 없습니다.</p>
+<h3>Querying</h3>
+<ol>
+<li>새 질문을 같은 embedding model로 embedding합니다.</li>
+<li>저장된 chunk vector와 similarity를 비교합니다.</li>
+<li>상위 k개의 chunk와 metadata를 반환합니다.</li>
+</ol>
+<p>질문마다 필요한 것은 query embedding과 검색입니다. 실습에서 같은 문서를 매번 다시 embedding하면 비용과 시간이
+불필요하게 늘어납니다.</p>
+<h2>5. 먼저 offline 모형으로 데이터 흐름 확인하기</h2>
+<p>제공된 실습은 <code>ConceptEmbedding</code>이라는 결정론적 수업용 모형을 사용합니다. 동의어 일부를 같은 대표 개념으로 바꾸고
+hash bucket에 세어 벡터를 만드는 단순한 장치입니다. 실제 embedding model의 언어 이해나 일반화 성능을 흉내 내지
+않습니다. 이 모형을 쓰는 목적은 API key, 비용, 네트워크 상태와 관계없이 아래 사항을 먼저 검증하는 것입니다.</p>
+<ul>
+<li>document와 query가 같은 interface로 vector가 되는가?</li>
+<li>VectorStore가 본문과 metadata를 함께 반환하는가?</li>
+<li>답이 없는 질문에도 nearest result가 반환되는가?</li>
+<li>같은 입력으로 다시 실행했을 때 평가 결과가 같은가?</li>
+</ul>
+<p><code>InMemoryVectorStore</code>의 similarity 계산에는 NumPy가 필요합니다. 현재 공개 requirements를 바꾸기 전 제작 검증 명령은
+다음과 같습니다.</p>
+<pre><code class="language-text">uv run --python 3.11 --with-requirements requirements.txt --with numpy==2.4.3 \
+  Jupyter에서 notebooks/07_embeddings_vector_search.ipynb를 위에서 아래로 실행합니다.
+</code></pre>
+<p>offline 모형에서 잘 나온 결과는 실제 embedding의 품질을 증명하지 않습니다. 반대로 이 모형의 실패도 실제 model이 반드시
+실패한다는 뜻이 아닙니다. Section 8의 평가 방법을 연습하기 위한 통제된 baseline으로만 사용합니다.</p>
+<h2>6. 선택 실습: 실제 API readiness gate</h2>
+<p>필수 실습의 <code>ConceptEmbedding</code> 통과는 interface와 데이터 흐름의 재현성만 확인합니다. 실제 embedding model이 한국어
+표현 변경을 적절히 검색하는지는 증명하지 않습니다. 이를 혼동하지 않도록 notebook은 다음 두 상태를 따로 출력합니다.</p>
+<ul>
+<li><code>offline fixture gate: PASS</code>: 비용 없는 수업용 모형과 metadata 검사가 통과함</li>
+<li><code>real API gate: PASS</code>: 실제 <code>text-embedding-3-small</code>로 direct/paraphrase 검색 검사가 통과함</li>
+</ul>
+<p>기본 실행에서는 real API gate가 <code>SKIPPED</code>되므로 비용이 발생하지 않습니다. 담당자가 비용 사용을 승인하고 환경변수에
+key가 준비된 경우에만 다음처럼 명시적으로 실행합니다.</p>
+<pre><code class="language-text">$env:RUN_LIVE_API = &quot;1&quot;
+$env:OPENAI_API_KEY = &quot;수업용_key&quot;
+uv run --python 3.11 --with-requirements requirements.txt --with notebook jupyter notebook notebooks
+</code></pre>
+<p>공유 notebook이나 shell history에 key를 직접 입력하지 말고, 실제 수업에서는 승인된 secret 주입 방식을 사용합니다.
+코드는 key의 존재만 확인하며 값을 출력하거나 저장하지 않습니다. 실행 전에 다음 계획을 먼저 출력합니다.</p>
+<pre><code class="language-text">model: text-embedding-3-small
+document inputs: 최대 5
+query inputs: 정확히 3 (direct / paraphrase / unanswerable)
+total characters: 최대 12,000
+planned requests: 4 (문서 batch 1회 + query 3회)
+approximate token range: 문자 수 기반 범위이며 과금용 정확한 token 수가 아님
+</code></pre>
+<p>문서는 한 번만 embedding하고 세 query에서 같은 index를 재사용합니다. 응답에 <code>usage</code>가 제공되면 요청별
+<code>prompt_tokens</code>와 <code>total_tokens</code>를 출력해 실제 사용량을 남깁니다. 제공되지 않으면 provider usage 기록을 확인합니다.
+답이 없는 질문에도 top-1은 반환될 수 있으므로 real gate는 direct/paraphrase의 기대 source만 assert하고,
+unanswerable 결과는 Section 9의 답변 거부 정책으로 넘깁니다.</p>
+<p>2026-07-14에 확인한 OpenAI 공식 가격표에서 <code>text-embedding-3-small</code>은 입력 100만 token당 USD 0.02입니다. 가격은
+변경될 수 있으므로 실행 직전에 공식 가격표를 다시 확인합니다. 문자 기반 token 범위는 호출 규모를 사전 점검하기 위한
+근사치이며 청구액 계산의 근거로 사용하지 않습니다.</p>
+<aside class="source-note" data-source="openai-api-pricing">
+  <button type="button" class="source-info" aria-label="Embedding 가격 참고자료 보기">ⓘ</button>
+  <div class="source-card" hidden>
+    가격 확인: OpenAI 공식 API Pricing (확인일: 2026-07-14). 실제 실행 전에 최신 가격을 다시 확인해야 합니다.
+  </div>
+</aside>
+
+<h2>7. Embedding adapter와 in-memory VectorStore</h2>
+<p>이 Section에서는 별도 서버나 database를 설치하지 않습니다. LangChain의 in-memory VectorStore를 사용해 한 Python
+process 안에서 vector와 <code>Document</code>를 관리합니다. process를 종료하면 index가 사라지므로 제품용 영구 저장소가 아닙니다.</p>
+<p>구조는 다음과 같습니다.</p>
+<pre><code class="language-python">from openai import OpenAI
+from langchain_core.embeddings import Embeddings
+from langchain_core.vectorstores import InMemoryVectorStore
+
+
+class OpenAIEmbeddingAdapter(Embeddings):
+    def __init__(self, client: OpenAI, model: str):
+        self.client = client
+        self.model = model
+
+    def embed_documents(self, texts: list[str]) -&gt; list[list[float]]:
+        response = self.client.embeddings.create(model=self.model, input=texts)
+        return [item.embedding for item in response.data]
+
+    def embed_query(self, text: str) -&gt; list[float]:
+        response = self.client.embeddings.create(model=self.model, input=text)
+        return response.data[0].embedding
+</code></pre>
+<p>adapter는 OpenAI API의 embedding 결과를 LangChain <code>Embeddings</code> interface에 맞춥니다. adapter를 작성했다고 embedding
+algorithm을 직접 구현한 것은 아닙니다. 실제 벡터는 API의 embedding model이 만듭니다.</p>
+<pre><code class="language-python">embeddings = OpenAIEmbeddingAdapter(
+    client=OpenAI(),
+    model=&quot;text-embedding-3-small&quot;,
+)
+vector_store = InMemoryVectorStore(embedding=embeddings)
+vector_store.add_documents(chunks)
+</code></pre>
+<p>모델명은 제작 시점의 공식 문서와 수업 계정 지원 여부를 다시 확인한 뒤 고정합니다.</p>
+<aside class="source-note" data-source="langchain-inmemory-vectorstore">
+  <button type="button" class="source-info" aria-label="InMemoryVectorStore 참고자료 보기">ⓘ</button>
+  <div class="source-card" hidden>
+    Interface 확인: LangChain 공식 API reference의 InMemoryVectorStore 및 Embeddings interface
+    (접속일: 2026-07-14). Adapter와 corpus는 독자적으로 작성했습니다.
+  </div>
+</aside>
+
+<h2>8. 필수 실습 A: lexical과 vector 검색 비교</h2>
+<p>Section 6의 corpus를 사용해 다음 세 종류의 질문을 준비합니다.</p>
+<ol>
+<li><strong>단어가 직접 겹치는 질문:</strong> “API key를 어디에 올리면 안 되나요?”</li>
+<li><strong>표현을 바꾼 질문:</strong> “비밀 인증정보가 유출된 것 같으면 어떻게 대응하나요?”</li>
+<li><strong>답이 없는 질문:</strong> “연구실 정기 회의는 매주 몇 시인가요?”</li>
+</ol>
+<p>각 질문에 대해 lexical 검색과 vector 검색의 top 3를 다음 형태로 출력합니다.</p>
+<pre><code class="language-text">[vector rank 1]
+source_id: ...
+chunk_id: ...
+score: ...
+preview: ...
+</code></pre>
+<p>비교할 때 모델 답변은 만들지 않습니다. 이번 실습의 대상은 retrieved chunks입니다.</p>
+<h3>관찰 질문</h3>
+<ul>
+<li>표현을 바꾼 질문에서 어떤 검색이 더 직접적인 근거를 찾았나요?</li>
+<li>같은 주제지만 질문에 답하지 않는 chunk가 높은 순위에 있나요?</li>
+<li>답이 없는 질문에서도 top 1이 반환되나요?</li>
+<li>Section 6의 small/large chunk 설정 중 어느 쪽이 더 적절한 근거를 반환했나요?</li>
+</ul>
+<h2>9. 필수 실습 B: model과 index의 일관성</h2>
+<p>다음 metadata를 index 단위로 기록합니다.</p>
+<pre><code class="language-python">index_config = {
+    &quot;embedding_model&quot;: &quot;text-embedding-3-small&quot;,
+    &quot;source_version&quot;: &quot;section06-v1&quot;,
+    &quot;split_setting&quot;: &quot;small&quot;,
+}
+</code></pre>
+<p>query model이 <code>index_config["embedding_model"]</code>과 다르면 검색을 실행하기 전에 오류를 냅니다. 실제 저장 시스템에서는
+model명 외에도 vector 차원, 전처리 방식, corpus version을 함께 관리해야 합니다.</p>
+<h2>10. 높은 similarity가 정답을 보장하지 않는 이유</h2>
+<p>답이 없는 회의 시간 질문에도 검색기는 가장 가까운 chunk를 반환할 수 있습니다. 이때 높은 순위는 “전체 후보 중 상대적으로
+가깝다”는 뜻이지 “이 문서에 정답이 있다”는 보장이 아닙니다.</p>
+<p>또한 score threshold 하나만으로 답변 가능 여부를 완벽히 결정할 수 없습니다. 질문 종류와 corpus에 따라 점수 분포가 달라지고,
+embedding model이나 distance 함수가 바뀌면 점수 해석도 달라집니다. Section 8에서 기대 source가 있는 평가 질문 세트를
+만들고 top-k와 threshold를 실제 결과로 조정합니다.</p>
+<h2>11. 실패 진단 순서</h2>
+<ol>
+<li>질문에 답하는 내용이 corpus에 실제로 있는지 확인합니다.</li>
+<li>해당 내용이 loader와 splitter를 거쳐 온전히 남았는지 확인합니다.</li>
+<li>문서와 질문이 같은 embedding model로 처리되었는지 확인합니다.</li>
+<li>검색된 chunk의 본문과 metadata를 직접 봅니다.</li>
+<li>top-k와 filter를 확인합니다.</li>
+<li>그 다음 embedding model 변경을 검토합니다.</li>
+</ol>
+<h2>12. 결과 확인</h2>
+<ul>
+<li>embedding과 similarity의 관계를 자기 말로 설명했습니다.</li>
+<li>cosine similarity dry run을 API 없이 실행했습니다.</li>
+<li>index 단계와 query 단계를 구분했습니다.</li>
+<li>Section 6 chunk의 metadata가 검색 결과에도 유지되는지 확인했습니다.</li>
+<li>세 종류의 질문에서 lexical과 vector 검색 결과를 비교했습니다.</li>
+<li>답이 없는 질문에도 nearest result가 나올 수 있음을 확인했습니다.</li>
+<li>similarity와 correctness가 다르다는 사례를 하나 기록했습니다.</li>
+</ul>
+<h2>13. 짧은 제출물</h2>
+<ol>
+<li>사용한 embedding model과 chunk 설정</li>
+<li>lexical보다 vector 검색이 나았던 질문 한 개</li>
+<li>vector 검색이 실패하거나 애매했던 질문 한 개</li>
+<li>Section 8에서 측정할 retrieval 가설 한 개</li>
+</ol>
+<h2>14. 선택 심화</h2>
+<ul>
+<li>embedding vector 차원과 저장 공간의 관계 조사</li>
+<li>query/document embedding을 batch 처리했을 때 요청 수와 시간 비교</li>
+<li>서로 다른 embedding model은 같은 질문 세트에서 별도 index로 비교</li>
+<li>Chroma 또는 FAISS는 Section 8 이후 프로젝트 필요가 확인될 때 도입</li>
+</ul>
+<h2>참고자료 및 저작권 안내</h2>
+<p>이 페이지의 설명, 구성 및 실습 예제는 AMSL 인턴 학습을 위해 독자적으로 작성했습니다. 학습 범위 선정에는
+테디노트의 <em>&lt;랭체인LangChain 노트&gt; - LangChain 한국어 튜토리얼</em>을 참고했으며, 원문 문장·도표·예제 설명을
+전재하거나 변형하지 않았습니다. 해당 자료의 저작권과 이용 조건은 원 저작자에게 있습니다.</p>
+<ul>
+<li>OpenAI, “Embeddings,” <a href="https://platform.openai.com/docs/guides/embeddings">https://platform.openai.com/docs/guides/embeddings</a> (접속일: 2026-07-14)</li>
+<li>OpenAI, “Create embeddings,” <a href="https://platform.openai.com/docs/api-reference/embeddings/create">https://platform.openai.com/docs/api-reference/embeddings/create</a>
+  (접속일: 2026-07-14)</li>
+<li>OpenAI, “API Pricing,” <a href="https://openai.com/api/pricing/">https://openai.com/api/pricing/</a> (접속일: 2026-07-14;
+  <code>text-embedding-3-small</code> USD 0.02 / 1M input tokens, 실행 전 재확인 필요)</li>
+<li>LangChain, “InMemoryVectorStore,”
+  <a href="https://reference.langchain.com/python/langchain-core/vectorstores/in_memory/InMemoryVectorStore">https://reference.langchain.com/python/langchain-core/vectorstores/in_memory/InMemoryVectorStore</a>
+  (접속일: 2026-07-14)</li>
+<li>LangChain, “Embeddings,”
+  <a href="https://python.langchain.com/api_reference/core/embeddings/langchain_core.embeddings.embeddings.Embeddings.html">https://python.langchain.com/api_reference/core/embeddings/langchain_core.embeddings.embeddings.Embeddings.html</a>
+  (접속일: 2026-07-14)</li>
+<li>테디노트, <em>&lt;랭체인LangChain 노트&gt; - LangChain 한국어 튜토리얼</em>, WikiDocs,
+  <a href="https://wikidocs.net/book/14314">https://wikidocs.net/book/14314</a> (접속일: 2026-07-14, 웹 문서 표기 라이선스: CC BY-NC-ND 2.0 KR)</li>
+</ul>
+<p>이 학습자료에는 외부 저장소에서 복사·수정한 코드가 없습니다.</p><nav class="section-nav" aria-label="Section 이동"><a href="06.html">← Section 6</a><a href="08.html">Section 8 →</a></nav></main><script>
+document.querySelectorAll('.source-info').forEach((button)=>{button.addEventListener('click',()=>{const card=button.nextElementSibling;const opening=card.hidden;document.querySelectorAll('.source-card').forEach((item)=>item.hidden=true);card.hidden=!opening;button.setAttribute('aria-expanded',String(opening));});});
+document.addEventListener('keydown',(event)=>{if(event.key==='Escape'){document.querySelectorAll('.source-card').forEach((item)=>item.hidden=true);document.querySelectorAll('.source-info').forEach((item)=>item.setAttribute('aria-expanded','false'));}});
+</script></body></html>

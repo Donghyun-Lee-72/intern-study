@@ -19,7 +19,7 @@ https://intern-study.donghyunlee.me
 3. PowerShell에서 압축을 푼 루트 폴더로 이동합니다.
 4. uv로 Python 3.11과 Jupyter를 실행합니다.
 5. `00_start_here.ipynb`에서 `requirements.txt` 확인, package import 확인, API 연결 확인을 합니다.
-6. 웹사이트 설명을 읽으며 `01`부터 `05`까지 노트북을 순서대로 실행합니다.
+6. 웹사이트 설명을 읽으며 `01`부터 `12`까지 노트북을 순서대로 실행합니다.
 7. 각 Section 하단의 `결과 확인`과 실행 결과를 비교합니다.
 
 ## 1. 압축 풀기
@@ -98,6 +98,13 @@ OPENAI_MODEL = "gpt-5.4-mini"
 - `notebooks/03_rag.ipynb`: 작은 문서 corpus로 RAG 흐름 이해
 - `notebooks/04_workflow.ipynb`: 검색, 판단, 답변을 연결하는 workflow
 - `notebooks/05_linux_wsl.ipynb`: Linux/WSL2 특강과 uv 원칙
+- `notebooks/06_documents_chunks.ipynb`: 문서 분할과 metadata 보존
+- `notebooks/07_embeddings_vector_search.ipynb`: embedding과 vector 검색
+- `notebooks/08_retrieval_evaluation.ipynb`: retriever 평가
+- `notebooks/09_traceable_vector_rag.ipynb`: 추적 가능한 Vector RAG
+- `notebooks/10_rag_evaluation.ipynb`: RAG 평가와 개선
+- `notebooks/11_tools_agent_graph.ipynb`: tool, agent, graph 제어
+- `notebooks/12_capstone_starter.ipynb`: 미니 프로젝트 starter와 평가 harness
 
 웹사이트에서 해당 Section을 읽고, 같은 번호의 노트북을 실행합니다.
 실행 결과는 웹사이트 각 Section 하단의 `결과 확인`과 비교합니다.

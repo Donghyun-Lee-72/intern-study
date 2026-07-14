@@ -3,6 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" href="data:,">
   <title>AMSL Agentic AI Study Portal</title>
   <style>
     :root {
@@ -570,13 +571,21 @@
           <a href="#section-3">3. 문서 근거</a>
           <a href="#section-4">4. Workflow</a>
           <a href="#section-5">5. Linux 특강</a>
+          <a href="#section-6">6. 문서 분할</a>
+          <a href="#section-7">7. Vector 검색</a>
+          <a href="#section-8">8. Retriever 평가</a>
+          <a href="#section-9">9. Vector RAG</a>
+          <a href="#section-10">10. RAG 평가</a>
+          <a href="#section-11">11. Tool과 Agent</a>
+          <a href="#section-12">12. 미니 프로젝트</a>
         </div>
         <div class="button-row">
           <a class="button primary" href="downloads/amsl-internship-practice-files.zip" download>실습 파일 ZIP 다운로드</a>
+          <a class="button" href="patch-notes.html">2026-07-15 패치노트</a>
         </div>
         <div class="callout amber">
           처음 시작할 때는 실습 ZIP 하나만 받으면 됩니다. ZIP 안에는 루트 <code>requirements.txt</code>와
-          Section 0-5 노트북이 들어 있습니다. 실행용 Python script 묶음은 두지 않고,
+          Section 0-12 노트북과 확장 실습용 데이터가 들어 있습니다. 실행용 Python script 묶음은 두지 않고,
           웹사이트에서 학습하고 ipynb에서 실습하는 구조로 단순화했습니다.
         </div>
 
@@ -975,6 +984,55 @@ uv run --python 3.11 python --version</code></pre>
             </div>
           </details>
         </article>
+
+        <article class="learning-section" id="section-6">
+          <h3>Section 6: 긴 문서를 검색 가능한 단위로 만들기</h3>
+          <div class="section-meta"><span>필수 110-140분</span><span>Document</span><span>Chunk</span><span>Metadata</span></div>
+          <p>긴 문서를 나누고도 원문의 위치와 출처를 잃지 않도록 문서·chunk 데이터 계약을 만듭니다.</p>
+          <a class="button primary" href="sections/06.html">Section 6 학습하기</a>
+        </article>
+
+        <article class="learning-section" id="section-7">
+          <h3>Section 7: Embedding과 VectorStore로 의미 검색하기</h3>
+          <div class="section-meta"><span>필수 120-150분</span><span>Embedding</span><span>VectorStore</span><span>Cosine similarity</span></div>
+          <p>단어가 직접 겹치지 않는 질문도 찾는 의미 검색을 만들고 lexical baseline과 실제 embedding 결과를 비교합니다.</p>
+          <a class="button primary" href="sections/07.html">Section 7 학습하기</a>
+        </article>
+
+        <article class="learning-section" id="section-8">
+          <h3>Section 8: Retriever를 설계하고 검색 품질 점검하기</h3>
+          <div class="section-meta"><span>필수 120-150분</span><span>Recall@k</span><span>Threshold</span><span>Failure analysis</span></div>
+          <p>작은 gold set을 기준으로 검색 품질을 수치화하고 query·chunk·corpus 문제를 구분합니다.</p>
+          <a class="button primary" href="sections/08.html">Section 8 학습하기</a>
+        </article>
+
+        <article class="learning-section" id="section-9">
+          <h3>Section 9: 근거가 추적되는 Vector RAG 만들기</h3>
+          <div class="section-meta"><span>필수 130-160분</span><span>Structured RAG</span><span>Citation</span><span>Validation</span></div>
+          <p>검색·생성·검증을 분리하고 답변의 quote가 실제 검색 원문에 존재하는지 검사합니다.</p>
+          <a class="button primary" href="sections/09.html">Section 9 학습하기</a>
+        </article>
+
+        <article class="learning-section" id="section-10">
+          <h3>Section 10: RAG를 평가하고 개선하기</h3>
+          <div class="section-meta"><span>필수 120-150분</span><span>Evaluation</span><span>Baseline</span><span>Semantic review</span></div>
+          <p>검색과 생성을 따로 평가하고 한 번에 한 설정만 바꾸어 실패 원인과 개선 효과를 기록합니다.</p>
+          <a class="button primary" href="sections/10.html">Section 10 학습하기</a>
+        </article>
+
+        <article class="learning-section" id="section-11">
+          <h3>Section 11: Tool을 사용하는 Agent와 LangGraph</h3>
+          <div class="section-meta"><span>필수 130-170분</span><span>Tool schema</span><span>Routing</span><span>Safety</span></div>
+          <p>다음 행동을 선택하는 agent와 실행을 통제하는 application을 분리하고 종료·권한·오류 정책을 검증합니다.</p>
+          <a class="button primary" href="sections/11.html">Section 11 학습하기</a>
+        </article>
+
+        <article class="learning-section" id="section-12">
+          <h3>Section 12: 미니 프로젝트 — 근거 기반 AI 도우미</h3>
+          <div class="section-meta"><span>공통 기반 + 개인 개선</span><span>RAG</span><span>Agent</span><span>Evaluation</span></div>
+          <p>공통 corpus와 평가 세트로 재현 가능한 baseline을 만든 뒤 각자 한 가지 개선을 측정합니다.</p>
+          <a class="button primary" href="sections/12.html">Section 12 학습하기</a>
+        </article>
       </section>
 
       <section id="cost" hidden>
@@ -995,9 +1053,9 @@ uv run --python 3.11 python --version</code></pre>
           별도로 안내받지 않았다면 개인 OpenAI 계정에 결제수단을 추가할 필요가 없습니다.
         </div>
         <div class="callout blue">
-          Section 0-4 노트북을 한 번씩 정상 실행하면 대략 5-8회 정도의 API 요청이 발생합니다.
-          JSON 형식 수정 재시도, 모델 응답 길이, 재실행 횟수에 따라 더 늘 수 있으므로 여유 있게 실행하고,
-          실패한 셀만 다시 실행합니다. Section 5는 API를 호출하지 않습니다.
+          Section 0-4는 실제 생성 모델을 호출합니다. Section 5-6, 8, 10-12의 필수 실습은 API를 호출하지 않고,
+          Section 7과 9는 기본 실습을 오프라인으로 실행한 뒤 선택적으로 작은 실제 API 검증을 수행합니다.
+          모델 응답 길이와 재실행 횟수에 따라 사용량이 늘 수 있으므로 실패한 셀만 다시 실행합니다.
         </div>
         <h3>비용 계산은 어떻게 보나요?</h3>
         <p>

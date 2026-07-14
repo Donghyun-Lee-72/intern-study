@@ -1,0 +1,32 @@
+[
+  {
+    "source_id": "security-guide",
+    "chunk_id": "security-guide:000",
+    "title": "가상 프로젝트 보안 안내",
+    "text": "API key와 비밀번호는 공개 저장소, 노트북 출력, 채팅 메시지에 기록하지 않습니다. 인증정보는 승인된 환경변수 또는 비밀 저장소에서 불러옵니다."
+  },
+  {
+    "source_id": "security-guide",
+    "chunk_id": "security-guide:001",
+    "title": "가상 프로젝트 보안 안내",
+    "text": "인증정보가 노출된 것으로 의심되면 해당 key를 즉시 폐기하고 새 key를 발급합니다. 이후 공개 기록과 실행 로그에서 노출 범위를 확인하고 담당자에게 알립니다."
+  },
+  {
+    "source_id": "data-guide",
+    "chunk_id": "data-guide:000",
+    "title": "가상 데이터 사용 안내",
+    "text": "학습 예제에는 개인정보나 비공개 연구자료를 넣지 않습니다. 공개 가능한 자체 제작 자료 또는 재사용 조건을 확인한 자료만 사용합니다."
+  },
+  {
+    "source_id": "meeting-guide",
+    "chunk_id": "meeting-guide:000",
+    "title": "가상 미팅 안내",
+    "text": "미팅 전에 질문과 실행 오류를 스레드에 정리합니다. 정기 미팅의 요일과 시각은 이 문서에서 정하지 않으며 별도 공지를 따릅니다."
+  },
+  {
+    "source_id": "submission-guide",
+    "chunk_id": "submission-guide:000",
+    "title": "가상 실습 제출 안내",
+    "text": "실습 결과에는 사용한 설정, 성공 사례, 실패 사례, 다음에 확인할 가설을 포함합니다. 코드 전체를 암기하는 것보다 각 단계의 입력과 출력을 설명하는 것이 중요합니다."
+  }
+]

@@ -1,0 +1,44 @@
+[
+  {
+    "case_id": "answerable-secret-storage",
+    "question": "API key는 어디에 보관해야 하나요?",
+    "answerable": true,
+    "expected_source_ids": ["security-guide"],
+    "required_claims": ["공개 저장소에 기록하지 않는다", "환경변수 또는 비밀 저장소에서 불러온다"]
+  },
+  {
+    "case_id": "answerable-secret-leak",
+    "question": "인증정보 유출이 의심될 때 첫 대응은 무엇인가요?",
+    "answerable": true,
+    "expected_source_ids": ["security-guide"],
+    "required_claims": ["key를 폐기한다", "새 key를 발급한다"]
+  },
+  {
+    "case_id": "answerable-private-data",
+    "question": "학습 예제에 비공개 연구자료를 넣어도 되나요?",
+    "answerable": true,
+    "expected_source_ids": ["data-guide"],
+    "required_claims": ["넣지 않는다"]
+  },
+  {
+    "case_id": "answerable-submission",
+    "question": "실습 결과에 무엇을 포함해야 하나요?",
+    "answerable": true,
+    "expected_source_ids": ["submission-guide"],
+    "required_claims": ["설정", "성공 사례", "실패 사례", "가설"]
+  },
+  {
+    "case_id": "unanswerable-meeting-time",
+    "question": "정기 미팅은 매주 월요일 몇 시인가요?",
+    "answerable": false,
+    "expected_source_ids": [],
+    "required_claims": []
+  },
+  {
+    "case_id": "unanswerable-vacation",
+    "question": "여름 휴가 신청 마감은 언제인가요?",
+    "answerable": false,
+    "expected_source_ids": [],
+    "required_claims": []
+  }
+]

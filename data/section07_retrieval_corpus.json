@@ -1,0 +1,32 @@
+[
+  {
+    "source_id": "security-guide",
+    "title": "가상 프로젝트 보안 안내",
+    "category": "security",
+    "text": "수업용 API key와 access token은 비밀 인증정보다. 공개 저장소, 채팅방, 발표 화면에 올리지 않는다. 노출이 의심되면 담당자에게 알리고 기존 키의 폐기와 재발급 여부를 확인한다."
+  },
+  {
+    "source_id": "debug-guide",
+    "title": "오류 질문 작성 안내",
+    "category": "development",
+    "text": "오류를 공유할 때는 실행 명령, 작업 폴더, 셀 위치, 오류 메시지, 모델명과 사용한 shell을 적는다. 비밀 키와 개인 경로는 가린다. 마지막 한 줄만 보내지 말고 처음 발생한 예외를 확인할 수 있는 범위를 포함한다."
+  },
+  {
+    "source_id": "rag-policy",
+    "title": "근거 기반 답변 정책",
+    "category": "rag",
+    "text": "RAG 답변을 만들기 전에 검색된 문서를 확인한다. 인용문은 실제 검색된 chunk에 존재해야 한다. 검색 결과에 답이 없으면 내용을 추측하지 않고 not_answered로 처리하며, 판단이 필요하면 needs_review로 보낸다."
+  },
+  {
+    "source_id": "environment-guide",
+    "title": "실습 환경 안내",
+    "category": "development",
+    "text": "기본 실습 환경은 Windows PowerShell, uv, Python 3.11과 Jupyter Notebook이다. 전역 python 명령이 실패하면 재설치부터 하지 말고 uv 버전과 uv로 실행한 Python 버전을 확인한다. VS Code kernel도 함께 확인한다."
+  },
+  {
+    "source_id": "evaluation-guide",
+    "title": "실습 결과 평가 안내",
+    "category": "evaluation",
+    "text": "실행 성공만 기록하지 말고 입력, 예상 결과와 실제 결과의 차이를 남긴다. 검색 평가는 기대 source와 실제 순위를 비교한다. 답이 없는 질문도 포함하고 설정을 바꿀 때에는 한 번에 하나의 조건만 변경한다."
+  }
+]

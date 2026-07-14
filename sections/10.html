@@ -1,0 +1,255 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" href="data:,">
+<title>Section 10 | AMSL Agentic AI Study</title><style>
+:root{--bg:#f5f7fb;--panel:#fff;--text:#111827;--muted:#5b6472;--line:#d8dee8;--teal:#0f766e;--blue:#1d4ed8;--soft:#ecfdf5}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;line-height:1.7}
+a{color:var(--blue)}.wrap{width:min(920px,calc(100% - 32px));margin:auto}header{background:#fff;border-bottom:1px solid var(--line);padding:22px 0}.back{font-weight:800;text-decoration:none}
+main{min-width:0;margin:24px auto 56px;padding:clamp(20px,4vw,42px);background:var(--panel);border:1px solid var(--line);border-radius:10px;box-shadow:0 14px 34px rgba(15,23,42,.08);overflow-wrap:anywhere}
+h1{font-size:clamp(28px,4vw,42px);line-height:1.2;margin:0 0 24px}h2{margin:38px 0 12px;font-size:25px}h3{margin:30px 0 10px;font-size:20px}h4{margin:24px 0 8px}p{margin:0 0 15px}li+li{margin-top:6px}
+pre{max-width:100%;overflow:auto;padding:16px;background:#111827;color:#f8fafc;border-radius:8px;overflow-wrap:normal}code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace}p code,li code{background:#eef2f7;padding:2px 5px;border-radius:4px}
+blockquote{margin:18px 0;padding:14px 18px;border-left:4px solid var(--teal);background:var(--soft)}table{width:100%;max-width:100%;border-collapse:collapse;display:block;overflow:auto}th,td{border:1px solid var(--line);padding:9px;text-align:left}
+.source-note{display:block;margin:14px 0;position:relative}.source-info{border:1px solid var(--line);border-radius:999px;background:#fff;color:var(--blue);font-weight:800;cursor:pointer}.source-card{margin-top:8px;padding:12px;border:1px solid var(--line);border-radius:7px;background:#eff6ff;color:#334155}
+.section-nav{display:flex;justify-content:space-between;gap:12px;margin-top:40px;padding-top:22px;border-top:1px solid var(--line)}.section-nav a{font-weight:800}@media(max-width:640px){.section-nav{flex-direction:column}}
+</style></head>
+<body><header><div class="wrap"><a class="back" href="../index.html#section-10">← 학습 포털</a></div></header>
+<main class="wrap"><h1>Section 10. RAG를 평가하고 개선하기</h1>
+<blockquote>
+<p>예상 시간: 필수 120~150분 / 선택 심화 30~60분<br />
+선수 과정: Section 8~9<br />
+API 비용: 필수 실습은 API 호출 없음. LLM judge는 선택이며 필수 통과 조건이 아닙니다.</p>
+</blockquote>
+<h2>이번 Section의 위치</h2>
+<p>Section 9에서 인용 검사를 통과하는 RAG pipeline을 만들었습니다. 이제 한두 질문의 성공 화면이 아니라 고정된 질문 세트와
+평가 규칙으로 변경 전후를 비교합니다. retrieval과 generation을 따로 평가해야 어느 설정을 고쳐야 하는지 알 수 있습니다.</p>
+<h3>핵심 질문</h3>
+<blockquote>
+<p>데모가 한 번 성공한 것과 시스템이 반복해서 안정적으로 동작하는 것을 어떻게 구분할까요?</p>
+</blockquote>
+<h3>학습 목표</h3>
+<ol>
+<li>평가 case에 question, expected source, reference claims, answerability를 기록합니다.</li>
+<li>source retrieval, exact quote integrity, semantic claim support를 서로 다른 검사로 구분합니다.</li>
+<li>baseline에서 설정 하나만 바꾼 candidate를 같은 데이터로 비교합니다.</li>
+<li>답이 없는 질문의 무근거 답변과 답할 수 있는 질문의 과도한 거부를 함께 측정합니다.</li>
+<li>자동 검사와 사람 rubric의 역할을 구분합니다.</li>
+<li>LLM-as-a-judge의 변동성과 편향을 설명합니다.</li>
+</ol>
+<h3>이번 Section의 필수선과 발전선</h3>
+<ul>
+<li><strong>필수선:</strong> 같은 6개 사례에서 baseline과 한 가지 변경만 비교하고, 질문별 실패 세 건을 설명합니다.</li>
+<li><strong>발전선:</strong> LLM judge, 더 큰 평가 세트, 통계적 신뢰구간은 선택입니다.</li>
+<li><strong>복습 신호:</strong> 평균 하나로 결론을 내리고 싶어진다면 질문별 결과로 돌아가 retrieval·상태·근거 중 어디가 변했는지 확인합니다.</li>
+</ul>
+<p>용어를 많이 암기하는 장이 아닙니다. 여러 평가 개념을 완벽히 정의하는 것보다 “검색 실패와 답변 실패를 같은 점수로
+섞지 않는다”와 “동시에 여러 설정을 바꾸지 않는다”를 실제 비교 결과로 보여주는 것이 필수입니다.</p>
+<h2>1. 시작 전 확인</h2>
+<ul>
+<li>Section 8의 Recall@k는 무엇을 측정했나요?</li>
+<li>정답 chunk가 검색되었는데 최종 답변이 틀릴 수 있는 이유는 무엇인가요?</li>
+<li>답변이 reference와 단어가 다르지만 의미는 같을 때 exact match는 어떻게 될까요?</li>
+<li>설정 두 개를 동시에 바꾸면 개선 원인을 알 수 있을까요?</li>
+</ul>
+<h2>2. 평가 단위를 먼저 고정하기</h2>
+<p>각 case는 최소 다음 필드를 가집니다.</p>
+<pre><code class="language-json">{
+  &quot;case_id&quot;: &quot;answerable-secret-leak&quot;,
+  &quot;question&quot;: &quot;인증정보 유출이 의심될 때 첫 대응은 무엇인가요?&quot;,
+  &quot;answerable&quot;: true,
+  &quot;expected_source_ids&quot;: [&quot;security-guide&quot;],
+  &quot;required_claims&quot;: [&quot;key를 폐기한다&quot;, &quot;새 key를 발급한다&quot;]
+}
+</code></pre>
+<p><code>reference answer</code>를 문장 하나로만 두면 같은 뜻의 다른 표현을 오답으로 처리하기 쉽습니다. 이 실습은 반드시 포함해야 할
+핵심 claim을 함께 기록합니다. claim 역시 완전한 정답 판정기가 아니므로 자동 coverage와 사람 검토를 같이 사용합니다.</p>
+<p>평가 데이터는 답할 수 있는 질문만 모으지 않습니다. 범위 밖 질문, corpus에 없는 일정 질문처럼 <code>answerable=false</code>인
+case를 반드시 포함해야 무근거 답변률을 볼 수 있습니다.</p>
+<h2>3. Retrieval과 generation 평가 분리</h2>
+<p>질문별 로그는 다음 두 층으로 나눕니다.</p>
+<h3>Retrieval</h3>
+<ul>
+<li>기대 source가 top-k 안에 있었는가?</li>
+<li>답이 없는 질문에서 threshold 이후 결과가 비었는가?</li>
+<li>어떤 chunk와 score가 반환되었는가?</li>
+</ul>
+<h3>Generation과 정책</h3>
+<ul>
+<li>답변 가능 여부 상태가 맞는가?</li>
+<li>필요한 claim이 포함되었는가?</li>
+<li>모든 주요 claim이 retrieved context에 근거하는가?</li>
+<li>질문에 직접 답하며 무관한 내용을 늘리지 않았는가?</li>
+</ul>
+<p>retrieval이 실패한 case에서 prompt만 바꾸는 것은 우선순위가 아닙니다. 반대로 정답 chunk가 top-k에 있는데 claim을 누락했다면
+retriever 변경보다 generation prompt, context 구성 또는 output policy를 확인합니다.</p>
+<h3>특히 혼동하기 쉬운 세 단계</h3>
+<table>
+<thead>
+<tr>
+<th>검사</th>
+<th>묻는 질문</th>
+<th>이 실습의 판정 방식</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Source retrieval</td>
+<td>기대한 source/chunk가 top-k에 들어왔는가?</td>
+<td>source ID로 자동 확인</td>
+</tr>
+<tr>
+<td>Exact quote integrity</td>
+<td>인용한 문장이 실제로 검색된 원문에 글자 그대로 있는가?</td>
+<td>chunk 범위와 substring으로 자동 확인</td>
+</tr>
+<tr>
+<td>Semantic claim support</td>
+<td>그 인용이 답변의 주요 주장을 실제로 지지하는가?</td>
+<td>답변·주장·인용을 나란히 읽는 사람 검토</td>
+</tr>
+</tbody>
+</table>
+<p>세 검사는 누적 관계지만 서로를 대신하지 않습니다. 기대 source를 찾았어도 엉뚱한 문장을 인용할 수 있고, 원문에 정확히
+존재하는 문장을 인용했어도 답변의 결론과 무관하거나 오히려 모순될 수 있습니다. 따라서 이 Section에서 <code>substring</code> 검사는
+<strong>인용 무결성</strong>만 증명합니다. 의미적 사실성이나 주장의 참을 증명한다고 표현하지 않습니다.</p>
+<aside class="source-note" data-source="langsmith-rag-evaluation">
+  <button type="button" class="source-info" aria-label="RAG 평가 참고자료 보기">ⓘ</button>
+  <div class="source-card" hidden>
+    평가 개념과 retrieval/generation 분리 확인: LangSmith 공식 문서, Evaluate a RAG application
+    (접속일: 2026-07-14). 평가 데이터와 코드는 독자적으로 작성했습니다.
+  </div>
+</aside>
+
+<h2>4. 지표를 해석하는 최소 기준</h2>
+<p>이 실습에서 사용하는 값은 0 또는 1을 case별로 기록한 뒤 평균냅니다.</p>
+<ul>
+<li><code>retrieval_success</code>: 기대 source가 검색되었는가? 답 없음 case에서는 결과가 비었는가?</li>
+<li><code>correct_status</code>: answerable에 맞게 answered/not_answered를 선택했는가?</li>
+<li><code>exact_quote_integrity</code>: <code>answered</code> 응답에서 citation의 chunk가 검색되었고 quote가 해당 원문에 정확히 존재하는가?</li>
+<li><code>required_claim_coverage</code>: reference의 핵심 claim 중 답에 포함된 비율</li>
+</ul>
+<p><code>semantic_claim_support</code>는 주요 주장별 0/1/2 사람 rubric으로 따로 기록합니다. <code>required_claim_coverage</code> 역시 문자열 포함
+여부를 보는 학습용 신호일 뿐, 동의어·부정·조건·모순을 올바르게 이해하는 의미 판정기가 아닙니다.
+인용이 없는 <code>not_answered</code>/<code>needs_review</code>는 quote 검사 분모에서 제외하고 <code>해당 없음</code>으로 둡니다. 이를 성공 1점으로 세면
+답변을 모두 거부하는 시스템이 인용 점수만 높아지는 왜곡이 생깁니다.</p>
+<p>하나의 평균만 보고 결론내리지 않습니다. 예를 들어 threshold를 높이면 답 없는 질문의 retrieval specificity는 좋아질 수 있지만,
+표현이 다른 정답 질문을 놓칠 수 있습니다. 전체 평균과 case별 실패를 함께 봅니다.</p>
+<h2>5. 수동 rubric</h2>
+<p>각 답변을 0/1/2점으로 사람이 평가하고, 점수 옆에 근거를 한 줄 적습니다.</p>
+<ul>
+<li><strong>Correctness:</strong> reference의 핵심 내용과 모순 없이 질문에 답하는가?</li>
+<li><strong>Semantic claim support:</strong> 답의 모든 주요 주장이 retrieved chunk로 지지되는가? 인용이 무관하거나 모순되지는 않는가?</li>
+<li><strong>Answer relevance:</strong> 질문에 직접 답하며 무관한 설명을 늘리지 않는가?</li>
+</ul>
+<p>0은 핵심 실패, 1은 일부 충족 또는 애매함, 2는 충족입니다. 평가자가 다르면 일부 case를 겹쳐 채점하고 의견이 다른 이유를
+기록합니다. rubric 문구를 바꾸었다면 이전 점수와 직접 비교하지 않습니다.</p>
+<h2>6. 필수 실습 A: baseline 저장</h2>
+<p><code>notebooks/10_rag_evaluation.ipynb</code>는 Section 9의 고정 corpus와 6개 평가 case를 사용합니다. 먼저 baseline의 다음 값을
+함께 저장합니다.</p>
+<pre><code class="language-text">코드/데이터 버전
+retriever 설정(k, threshold)
+generator와 policy 버전
+case별 retrieved chunk ID
+raw answer와 status
+  retrieval metric, exact quote validation error, semantic support 검토 기록
+</code></pre>
+<p>기본 실행은 파일을 쓰지 않습니다. 제출할 때만 <code>SAVE_RESULTS=True</code>로 바꿔 JSON을 만들고, 생성된 결과를 diff로 확인합니다.
+API 모델을 사용했다면 모델명, snapshot, 실행 시각, 재시도 횟수도 추가합니다.</p>
+<h2>7. 필수 실습 B: 한 가지 설정만 변경</h2>
+<p>제공 실습은 <code>k=2</code>를 유지하고 <code>minimum_score</code>만 바꿉니다. 일부러 지나치게 엄격한 candidate를 사용해, 답 없음 검색은
+줄지만 답할 수 있는 질문의 근거까지 사라지는 부작용을 관찰합니다. 실행 전에 가설을 먼저 씁니다.</p>
+<pre><code class="language-text">가설: threshold를 높이면 답이 없는 질문의 무관한 검색 결과가 줄어든다.
+고정: corpus, chunk, 질문, k, generator, policy
+변경: minimum_score 한 개
+관찰할 부작용: answerable 질문의 정답 chunk 누락
+</code></pre>
+<p>결과가 나빠져도 실습 실패가 아닙니다. 가설과 다른 결과를 숨기지 않고 어떤 case가 왜 달라졌는지 설명하는 것이 목표입니다.</p>
+<h2>8. 최소 3개 실패 분석</h2>
+<p>실패를 다음 순서로 분류합니다.</p>
+<ol>
+<li><strong>Corpus:</strong> 정답 내용이 원문에 없음</li>
+<li><strong>Chunk:</strong> 정답 문장이 분할 과정에서 손상됨</li>
+<li><strong>Query/retrieval:</strong> 기대 chunk가 top-k에 없음</li>
+<li><strong>Context:</strong> 검색 결과가 모델 입력에서 누락되거나 잘림</li>
+<li><strong>Generation:</strong> 근거를 받았지만 claim 누락·왜곡·잘못된 citation</li>
+<li><strong>Policy:</strong> 답 없음/검토/답변 상태를 잘못 선택</li>
+<li><strong>Evaluation:</strong> reference 또는 metric 자체가 부정확함</li>
+</ol>
+<p>각 실패에는 관찰 증거, 가장 가능성 높은 원인, 다음에 하나만 바꿔볼 개선안을 적습니다. “모델이 나쁨”처럼 단계가 없는
+설명은 원인 분석으로 인정하지 않습니다.</p>
+<h2>9. LLM-as-a-judge는 보조 도구</h2>
+<p>자유로운 자연어 답변의 correctness와 relevance를 사람이 전부 평가하기 어려울 때 judge 모델을 사용할 수 있습니다. 그러나
+judge는 정답 판정기가 아닙니다.</p>
+<ul>
+<li>prompt의 표현과 평가 순서에 영향을 받을 수 있습니다.</li>
+<li>같은 모델도 시점·설정·샘플링에 따라 결과가 달라질 수 있습니다.</li>
+<li>길거나 자신감 있는 답을 더 좋게 평가하는 편향이 생길 수 있습니다.</li>
+<li>생성 모델과 같은 계열 judge가 같은 오류를 공유할 수 있습니다.</li>
+<li>private context를 외부 judge에 보내기 전에 데이터 정책을 확인해야 합니다.</li>
+</ul>
+<p>따라서 judge를 쓰면 model/version, rubric prompt, raw rationale 또는 근거, 실행 시각을 남기고 작은 표본은 사람이 재검토합니다.
+judge 점수만 높았다는 이유로 공개하지 않습니다.</p>
+<aside class="source-note" data-source="openai-evaluation-best-practices">
+  <button type="button" class="source-info" aria-label="평가 설계 참고자료 보기">ⓘ</button>
+  <div class="source-card" hidden>
+    평가 설계의 일반 원칙 확인: OpenAI 공식 문서, Evaluation best practices (접속일: 2026-07-14).
+    본 Section의 metric과 rubric은 수업 목적에 맞게 독자적으로 작성했습니다.
+  </div>
+</aside>
+
+<h2>10. 흔한 잘못된 비교</h2>
+<ul>
+<li>질문 세트를 바꾼 뒤 baseline과 candidate 평균을 비교함</li>
+<li>chunk size와 embedding model과 prompt를 동시에 바꿈</li>
+<li>성공한 질문만 골라 평균을 냄</li>
+<li>오류 난 API 호출을 조용히 제외함</li>
+<li>LLM judge 점수를 ground truth처럼 사용함</li>
+<li>평균은 좋아졌지만 중요한 안전 case의 퇴행을 확인하지 않음</li>
+</ul>
+<p>비교 전후에 동일한 case ID가 모두 존재하는지 assertion으로 검사하고, 실패·timeout·거부도 결과로 기록합니다.</p>
+<h2>11. 결과를 읽는 순서</h2>
+<ol>
+<li>실행되지 않았거나 누락된 case가 없는지 확인합니다.</li>
+<li>답 없음 질문의 무근거 <code>answered</code>가 있는지 먼저 확인합니다.</li>
+<li>answerable 질문의 retrieval hit를 확인합니다.</li>
+<li>hit인데 generation이 실패한 case를 분리합니다.</li>
+<li>평균 지표와 case별 퇴행을 함께 봅니다.</li>
+<li>변경한 한 설정으로 설명 가능한 차이인지 판단합니다.</li>
+<li>다음 실험에서도 한 가지 가설만 선택합니다.</li>
+</ol>
+<h2>12. 통과 기준과 제출물</h2>
+<ul>
+<li>최소 6개 case에 answerable과 unanswerable이 모두 포함됩니다.</li>
+<li>baseline과 candidate가 같은 case·corpus·generator를 사용합니다.</li>
+<li>변경한 설정이 하나뿐임을 코드와 기록으로 확인합니다.</li>
+<li>source retrieval과 exact quote integrity를 별도로 출력합니다.</li>
+<li>answered 사례는 주요 주장별 semantic support를 사람이 검토하고 이유를 기록합니다.</li>
+<li>최소 3개 실패를 단계별 원인과 개선 후보로 분류합니다.</li>
+<li>자동 점수 하나와 수동 rubric 하나의 불일치 사례를 설명합니다.</li>
+</ul>
+<p>제출물은 <code>comparison.json</code>, 의미적 지지 0/1/2 수동 검토표, 가장 중요한 실패 3개의 분석, 다음 실험 가설 한 개입니다. secret이나 개인
+경로가 결과 파일에 없는지 제출 전에 확인합니다.</p>
+<h2>13. 선택 심화</h2>
+<ul>
+<li>두 평가자의 rubric 일치/불일치 비교</li>
+<li>bootstrap confidence interval 또는 작은 표본의 불확실성 토론</li>
+<li>query rewrite 전후 retrieval 성능 비교</li>
+<li>비용·latency를 품질 지표와 함께 기록</li>
+<li>LLM judge와 사람 점수가 다른 case만 재검토</li>
+</ul>
+<h2>참고자료 및 저작권 안내</h2>
+<p>이 페이지의 설명, 구성, 평가 데이터 및 실습 예제는 AMSL 인턴 학습을 위해 독자적으로 작성했습니다. 학습 범위 선정에는
+테디노트의 <em>&lt;랭체인LangChain 노트&gt; - LangChain 한국어 튜토리얼</em>을 참고했으며, 원문 문장·도표·예제 설명을
+전재하거나 변형하지 않았습니다. 해당 자료의 저작권과 이용 조건은 원 저작자에게 있습니다.</p>
+<ul>
+<li>LangSmith, “Evaluate a RAG application,”
+  <a href="https://docs.langchain.com/langsmith/evaluate-rag-tutorial">https://docs.langchain.com/langsmith/evaluate-rag-tutorial</a> (접속일: 2026-07-14, 평가 구조 참고)</li>
+<li>OpenAI, “Evaluation best practices,”
+  <a href="https://platform.openai.com/docs/guides/evaluation-best-practices">https://platform.openai.com/docs/guides/evaluation-best-practices</a> (접속일: 2026-07-14, 평가 설계 참고)</li>
+<li>OpenAI, “Evaluating model performance,”
+  <a href="https://platform.openai.com/docs/guides/evals">https://platform.openai.com/docs/guides/evals</a> (접속일: 2026-07-14, 자동 평가의 범위 참고)</li>
+<li>테디노트, <em>&lt;랭체인LangChain 노트&gt; - LangChain 한국어 튜토리얼</em>, WikiDocs,
+  <a href="https://wikidocs.net/book/14314">https://wikidocs.net/book/14314</a> (접속일: 2026-07-14, 웹 문서 표기 라이선스: CC BY-NC-ND 2.0 KR)</li>
+</ul>
+<p>이 학습자료에는 외부 저장소에서 복사·수정한 코드가 없습니다.</p><nav class="section-nav" aria-label="Section 이동"><a href="09.html">← Section 9</a><a href="11.html">Section 11 →</a></nav></main><script>
+document.querySelectorAll('.source-info').forEach((button)=>{button.addEventListener('click',()=>{const card=button.nextElementSibling;const opening=card.hidden;document.querySelectorAll('.source-card').forEach((item)=>item.hidden=true);card.hidden=!opening;button.setAttribute('aria-expanded',String(opening));});});
+document.addEventListener('keydown',(event)=>{if(event.key==='Escape'){document.querySelectorAll('.source-card').forEach((item)=>item.hidden=true);document.querySelectorAll('.source-info').forEach((item)=>item.setAttribute('aria-expanded','false'));}});
+</script></body></html>

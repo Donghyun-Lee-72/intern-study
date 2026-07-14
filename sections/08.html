@@ -1,0 +1,250 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" href="data:,">
+<title>Section 8 | AMSL Agentic AI Study</title><style>
+:root{--bg:#f5f7fb;--panel:#fff;--text:#111827;--muted:#5b6472;--line:#d8dee8;--teal:#0f766e;--blue:#1d4ed8;--soft:#ecfdf5}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;line-height:1.7}
+a{color:var(--blue)}.wrap{width:min(920px,calc(100% - 32px));margin:auto}header{background:#fff;border-bottom:1px solid var(--line);padding:22px 0}.back{font-weight:800;text-decoration:none}
+main{min-width:0;margin:24px auto 56px;padding:clamp(20px,4vw,42px);background:var(--panel);border:1px solid var(--line);border-radius:10px;box-shadow:0 14px 34px rgba(15,23,42,.08);overflow-wrap:anywhere}
+h1{font-size:clamp(28px,4vw,42px);line-height:1.2;margin:0 0 24px}h2{margin:38px 0 12px;font-size:25px}h3{margin:30px 0 10px;font-size:20px}h4{margin:24px 0 8px}p{margin:0 0 15px}li+li{margin-top:6px}
+pre{max-width:100%;overflow:auto;padding:16px;background:#111827;color:#f8fafc;border-radius:8px;overflow-wrap:normal}code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace}p code,li code{background:#eef2f7;padding:2px 5px;border-radius:4px}
+blockquote{margin:18px 0;padding:14px 18px;border-left:4px solid var(--teal);background:var(--soft)}table{width:100%;max-width:100%;border-collapse:collapse;display:block;overflow:auto}th,td{border:1px solid var(--line);padding:9px;text-align:left}
+.source-note{display:block;margin:14px 0;position:relative}.source-info{border:1px solid var(--line);border-radius:999px;background:#fff;color:var(--blue);font-weight:800;cursor:pointer}.source-card{margin-top:8px;padding:12px;border:1px solid var(--line);border-radius:7px;background:#eff6ff;color:#334155}
+.section-nav{display:flex;justify-content:space-between;gap:12px;margin-top:40px;padding-top:22px;border-top:1px solid var(--line)}.section-nav a{font-weight:800}@media(max-width:640px){.section-nav{flex-direction:column}}
+</style></head>
+<body><header><div class="wrap"><a class="back" href="../index.html#section-8">← 학습 포털</a></div></header>
+<main class="wrap"><h1>Section 8. Retriever를 설계하고 검색 품질 점검하기</h1>
+<blockquote>
+<p>예상 시간: 필수 125~150분 / 선택 심화 30~45분<br />
+선수 과정: Section 6~7<br />
+API 비용: 필수 실습은 API 호출 없음</p>
+</blockquote>
+<h2>이번 Section의 위치</h2>
+<p>Section 7에서는 같은 corpus를 lexical 검색과 vector 검색으로 찾아보았습니다. 하지만 몇 개의 결과를 눈으로 보고
+“vector 검색이 더 자연스럽다”고 말하는 것만으로는 검색기가 좋아졌다고 판단할 수 없습니다. 질문을 바꾸면 결론이
+달라질 수 있고, top result가 그럴듯해도 실제 정답 source를 놓칠 수 있습니다.</p>
+<p>이번 Section에서는 생성 모델을 호출하지 않습니다. 질문을 받아 <code>Document</code> 목록을 반환하는 retriever의 경계를 분명히
+하고, 작은 정답 세트로 검색 설정을 측정합니다.</p>
+<h3>핵심 질문</h3>
+<blockquote>
+<p>검색 결과가 있다는 사실과 질문에 필요한 근거를 찾았다는 사실을 어떻게 구분할까요?</p>
+</blockquote>
+<h3>학습 목표</h3>
+<ol>
+<li>VectorStore와 Retriever의 책임을 구분합니다.</li>
+<li><code>k</code>, score threshold, metadata filter가 후보 결과에 미치는 영향을 실험합니다.</li>
+<li>8~12개의 평가 질문에 기대 source와 answerability를 기록합니다.</li>
+<li>Hit@k와 Recall@k를 계산하고 수치가 의미하는 범위를 설명합니다.</li>
+<li>실패를 query, chunk, corpus, configuration, representation 문제로 분류합니다.</li>
+<li>답이 없는 질문을 일반적인 검색 hit와 별도로 평가합니다.</li>
+</ol>
+<h3>이번 Section의 필수선과 발전선</h3>
+<ul>
+<li><strong>필수선:</strong> 제공된 평가 질문으로 <code>k=1</code>과 <code>k=3</code>을 비교하고, 기대 source가 검색되었는지 질문별로 기록합니다.</li>
+<li><strong>발전선:</strong> 질문 세트 확장과 MultiQuery/ensemble 비교는 선택입니다.</li>
+<li><strong>복습 신호:</strong> 비율 계산이 익숙하지 않다면 4개 질문 중 3개 적중을 <code>3/4</code>로 손으로 계산한 뒤 코드 결과와 맞춥니다.</li>
+</ul>
+<p>처음부터 완벽한 gold set을 만드는 것은 요구하지 않습니다. 제공된 기대 source를 검토하고 학습자가 직접 추가하는 질문은
+2개면 충분합니다. 라벨이 애매하면 임의로 확정하지 말고 <code>needs_review</code>로 표시해 함께 검토합니다.</p>
+<h2>1. 선수지식 확인</h2>
+<ul>
+<li>Section 7의 index 단계와 query 단계를 한 문장씩 설명할 수 있나요?</li>
+<li><code>k=3</code>은 검색기가 세 문서 모두 옳다고 판정했다는 뜻일까요?</li>
+<li>기대 source가 없는 질문을 일반 Recall 계산에 넣으면 어떤 문제가 생길까요?</li>
+<li>metadata filter를 잘못 적용하면 embedding이 좋아도 정답을 찾을 수 있을까요?</li>
+</ul>
+<h2>2. VectorStore와 Retriever의 책임 경계</h2>
+<p>VectorStore는 vector, 본문과 metadata를 저장하고 similarity search 같은 연산을 제공합니다. Retriever는 사용자 질문을
+받아 downstream 단계가 사용할 <code>Document</code> 목록을 반환하는 인터페이스입니다. Retriever 안에서는 VectorStore 검색뿐
+아니라 filter, threshold, query 변환 또는 여러 검색 결과의 결합이 일어날 수 있습니다.</p>
+<pre><code class="language-text">question
+   ↓
+Retriever policy: k, filter, threshold
+   ↓
+VectorStore search
+   ↓
+ranked Documents + metadata
+</code></pre>
+<p>둘을 구분하면 “vector가 잘못 저장되었는가?”와 “retriever 정책이 좋은 후보를 제거했는가?”를 따로 확인할 수 있습니다.
+이번 실습의 retriever는 작은 함수이지만 입력과 출력의 계약은 분명히 유지합니다.</p>
+<pre><code class="language-python">def retrieve(question: str, k: int) -&gt; list[tuple[Document, float]]:
+    return store.similarity_search_with_score(question, k=k)
+</code></pre>
+<aside class="source-note" data-source="langchain-retrieval">
+  <button type="button" class="source-info" aria-label="Retriever와 VectorStore 참고자료 보기">ⓘ</button>
+  <div class="source-card" hidden>
+    인터페이스와 검색 흐름 확인: LangChain 공식 문서, Retrieval 및 Vector stores
+    (접속일: 2026-07-14). 설명과 예제는 독자적으로 작성했습니다.
+  </div>
+</aside>
+
+<h2>3. Gold evaluation set 만들기</h2>
+<p>검색 설정을 비교하려면 설정을 보기 전에 질문과 기대값을 먼저 고정합니다. 그렇지 않으면 현재 검색기가 잘 찾는 질문만
+남기는 방식으로 평가가 왜곡될 수 있습니다.</p>
+<p>각 사례에는 최소한 다음 필드를 둡니다.</p>
+<pre><code class="language-python">{
+    &quot;id&quot;: &quot;q01&quot;,
+    &quot;question&quot;: &quot;API key를 공개 저장소에 올려도 되나요?&quot;,
+    &quot;expected_source&quot;: &quot;security-guide&quot;,
+}
+</code></pre>
+<p>corpus로 답할 수 없는 질문은 <code>expected_source=None</code>으로 표시합니다. 정답 source가 여러 개라면 문자열 하나로 억지로
+줄이지 않고 <code>expected_sources</code> 집합과 채점 규칙을 별도로 정해야 합니다. 이번 corpus는 metric 계산을 명확히 보기 위해
+답할 수 있는 질문마다 대표 source 하나를 지정했습니다.</p>
+<h3>질문 구성 원칙</h3>
+<ul>
+<li>문서의 표현을 그대로 포함한 질문과 바꿔 쓴 질문을 섞습니다.</li>
+<li>다섯 category가 한쪽으로 치우치지 않게 합니다.</li>
+<li>답할 수 없는 질문을 최소 두 개 넣습니다.</li>
+<li>개인정보나 실제 연구실 내부 정보를 정답 데이터에 넣지 않습니다.</li>
+<li>질문을 만든 사람 외의 검토자가 기대 source를 원문과 대조합니다.</li>
+</ul>
+<h2>4. Hit@k와 Recall@k</h2>
+<p>한 질문에서 기대 source가 top-k 안에 하나라도 있으면 hit로 셉니다. 답할 수 있는 질문이 <code>N</code>개일 때 이번 실습의
+Recall@k는 다음과 같이 계산합니다.</p>
+<pre><code class="language-text">Recall@k = top-k에 기대 source가 포함된 질문 수 / 답할 수 있는 전체 질문 수
+</code></pre>
+<p>대표 source가 하나뿐인 현재 구성에서는 평균 Hit@k와 같은 값입니다. 여러 관련 문서를 모두 찾아야 하는 평가에서는
+질문별 relevant 문서 중 몇 개를 찾았는지 계산해야 하므로 같은 방식으로 단순화하면 안 됩니다.</p>
+<p><code>k</code>가 커지면 Recall@k는 보통 유지되거나 올라갑니다. 그러나 LLM에게 전달되는 무관한 문서, 입력 길이와 비용도 늘 수
+있습니다. 따라서 Recall만 보고 가장 큰 <code>k</code>를 선택하지 않습니다. Section 9에서는 context에 들어간 근거의 정확성까지
+함께 봅니다.</p>
+<aside class="source-note" data-source="ir-evaluation">
+  <button type="button" class="source-info" aria-label="정보 검색 평가 참고자료 보기">ⓘ</button>
+  <div class="source-card" hidden>
+    평가 개념 확인: Manning, Raghavan, Schütze, Introduction to Information Retrieval,
+    Evaluation in information retrieval (접속일: 2026-07-14). 수업용 계산 예시는 독자적으로 작성했습니다.
+  </div>
+</aside>
+
+<h2>5. <code>k=1</code>과 <code>k=3</code> 비교</h2>
+<p>제공된 12개 질문 중 답할 수 있는 10개에 대해 두 설정을 실행합니다.</p>
+<pre><code class="language-python">for k in (1, 3):
+    print(f&quot;Recall@{k}: {recall_at_k(k):.3f}&quot;)
+</code></pre>
+<p>제작용 offline baseline에서는 Recall@1이 <code>0.900</code>, Recall@3이 <code>1.000</code>으로 재현되었습니다. 이 수치는 실제 OpenAI
+embedding의 예상 성능이 아니라, metric 코드와 실패 분석 흐름이 작동하는지 확인한 fixture 결과입니다. corpus, chunk,
+model 또는 질문이 바뀌면 baseline을 새로 저장합니다.</p>
+<p>관찰할 내용:</p>
+<ul>
+<li>top 1에서 놓쳤지만 top 3에서 찾은 질문은 무엇인가요?</li>
+<li>top 3에 추가된 두 문서는 질문과 실제로 관련이 있나요?</li>
+<li><code>k=3</code>이 generation 단계에 더 좋은 선택이라고 바로 결론 내릴 수 있나요?</li>
+</ul>
+<h2>6. Metadata filter</h2>
+<p>filter는 특정 category, 날짜, 접근 권한 또는 문서 종류로 검색 공간을 제한합니다. embedding이 구분하기 어려운 영역을
+명시적 조건으로 좁힐 수 있지만, metadata가 틀리거나 filter를 잘못 고르면 정답 문서는 검색 전에 제거됩니다.</p>
+<pre><code class="language-python">filter_fn = lambda doc: doc.metadata.get(&quot;category&quot;) == &quot;development&quot;
+results = store.similarity_search_with_score(
+    &quot;에러 질문에는 어떤 정보를 포함하나요?&quot;,
+    k=3,
+    filter=filter_fn,
+)
+</code></pre>
+<p>필수 실습에서는 같은 질문에 filter 없음, 올바른 <code>development</code>, 잘못된 <code>security</code>를 적용합니다. filter 결과가 기대와
+다르다면 embedding model을 바꾸기 전에 원본 metadata와 filter callable이 받는 객체를 확인합니다.</p>
+<h2>7. Score threshold</h2>
+<p>top-k 검색은 corpus에 답이 없어도 가장 가까운 후보를 반환합니다. threshold는 점수가 낮은 결과를 거부하는 한 가지
+정책이지만 보편적인 정답값은 없습니다.</p>
+<p>제작 fixture에서 <code>0.30</code>을 시작점으로 적용하면 답 없음 두 질문은 모두 거부하지만, 답할 수 있는 질문 일부도 거부합니다.
+즉 false acceptance를 줄이는 대신 false rejection이 늘어납니다. 이 결과가 threshold를 평가 세트로 조정해야 하는
+이유입니다.</p>
+<p>다음 값을 함께 기록합니다.</p>
+<ul>
+<li>answerable 질문 중 accepted 비율</li>
+<li>기대 source가 top 1이고 accepted인 비율</li>
+<li>unanswerable 질문 중 잘못 accepted된 비율</li>
+<li>threshold 바로 위와 아래에 있는 실제 질문</li>
+</ul>
+<p>score의 범위와 방향은 store 구현과 distance 전략에 따라 달라질 수 있습니다. 다른 backend로 옮길 때 <code>0.30</code>을 그대로
+복사하지 않습니다.</p>
+<h2>8. 답이 없는 질문은 별도로 평가하기</h2>
+<p><code>expected_source=None</code>인 질문은 일반 Recall의 분모에서 제외합니다. 기대 source가 없기 때문에 “찾지 못함”이 올바른
+동작일 수 있기 때문입니다. 대신 retriever가 안전하게 빈 결과를 반환하거나 <code>not_answered</code> 후보 상태로 보냈는지 봅니다.</p>
+<p>현재 단계에서는 threshold가 검색 결과를 거부할 수 있게 만드는 데까지만 다룹니다. threshold를 넘었다고 답변 가능성이
+확정되는 것은 아닙니다. Section 9에서는 retrieved context 안에 실제 답 근거가 있는지 validation을 한 번 더 수행합니다.</p>
+<h2>9. 실패 분류</h2>
+<p>검색 miss를 발견하면 아래 범주 중 하나로 임시 분류하고 증거를 기록합니다.</p>
+<ul>
+<li><strong>query:</strong> 표현이 모호하거나 여러 의도를 가짐</li>
+<li><strong>chunk:</strong> 필요한 문장이 경계에서 분리되거나 주변 문맥이 부족함</li>
+<li><strong>corpus:</strong> 답이 원문에 없거나 source가 누락됨</li>
+<li><strong>configuration:</strong> <code>k</code>, filter, threshold가 좋은 후보를 제거함</li>
+<li><strong>representation:</strong> embedding이 필요한 의미 관계를 충분히 표현하지 못함</li>
+<li><strong>label:</strong> 기대 source 자체가 틀리거나 복수 정답을 하나로 제한함</li>
+</ul>
+<p>한 실패에 원인이 여러 개일 수 있습니다. 처음부터 “embedding 문제”로 단정하지 말고 원문 존재 → chunk → metadata →
+설정 → representation → label 순서로 확인합니다.</p>
+<h2>10. 필수 실습 순서</h2>
+<ol>
+<li>제공된 corpus 5개와 12개 평가 질문을 읽고 기대 source를 원문과 대조합니다.</li>
+<li>API 없는 <code>ConceptEmbedding</code>으로 index를 생성합니다.</li>
+<li><code>k=1</code>, <code>k=3</code>의 Recall을 계산합니다.</li>
+<li>한 질문에 올바른 filter와 잘못된 filter를 각각 적용합니다.</li>
+<li>threshold <code>0.30</code>의 acceptance를 answerable/unanswerable로 나누어 봅니다.</li>
+<li>top-1 miss와 threshold false rejection을 최소 두 개 분류합니다.</li>
+<li>실제 embedding 선택 실습을 한다면 같은 평가 파일을 그대로 실행하고 별도 결과로 저장합니다.</li>
+</ol>
+<p>실행 명령:</p>
+<pre><code class="language-text">uv run --python 3.11 --with-requirements requirements.txt --with numpy==2.4.3 \
+  Jupyter에서 notebooks/08_retrieval_evaluation.ipynb를 위에서 아래로 실행합니다.
+</code></pre>
+<h2>11. 실패를 디버깅하는 순서</h2>
+<ol>
+<li>평가 질문의 기대 source가 원문에 실제로 답을 포함하는지 확인합니다.</li>
+<li>기대 source의 chunk가 index에 있고 metadata가 유지되는지 확인합니다.</li>
+<li>filter 전 결과와 filter 후 결과를 비교합니다.</li>
+<li>top-k 전체 source와 score를 출력합니다.</li>
+<li>threshold를 적용하기 전 raw 결과를 확인합니다.</li>
+<li>같은 model/index config인지 확인합니다.</li>
+<li>마지막으로 query 수정, chunk 변경 또는 embedding 변경 실험을 하나씩 수행합니다.</li>
+</ol>
+<p>설정을 여러 개 동시에 바꾸면 어느 변경이 결과에 영향을 주었는지 알 수 없습니다.</p>
+<h2>12. 결과 확인</h2>
+<ul>
+<li>VectorStore와 Retriever의 역할을 입력·출력 기준으로 구분했습니다.</li>
+<li>평가 설정을 보기 전에 12개 질문과 기대 source를 확인했습니다.</li>
+<li>Recall@1과 Recall@3를 직접 계산하고 차이를 설명했습니다.</li>
+<li>올바른 filter가 검색 공간을 좁히고, 잘못된 filter가 정답을 제거하는 사례를 실행했습니다.</li>
+<li>답 없음 질문을 Recall과 분리해 threshold 정책으로 평가했습니다.</li>
+<li>최소 두 실패를 원인 범주와 근거를 포함해 기록했습니다.</li>
+<li>생성 모델을 호출하지 않고 retrieval 실패를 진단했습니다.</li>
+</ul>
+<h2>13. 짧은 제출물</h2>
+<ol>
+<li>Recall@1, Recall@3와 각 설정의 장단점</li>
+<li>filter 전/후 top source 비교</li>
+<li>답 없음 질문 두 개의 top score와 acceptance</li>
+<li>실패 사례 두 개: 예상, 실제, 원인 범주, 다음 한 가지 실험</li>
+<li>Section 9에서 사용할 <code>k</code>, filter, threshold 후보와 선택 근거</li>
+</ol>
+<h2>14. 선택 심화</h2>
+<ul>
+<li>질문별 relevant source가 여러 개인 평가 세트로 precision과 recall을 따로 계산</li>
+<li>lexical+vector ensemble을 동일 질문 세트에서 baseline과 비교</li>
+<li>MultiQueryRetriever는 단순 query 실패가 확인된 사례에만 적용</li>
+<li>threshold별 false acceptance/false rejection curve 작성</li>
+</ul>
+<p>고급 retriever를 추가하기 전에 단순 baseline의 실패가 무엇인지 먼저 기록합니다. 새 구성요소가 metric 또는 명확한 실패
+사례를 개선하지 못하면 필수 pipeline에 넣지 않습니다.</p>
+<h2>참고자료 및 저작권 안내</h2>
+<p>이 페이지의 설명, 구성 및 실습 예제는 AMSL 인턴 학습을 위해 독자적으로 작성했습니다. 학습 범위 선정에는
+테디노트의 <em>&lt;랭체인LangChain 노트&gt; - LangChain 한국어 튜토리얼</em>을 참고했으며, 원문 문장·도표·예제 설명을
+전재하거나 변형하지 않았습니다. 해당 자료의 저작권과 이용 조건은 원 저작자에게 있습니다.</p>
+<ul>
+<li>LangChain, “Retrieval,” <a href="https://docs.langchain.com/oss/python/langchain/retrieval">https://docs.langchain.com/oss/python/langchain/retrieval</a>
+  (접속일: 2026-07-14)</li>
+<li>LangChain, “Vector stores,” <a href="https://docs.langchain.com/oss/python/integrations/vectorstores">https://docs.langchain.com/oss/python/integrations/vectorstores</a>
+  (접속일: 2026-07-14)</li>
+<li>LangChain, “InMemoryVectorStore,”
+  <a href="https://reference.langchain.com/python/langchain-core/vectorstores/in_memory/InMemoryVectorStore">https://reference.langchain.com/python/langchain-core/vectorstores/in_memory/InMemoryVectorStore</a>
+  (접속일: 2026-07-14)</li>
+<li>Christopher D. Manning, Prabhakar Raghavan, Hinrich Schütze, “Evaluation in information retrieval,”
+  <em>Introduction to Information Retrieval</em>, <a href="https://nlp.stanford.edu/IR-book/html/htmledition/evaluation-in-information-retrieval-1.html">https://nlp.stanford.edu/IR-book/html/htmledition/evaluation-in-information-retrieval-1.html</a>
+  (접속일: 2026-07-14)</li>
+<li>테디노트, <em>&lt;랭체인LangChain 노트&gt; - LangChain 한국어 튜토리얼</em>, WikiDocs,
+  <a href="https://wikidocs.net/book/14314">https://wikidocs.net/book/14314</a> (접속일: 2026-07-14, 웹 문서 표기 라이선스: CC BY-NC-ND 2.0 KR)</li>
+</ul>
+<p>이 학습자료와 실습 corpus에는 외부 저장소에서 복사·수정한 코드나 실제 개인정보·비공개 연구자료가 없습니다.</p><nav class="section-nav" aria-label="Section 이동"><a href="07.html">← Section 7</a><a href="09.html">Section 9 →</a></nav></main><script>
+document.querySelectorAll('.source-info').forEach((button)=>{button.addEventListener('click',()=>{const card=button.nextElementSibling;const opening=card.hidden;document.querySelectorAll('.source-card').forEach((item)=>item.hidden=true);card.hidden=!opening;button.setAttribute('aria-expanded',String(opening));});});
+document.addEventListener('keydown',(event)=>{if(event.key==='Escape'){document.querySelectorAll('.source-card').forEach((item)=>item.hidden=true);document.querySelectorAll('.source-info').forEach((item)=>item.setAttribute('aria-expanded','false'));}});
+</script></body></html>
