@@ -4,12 +4,51 @@
 
 ## 기존 Section 0~5 변경사항
 
-- API key 입력 셀은 직접 입력뿐 아니라 `OPENAI_API_KEY` 환경변수도 사용할 수 있도록 변경했습니다.
-- 모델명은 `OPENAI_MODEL` 환경변수로 바꿀 수 있으며, 별도 설정이 없으면 수업 기본 모델을 사용합니다.
-- Section 3과 4의 자유 형식 JSON 생성을 OpenAI structured output으로 변경했습니다. 필드 누락이나 이름 변경 때문에 실습이 불규칙하게 실패하는 문제를 줄였습니다.
-- Section 4에서는 미리 결정된 workflow route가 모델 응답에서 바뀌지 않는지 검사합니다.
-- 모든 notebook의 cell ID와 저장된 output을 정리해 새 환경에서 처음부터 실행할 수 있게 했습니다.
-- `START_HERE.md`, `requirements.txt`, 다운로드 ZIP을 전체 과정 기준으로 갱신했습니다.
+기존 Section의 학습 주제와 순서는 바꾸지 않았습니다. 새 Section과 연결해도 처음 학습하는 사람이 기존 흐름을 그대로 따라갈 수 있도록 실행 안정성과 검증 방식을 보완했습니다.
+
+### Section 0 — 환경 준비와 API 연결 확인
+
+- API key를 셀에 직접 입력하는 기존 방식은 유지하면서, 담당자 검증이나 별도 실행 환경에서는 `OPENAI_API_KEY` 환경변수를 사용할 수 있게 했습니다.
+- 모델명도 `OPENAI_MODEL` 환경변수로 바꿀 수 있으며, 별도 설정이 없으면 수업 기본 모델을 사용합니다.
+- key가 설정되지 않았을 때 무엇을 확인해야 하는지 오류 메시지를 명확하게 수정했습니다.
+- `requirements.txt` 확인, package import, 실제 API 연결 확인이라는 기존 통과 기준은 유지했습니다.
+
+### Section 1 — LLM API와 prompt
+
+- 학습 내용과 prompt 예시는 변경하지 않았습니다.
+- Section 0과 동일한 API key·모델 설정 방식을 적용해 notebook마다 설정 방법이 달라지는 문제를 없앴습니다.
+- 실제 API 호출과 출력 길이 제한이 현재 OpenAI SDK 및 수업 기본 모델에서 동작하는지 다시 확인했습니다.
+
+### Section 2 — Structured output과 Pydantic
+
+- Pydantic schema, validation 성공·실패, “형식 검증은 사실 검증이 아니다”라는 학습 목표는 유지했습니다.
+- API key·모델 설정을 다른 Section과 통일했습니다.
+- 기존 JSON 출력과 Pydantic validation 예제가 현재 의존성 버전에서 실행되는지 다시 검증했습니다.
+
+### Section 3 — 문서 근거를 사용하는 RAG
+
+- 모델이 자유 형식 JSON을 생성하고 `json.loads`로 해석하던 부분을 OpenAI structured output으로 변경했습니다.
+- `answered`, `answer_ko`, `evidence` 중 일부 필드가 빠져 notebook이 불규칙하게 실패하던 가능성을 줄였습니다.
+- `answered=true`일 때는 `source_id`와 원문 quote를 반환하고, 답할 근거가 없을 때는 빈 evidence를 반환하도록 계약을 명시했습니다.
+- lexical retrieval과 “검색된 근거를 먼저 확인한다”는 기존 학습 흐름은 그대로 유지했습니다.
+
+### Section 4 — Workflow와 상태 분기
+
+- 자유 형식 JSON 출력을 `WorkflowResult` structured output으로 변경했습니다.
+- 모델이 `source`처럼 비슷하지만 잘못된 필드명을 반환하던 문제를 schema 수준에서 방지했습니다.
+- 검색 결과로 미리 결정된 `answer`, `not_answered`, `needs_review` route를 모델이 임의로 바꾸지 않는지 assertion을 추가했습니다.
+- 검색 → route 결정 → 답변 → 다음 행동이라는 기존 workflow 학습 순서는 유지했습니다.
+
+### Section 5 — Linux/WSL2 특강
+
+- Linux/WSL2의 위치와 학습 범위는 변경하지 않았습니다. Section 1~4의 필수 AI 실습을 마친 뒤 진행하는 선택적 환경 확장 단계로 유지했습니다.
+- 새 Section 6~12를 Windows PowerShell 환경에서도 시작할 수 있으므로 WSL2가 후속 학습의 필수 조건으로 오해되지 않도록 전체 안내를 맞췄습니다.
+
+### 기존 notebook 공통 정리
+
+- notebook 00~05의 cell ID를 정규화하고 이전 실행 output을 제거했습니다.
+- 새 환경에서 위에서 아래로 실행할 때 이전 실행 흔적과 현재 결과가 섞이지 않도록 했습니다.
+- `START_HERE.md`, `requirements.txt`, 다운로드 ZIP을 전체 Section 0~12 기준으로 갱신했습니다.
 
 ## 새로 추가된 Section
 
