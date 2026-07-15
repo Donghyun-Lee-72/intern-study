@@ -57,8 +57,8 @@
 - **Section 8 — Retriever 평가:** 작은 gold set으로 Recall@k, threshold, filter와 실패 원인을 점검합니다.
 - **Section 9 — 추적 가능한 Vector RAG:** 검색·생성·검증을 분리하고 `answered`, `not_answered`, `needs_review` 정책과 exact citation을 검사합니다.
 - **Section 10 — RAG 평가:** retrieval과 generation을 따로 측정하고 한 설정만 바꾼 baseline/candidate 실험을 수행합니다.
-- **Section 11 — Tool과 Agent:** tool schema, routing, 종료 조건, 정책 차단과 오류 처리를 통해 제어 가능한 agent 흐름을 학습합니다.
-- **Section 12 — 미니 프로젝트:** 공통 corpus와 평가 계약으로 baseline을 만든 뒤 각자 한 가지 개선을 측정합니다.
+- **Section 11 — Tool과 Agent:** tool schema, routing, 검색 후 근거 검증, 종료 조건, 정책 차단과 오류 처리를 통해 제어 가능한 agent 흐름을 학습합니다.
+- **Section 12 — 미니 프로젝트:** 공통 corpus와 평가 계약으로 baseline을 만든 뒤 각자 한 가지 개선을 측정합니다. 답변 가능 여부와 정책에 따라 적용되는 평가 지표를 구분합니다.
 
 ## 사이트와 배포 파일 변경사항
 
@@ -66,6 +66,7 @@
 - Section 페이지에 이전/다음 이동, 참고자료 `ⓘ` 카드, 모바일 레이아웃을 추가했습니다.
 - ZIP에 notebook 00~12, 확장 실습용 데이터 4개, 갱신된 requirements와 시작 안내를 포함했습니다.
 - API를 사용하는 notebook 00~04와 선택 실습이 있는 Section 7·9에는 파일 상단에서 수업용 key를 설정할 수 있는 셀을 두었습니다. API가 필요 없는 Section에는 기본 실습에 key가 필요하지 않다고 표시했습니다.
+- Section 10·12에서는 인용과 검색 지표가 적용되지 않는 사례를 성공으로 계산하지 않도록 정리했고, Section 11에는 검색 결과를 검증 Tool로 확인하는 2단계 실행을 추가했습니다.
 - 내부 제작 계획·리뷰·비밀 파일은 공개 저장소 대상에서 제외했습니다.
 
 ## 검증 결과
