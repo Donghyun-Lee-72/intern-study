@@ -12,55 +12,14 @@ blockquote{margin:18px 0;padding:14px 18px;border-left:4px solid var(--teal);bac
 .section-nav{display:flex;justify-content:space-between;gap:12px;margin-top:40px;padding-top:22px;border-top:1px solid var(--line)}.section-nav a{font-weight:800}@media(max-width:640px){.section-nav{flex-direction:column}}
 </style></head>
 <body><header><div class="wrap"><a class="back" href="index.html">← 학습 포털</a></div></header>
-<main class="wrap"><h1>2026-07-15 학습자료 확장 패치노트</h1>
-<p>이번 업데이트는 기존 Section 0~5의 입문 흐름을 유지하면서, 문서 준비부터 Vector RAG, 평가, Tool/Agent, 미니 프로젝트까지 이어지는 Section 6~12를 추가합니다.</p>
-<h2>기존 Section 0~5 변경사항</h2>
-<p>기존 Section의 학습 주제와 순서는 바꾸지 않았습니다. 새 Section과 연결해도 처음 학습하는 사람이 기존 흐름을 그대로 따라갈 수 있도록 실행 안정성과 검증 방식을 보완했습니다.</p>
-<h3>Section 0 — 환경 준비와 API 연결 확인</h3>
-<ul>
-<li>API key를 셀에 직접 입력하는 기존 방식은 유지하면서, 담당자 검증이나 별도 실행 환경에서는 <code>OPENAI_API_KEY</code> 환경변수를 사용할 수 있게 했습니다.</li>
-<li>모델명도 <code>OPENAI_MODEL</code> 환경변수로 바꿀 수 있으며, 별도 설정이 없으면 수업 기본 모델을 사용합니다.</li>
-<li>key가 설정되지 않았을 때 무엇을 확인해야 하는지 오류 메시지를 명확하게 수정했습니다.</li>
-<li><code>requirements.txt</code> 확인, package import, 실제 API 연결 확인이라는 기존 통과 기준은 유지했습니다.</li>
-</ul>
-<h3>Section 1 — LLM API와 prompt</h3>
-<ul>
-<li>학습 내용과 prompt 예시는 변경하지 않았습니다.</li>
-<li>Section 0과 동일한 API key·모델 설정 방식을 적용해 notebook마다 설정 방법이 달라지는 문제를 없앴습니다.</li>
-<li>실제 API 호출과 출력 길이 제한이 현재 OpenAI SDK 및 수업 기본 모델에서 동작하는지 다시 확인했습니다.</li>
-</ul>
-<h3>Section 2 — Structured output과 Pydantic</h3>
-<ul>
-<li>Pydantic schema, validation 성공·실패, “형식 검증은 사실 검증이 아니다”라는 학습 목표는 유지했습니다.</li>
-<li>API key·모델 설정을 다른 Section과 통일했습니다.</li>
-<li>기존 JSON 출력과 Pydantic validation 예제가 현재 의존성 버전에서 실행되는지 다시 검증했습니다.</li>
-</ul>
-<h3>Section 3 — 문서 근거를 사용하는 RAG</h3>
-<ul>
-<li>모델이 자유 형식 JSON을 생성하고 <code>json.loads</code>로 해석하던 부분을 OpenAI structured output으로 변경했습니다.</li>
-<li><code>answered</code>, <code>answer_ko</code>, <code>evidence</code> 중 일부 필드가 빠져 notebook이 불규칙하게 실패하던 가능성을 줄였습니다.</li>
-<li><code>answered=true</code>일 때는 <code>source_id</code>와 원문 quote를 반환하고, 답할 근거가 없을 때는 빈 evidence를 반환하도록 계약을 명시했습니다.</li>
-<li>lexical retrieval과 “검색된 근거를 먼저 확인한다”는 기존 학습 흐름은 그대로 유지했습니다.</li>
-</ul>
-<h3>Section 4 — Workflow와 상태 분기</h3>
-<ul>
-<li>자유 형식 JSON 출력을 <code>WorkflowResult</code> structured output으로 변경했습니다.</li>
-<li>모델이 <code>source</code>처럼 비슷하지만 잘못된 필드명을 반환하던 문제를 schema 수준에서 방지했습니다.</li>
-<li>검색 결과로 미리 결정된 <code>answer</code>, <code>not_answered</code>, <code>needs_review</code> route를 모델이 임의로 바꾸지 않는지 assertion을 추가했습니다.</li>
-<li>검색 → route 결정 → 답변 → 다음 행동이라는 기존 workflow 학습 순서는 유지했습니다.</li>
-</ul>
-<h3>Section 5 — Linux/WSL2 특강</h3>
-<ul>
-<li>Linux/WSL2의 위치와 학습 범위는 변경하지 않았습니다. Section 1~4의 필수 AI 실습을 마친 뒤 진행하는 선택적 환경 확장 단계로 유지했습니다.</li>
-<li>새 Section 6~12를 Windows PowerShell 환경에서도 시작할 수 있으므로 WSL2가 후속 학습의 필수 조건으로 오해되지 않도록 전체 안내를 맞췄습니다.</li>
-</ul>
-<h3>기존 notebook 공통 정리</h3>
-<ul>
-<li>notebook 00~05의 cell ID를 정규화하고 이전 실행 output을 제거했습니다.</li>
-<li>새 환경에서 위에서 아래로 실행할 때 이전 실행 흔적과 현재 결과가 섞이지 않도록 했습니다.</li>
-<li><code>START_HERE.md</code>, <code>requirements.txt</code>, 다운로드 ZIP을 전체 Section 0~12 기준으로 갱신했습니다.</li>
-</ul>
-<h2>새로 추가된 Section</h2>
+<main class="wrap"><h1>패치 1 — 학습자료 확장</h1>
+<p><strong>배포일: 2026년 7월 15일</strong></p>
+<p>Section 6~12가 새로 추가되었습니다. 기존의 LLM API, 구조화 출력, 간단한 RAG와 Workflow 실습에서 이어서 문서 분할, Vector 검색, RAG 평가, Tool과 Agent까지 학습할 수 있습니다.</p>
+<blockquote>기존 Section 0~5를 완료했다면 다시 진행할 필요가 없습니다. 최신 실습 파일을 내려받은 뒤 Section 6부터 이어서 진행하면 됩니다.</blockquote>
+<h2>기존 Section 0~5</h2>
+<p>학습 주제와 진행 순서는 그대로입니다. API key와 모델 설정 방식을 통일하고, 실습 결과가 모델의 출력 형식에 따라 간헐적으로 달라지지 않도록 Section 3~4의 구조화 출력을 보완했습니다. Notebook에 남아 있던 이전 실행 결과도 정리했습니다.</p>
+<p>기존 Section을 이미 정상적으로 완료했다면 다시 실행할 필요는 없습니다. 이전에 Section 3이나 4에서 JSON 형식 또는 필드 누락 문제로 실행이 중단되었다면 최신 파일로 해당 Section만 다시 실행해보면 됩니다.</p>
+<h2>새로 추가된 Section 6~12</h2>
 <ul>
 <li><strong>Section 6 — 문서와 chunk:</strong> 긴 문서를 나누고 <code>source_id</code>, <code>chunk_id</code>, 원문 위치를 보존합니다.</li>
 <li><strong>Section 7 — Embedding과 VectorStore:</strong> lexical 검색과 의미 검색을 비교하고 실제 embedding을 선택적으로 검증합니다.</li>
@@ -70,19 +29,18 @@ blockquote{margin:18px 0;padding:14px 18px;border-left:4px solid var(--teal);bac
 <li><strong>Section 11 — Tool과 Agent:</strong> tool schema, routing, 종료 조건, 정책 차단과 오류 처리를 통해 제어 가능한 agent 흐름을 학습합니다.</li>
 <li><strong>Section 12 — 미니 프로젝트:</strong> 공통 corpus와 평가 계약으로 baseline을 만든 뒤 각자 한 가지 개선을 측정합니다.</li>
 </ul>
-<h2>사이트와 배포 파일 변경사항</h2>
+<h2>사이트와 실습 파일</h2>
 <ul>
-<li>메인 학습 지도에 Section 6~12를 추가하고 각 Section의 독립 학습 페이지를 연결했습니다.</li>
-<li>Section 페이지에 이전/다음 이동, 참고자료 <code>ⓘ</code> 카드, 모바일 레이아웃을 추가했습니다.</li>
-<li>ZIP에 notebook 00~12, 확장 실습용 데이터 4개, 갱신된 requirements와 시작 안내를 포함했습니다.</li>
-<li>API를 사용하는 notebook 00~04와 선택 실습이 있는 Section 7·9에는 파일 상단에서 수업용 key를 설정할 수 있는 셀을 두었습니다. API가 필요 없는 Section에는 기본 실습에 key가 필요하지 않다고 표시했습니다.</li>
-<li>내부 제작 계획·리뷰·비밀 파일은 공개 저장소 대상에서 제외했습니다.</li>
+<li>메인 학습 지도와 Section별 학습 페이지에 Section 6~12를 연결했습니다.</li>
+<li>다운로드 ZIP에 Notebook 00~12와 새 실습 데이터를 포함했습니다.</li>
+<li>각 Notebook 상단에서 API key 필요 여부를 확인할 수 있습니다. API를 사용하는 파일에는 key 입력 셀을 두었습니다.</li>
+<li>Section 페이지에 이전·다음 이동과 참고자료 안내를 추가하고 모바일 화면을 정리했습니다.</li>
 </ul>
-<h2>검증 결과</h2>
+<h2>검증</h2>
 <ul>
-<li>배포 ZIP을 새 폴더에 압축 해제한 뒤 notebook 00~12를 순서대로 실행했습니다.</li>
-<li>API가 필요한 기존 Section과 Section 7·9의 live gate를 수업용 프로젝트 key로 실제 검증했습니다.</li>
-<li>notebook schema, 구조화 출력, citation validation, 내부 링크, 외부 참고 링크, 모바일 Chromium 렌더링을 확인했습니다.</li>
-<li>공개 산출물에서 API key literal, 개인 이메일, 개인 절대경로와 비공개 저장소 경로가 없는지 검사했습니다.</li>
+<li>최신 ZIP을 새 폴더에 풀어 Notebook 00~12를 순서대로 실행했습니다.</li>
+<li>API가 필요한 실습은 수업용 프로젝트 key로 실제 호출해 확인했습니다.</li>
+<li>구조화 출력, 상태 분기, 검색 근거와 인용 검증을 확인했습니다.</li>
+<li>사이트 링크, 모바일 화면, 다운로드 파일과 공개 파일의 개인정보·API key 포함 여부를 점검했습니다.</li>
 </ul>
-<p>학습자는 기존과 같이 웹사이트에서 설명을 읽고 같은 번호의 notebook을 위에서 아래로 실행하면 됩니다. Section 6부터는 앞 Section의 산출물을 다음 Section의 입력과 평가 기준으로 연결합니다.</p></main></body></html>
+<p>기존 자료를 내려받아 사용하고 있다면 Section 6을 시작하기 전에 최신 ZIP을 다시 받아주세요. API key는 ZIP에 포함되지 않으므로 필요한 Notebook의 상단 셀에 다시 입력해야 합니다.</p></main></body></html>
