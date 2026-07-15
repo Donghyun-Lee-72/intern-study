@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" href="data:,">
+<title>Section 4 | AMSL Agentic AI Study</title><style>
+:root{--bg:#f5f7fb;--panel:#fff;--text:#111827;--muted:#5b6472;--line:#d8dee8;--teal:#0f766e;--blue:#1d4ed8;--soft:#ecfdf5}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;line-height:1.7}
+a{color:var(--blue)}.wrap{width:min(920px,calc(100% - 32px));margin:auto}header{background:#fff;border-bottom:1px solid var(--line);padding:22px 0}.back{font-weight:800;text-decoration:none}
+main{min-width:0;margin:24px auto 56px;padding:clamp(20px,4vw,42px);background:var(--panel);border:1px solid var(--line);border-radius:10px;box-shadow:0 14px 34px rgba(15,23,42,.08);overflow-wrap:anywhere}
+h1{font-size:clamp(28px,4vw,42px);line-height:1.2;margin:0 0 18px}h2{margin:38px 0 12px;font-size:25px}h3{margin:30px 0 10px;font-size:20px}h4{margin:24px 0 8px}p{margin:0 0 15px}li+li{margin-top:6px}
+pre{max-width:100%;overflow:auto;padding:16px;background:#111827;color:#f8fafc;border-radius:8px;overflow-wrap:normal}code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace}p code,li code{background:#eef2f7;padding:2px 5px;border-radius:4px}
+.section-meta{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 18px}.section-meta span{display:inline-flex;align-items:center;min-height:28px;border:1px solid #c7d2fe;border-radius:999px;background:#eef2ff;color:#3730a3;padding:0 10px;font-size:13px;font-weight:800}
+.lesson-block{border-top:1px solid var(--line);padding-top:16px;margin-top:16px}.lesson-block:first-of-type{border-top:0;padding-top:0}.lesson-block h4{margin:0 0 8px;font-size:17px}
+.practice-panel{border:1px solid #bfdbfe;border-radius:8px;background:#f8fbff;padding:16px;margin-top:14px}.practice-panel h4{margin-top:0}
+.result-toggle{border:1px solid #c7d2fe;border-radius:8px;background:#f8faff;margin-top:14px}.result-toggle summary{cursor:pointer;list-style:none;padding:12px 14px;font-weight:900;color:#312e81}.result-toggle summary::-webkit-details-marker{display:none}.result-toggle[open] summary{border-bottom:1px solid #c7d2fe;background:#eef2ff}.result-toggle-body{padding:14px}
+.section-mini-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.mini-block{border:1px solid var(--line);border-radius:8px;background:#fbfcfe;padding:12px}.mini-block h4{margin:0 0 7px;font-size:14px}
+.section-nav{display:flex;justify-content:space-between;gap:12px;margin-top:40px;padding-top:22px;border-top:1px solid var(--line)}.section-nav a{font-weight:800}@media(max-width:640px){.section-nav{flex-direction:column}.section-mini-grid{grid-template-columns:1fr}}
+</style></head>
+<body><header><div class="wrap"><a class="back" href="../index.html#section-4">← 학습 포털</a></div></header>
+<main class="wrap"><h1>Section 4: 여러 단계를 하나로 연결하기</h1>
+          <div class="section-meta">
+            <span>예상 60-90분</span>
+            <span>Workflow</span>
+            <span>Tool</span>
+            <span>Agent-like flow</span>
+          </div>
+          <div class="lesson-block">
+            <h4>핵심 개념</h4>
+            <p>
+              Workflow는 여러 단계를 순서대로 연결한 실행 흐름입니다.
+              Section 4에서는 검색, 답변 생성, 사실 추출, schema validation, 로그 기록을 하나로 묶습니다.
+              여기서 만드는 것은 완전 자율 agent가 아니라 agent-like workflow입니다.
+              AI를 사용하지만, 어떤 단계를 어떤 순서로 실행할지는 사람이 명시적으로 정합니다.
+            </p>
+            <p>
+              초심자에게는 이 방식이 더 안전합니다.
+              완전 자율 agent loop는 모델이 다음 행동을 직접 고르고, 실행 결과를 관찰한 뒤 다시 다음 행동을 고르는 구조입니다.
+              강력하지만 디버깅이 어렵습니다.
+              반면 고정 workflow는 각 단계의 입력과 출력이 보이므로,
+              retrieval이 틀렸는지, 답변 생성이 틀렸는지, schema validation이 틀렸는지 나눠서 확인할 수 있습니다.
+            </p>
+            <p>
+              Tool은 workflow가 호출할 수 있는 외부 기능입니다.
+              이번 실습에서는 검색 함수, tokenization 함수, percentage extraction 같은 작은 Python 함수가 tool에 가깝습니다.
+              좋은 tool은 입력과 출력이 좁고 명확합니다.
+              너무 넓은 <code>analyze_everything</code> 같은 함수보다, 작고 검증 가능한 함수가 workflow를 안정적으로 만듭니다.
+            </p>
+          </div>
+          <div class="lesson-block">
+            <h4>이번 Section의 최종 그림</h4>
+            <p>
+              질문이 들어오면 먼저 관련 문서를 찾습니다.
+              찾은 문서에서 답변을 만들고, 답변에서 핵심 사실을 구조화합니다.
+              그 구조가 schema에 맞는지 확인하고, 마지막으로 어떤 단계가 실행되었는지 log를 남깁니다.
+              최종 출력에는 <code>answer_ko</code>, <code>facts</code>, <code>evidence</code>, <code>not_answered</code>, <code>log</code>가 함께 있어야 합니다.
+            </p>
+            <p>
+              이 구조는 나중에 더 자율적인 agent로 확장할 수 있습니다.
+              다만 지금 단계에서는 “AI가 알아서 다 한다”보다 “어떤 단계는 사람이 고정하고, 어떤 단계만 AI에게 맡긴다”를 구분하는 것이 더 중요합니다.
+            </p>
+          </div>
+          <div class="practice-panel">
+            <h4>ipynb에서 실행할 것</h4>
+            <p>
+              <code>04_workflow.ipynb</code>를 실행하고, 성공 질문, 답이 없는 질문, 사람 검토가 필요한 질문의 route를 비교합니다.
+              dry run에서는 API 없이 검색과 routing만 확인하고, 마지막 live 셀에서 최종 JSON을 만듭니다.
+            </p>
+            <pre><code>notebooks/04_workflow.ipynb</code></pre>
+          </div>
+          <details class="result-toggle">
+            <summary>Section 4 결과 확인</summary>
+            <div class="result-toggle-body">
+              <ul>
+                <li>dry run에서 질문별 retrieved document와 route가 출력되어야 합니다.</li>
+                <li>최종 출력에 <code>route</code>, <code>answer_ko</code>, <code>evidence</code>, <code>next_action_ko</code>가 있어야 합니다.</li>
+                <li>답이 없는 질문은 <code>not_answered</code>, 애매한 질문은 <code>needs_review</code>로 분기할 수 있어야 합니다.</li>
+                <li>workflow가 검색, 판단, 답변 단계를 분리한다는 점을 설명할 수 있어야 합니다.</li>
+                <li>workflow와 agent의 차이를 “누가 다음 행동을 고르는가”로 설명할 수 있으면 통과입니다.</li>
+              </ul>
+            </div>
+          </details><nav class="section-nav" aria-label="Section 이동"><a href="03.html">← Section 3</a><a href="05.html">Section 5 →</a></nav></main><script defer src="../analytics.js"></script></body></html>

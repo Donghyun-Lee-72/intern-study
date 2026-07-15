@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" href="data:,">
+<title>Section 3 | AMSL Agentic AI Study</title><style>
+:root{--bg:#f5f7fb;--panel:#fff;--text:#111827;--muted:#5b6472;--line:#d8dee8;--teal:#0f766e;--blue:#1d4ed8;--soft:#ecfdf5}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;line-height:1.7}
+a{color:var(--blue)}.wrap{width:min(920px,calc(100% - 32px));margin:auto}header{background:#fff;border-bottom:1px solid var(--line);padding:22px 0}.back{font-weight:800;text-decoration:none}
+main{min-width:0;margin:24px auto 56px;padding:clamp(20px,4vw,42px);background:var(--panel);border:1px solid var(--line);border-radius:10px;box-shadow:0 14px 34px rgba(15,23,42,.08);overflow-wrap:anywhere}
+h1{font-size:clamp(28px,4vw,42px);line-height:1.2;margin:0 0 18px}h2{margin:38px 0 12px;font-size:25px}h3{margin:30px 0 10px;font-size:20px}h4{margin:24px 0 8px}p{margin:0 0 15px}li+li{margin-top:6px}
+pre{max-width:100%;overflow:auto;padding:16px;background:#111827;color:#f8fafc;border-radius:8px;overflow-wrap:normal}code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace}p code,li code{background:#eef2f7;padding:2px 5px;border-radius:4px}
+.section-meta{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 18px}.section-meta span{display:inline-flex;align-items:center;min-height:28px;border:1px solid #c7d2fe;border-radius:999px;background:#eef2ff;color:#3730a3;padding:0 10px;font-size:13px;font-weight:800}
+.lesson-block{border-top:1px solid var(--line);padding-top:16px;margin-top:16px}.lesson-block:first-of-type{border-top:0;padding-top:0}.lesson-block h4{margin:0 0 8px;font-size:17px}
+.practice-panel{border:1px solid #bfdbfe;border-radius:8px;background:#f8fbff;padding:16px;margin-top:14px}.practice-panel h4{margin-top:0}
+.result-toggle{border:1px solid #c7d2fe;border-radius:8px;background:#f8faff;margin-top:14px}.result-toggle summary{cursor:pointer;list-style:none;padding:12px 14px;font-weight:900;color:#312e81}.result-toggle summary::-webkit-details-marker{display:none}.result-toggle[open] summary{border-bottom:1px solid #c7d2fe;background:#eef2ff}.result-toggle-body{padding:14px}
+.section-mini-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.mini-block{border:1px solid var(--line);border-radius:8px;background:#fbfcfe;padding:12px}.mini-block h4{margin:0 0 7px;font-size:14px}
+.section-nav{display:flex;justify-content:space-between;gap:12px;margin-top:40px;padding-top:22px;border-top:1px solid var(--line)}.section-nav a{font-weight:800}@media(max-width:640px){.section-nav{flex-direction:column}.section-mini-grid{grid-template-columns:1fr}}
+</style></head>
+<body><header><div class="wrap"><a class="back" href="../index.html#section-3">← 학습 포털</a></div></header>
+<main class="wrap"><h1>Section 3: 문서 근거로 답하게 하기</h1>
+          <div class="section-meta">
+            <span>예상 90-120분</span>
+            <span>RAG</span>
+            <span>Evidence</span>
+            <span>LangChain Document</span>
+          </div>
+          <div class="lesson-block">
+            <h4>핵심 개념</h4>
+            <p>
+              RAG는 Retrieval-Augmented Generation의 줄임말입니다.
+              모델이 기억만으로 바로 답하는 것이 아니라, 먼저 질문과 관련된 문서를 찾고,
+              그 문서 조각을 근거로 답변을 생성하는 패턴입니다.
+              검색 단계가 retrieval이고, 근거를 바탕으로 답을 쓰는 단계가 generation입니다.
+            </p>
+            <p>
+              RAG를 쓰는 이유는 모델이 모든 최신 문서와 내부 문서를 기억하고 있다고 가정하지 않기 위해서입니다.
+              API onboarding 문서, support workflow 문서, release note 문서처럼 우리 프로젝트 안에 있는 자료를 먼저 찾고,
+              그 안에서만 답하게 만들면 근거 없는 답변을 줄일 수 있습니다.
+              하지만 RAG가 hallucination을 완전히 없애지는 못합니다.
+              검색된 문서가 틀리거나 질문과 관련이 없으면, 모델은 그 근거로도 틀린 답을 만들 수 있습니다.
+            </p>
+            <p>
+              그래서 RAG에서 가장 먼저 볼 것은 모델 답변이 아니라 retrieved evidence입니다.
+              어떤 문서가 검색되었는지, 그 문서가 질문에 직접 답하는지, <code>source_id</code>와 <code>quote</code>가 유지되는지 확인합니다.
+              답이 없는 질문이라면 억지로 답하지 않고 <code>not_answered: true</code>가 되어야 합니다.
+            </p>
+          </div>
+          <div class="lesson-block">
+            <h4>Lexical retrieval과 실제 RAG의 차이</h4>
+            <p>
+              이번 실습은 초심자용이라 embedding/vector DB를 바로 쓰지 않습니다.
+              대신 단어가 얼마나 겹치는지 보는 lexical retrieval로 RAG의 구조를 먼저 익힙니다.
+              이 방식은 단순하고 이해하기 쉽지만, 표현이 많이 바뀐 질문에는 약합니다.
+              실제 프로젝트에서는 embedding model이 텍스트를 의미 벡터로 바꾸고,
+              vector store가 유사한 chunk를 찾아주는 방식으로 확장할 수 있습니다.
+            </p>
+            <p>
+              LangChain 예제에서는 <code>Document</code> 객체와 <code>metadata</code>를 봅니다.
+              문서 본문만 들고 다니면 답변 출처를 잃기 쉽기 때문에,
+              <code>metadata.source_id</code>에 문서 ID를 넣어 끝까지 유지합니다.
+            </p>
+          </div>
+          <div class="practice-panel">
+            <h4>ipynb에서 실행할 것</h4>
+            <p>
+              <code>03_rag.ipynb</code>를 실행하고, 질문별로 어떤 문서가 검색되는지 먼저 봅니다.
+              그 다음 모델 답변이 검색된 문서의 quote에서 나왔는지 확인합니다.
+            </p>
+            <pre><code>notebooks/03_rag.ipynb</code></pre>
+          </div>
+          <details class="result-toggle">
+            <summary>Section 3 결과 확인</summary>
+            <div class="result-toggle-body">
+              <ul>
+                <li>API onboarding 질문은 <code>api_onboarding</code> 문서를 검색해야 합니다.</li>
+                <li>답변의 <code>quote</code>가 실제 corpus text에 포함되어야 합니다.</li>
+                <li>quote 검증 셀이 <code>evidence quote check passed</code>를 출력해야 합니다.</li>
+                <li>pricing 정책처럼 corpus에 없는 질문은 억지로 답하지 않아야 합니다.</li>
+                <li>검색 결과에 잡혔다는 사실과 최종 답변 근거로 써도 된다는 판단을 구분할 수 있으면 통과입니다.</li>
+              </ul>
+            </div>
+          </details><nav class="section-nav" aria-label="Section 이동"><a href="02.html">← Section 2</a><a href="04.html">Section 4 →</a></nav></main><script defer src="../analytics.js"></script></body></html>

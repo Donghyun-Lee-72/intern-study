@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" href="data:,">
+<title>Section 2 | AMSL Agentic AI Study</title><style>
+:root{--bg:#f5f7fb;--panel:#fff;--text:#111827;--muted:#5b6472;--line:#d8dee8;--teal:#0f766e;--blue:#1d4ed8;--soft:#ecfdf5}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;line-height:1.7}
+a{color:var(--blue)}.wrap{width:min(920px,calc(100% - 32px));margin:auto}header{background:#fff;border-bottom:1px solid var(--line);padding:22px 0}.back{font-weight:800;text-decoration:none}
+main{min-width:0;margin:24px auto 56px;padding:clamp(20px,4vw,42px);background:var(--panel);border:1px solid var(--line);border-radius:10px;box-shadow:0 14px 34px rgba(15,23,42,.08);overflow-wrap:anywhere}
+h1{font-size:clamp(28px,4vw,42px);line-height:1.2;margin:0 0 18px}h2{margin:38px 0 12px;font-size:25px}h3{margin:30px 0 10px;font-size:20px}h4{margin:24px 0 8px}p{margin:0 0 15px}li+li{margin-top:6px}
+pre{max-width:100%;overflow:auto;padding:16px;background:#111827;color:#f8fafc;border-radius:8px;overflow-wrap:normal}code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace}p code,li code{background:#eef2f7;padding:2px 5px;border-radius:4px}
+.section-meta{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 18px}.section-meta span{display:inline-flex;align-items:center;min-height:28px;border:1px solid #c7d2fe;border-radius:999px;background:#eef2ff;color:#3730a3;padding:0 10px;font-size:13px;font-weight:800}
+.lesson-block{border-top:1px solid var(--line);padding-top:16px;margin-top:16px}.lesson-block:first-of-type{border-top:0;padding-top:0}.lesson-block h4{margin:0 0 8px;font-size:17px}
+.practice-panel{border:1px solid #bfdbfe;border-radius:8px;background:#f8fbff;padding:16px;margin-top:14px}.practice-panel h4{margin-top:0}
+.result-toggle{border:1px solid #c7d2fe;border-radius:8px;background:#f8faff;margin-top:14px}.result-toggle summary{cursor:pointer;list-style:none;padding:12px 14px;font-weight:900;color:#312e81}.result-toggle summary::-webkit-details-marker{display:none}.result-toggle[open] summary{border-bottom:1px solid #c7d2fe;background:#eef2ff}.result-toggle-body{padding:14px}
+.section-mini-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.mini-block{border:1px solid var(--line);border-radius:8px;background:#fbfcfe;padding:12px}.mini-block h4{margin:0 0 7px;font-size:14px}
+.section-nav{display:flex;justify-content:space-between;gap:12px;margin-top:40px;padding-top:22px;border-top:1px solid var(--line)}.section-nav a{font-weight:800}@media(max-width:640px){.section-nav{flex-direction:column}.section-mini-grid{grid-template-columns:1fr}}
+</style></head>
+<body><header><div class="wrap"><a class="back" href="../index.html#section-2">← 학습 포털</a></div></header>
+<main class="wrap"><h1>Section 2: 답변을 정해진 형식으로 받기</h1>
+          <div class="section-meta">
+            <span>예상 60-90분</span>
+            <span>Structured output</span>
+            <span>Pydantic</span>
+            <span>LangChain parser</span>
+          </div>
+          <div class="lesson-block">
+            <h4>핵심 개념</h4>
+            <p>
+              자연어 답변은 사람이 읽기에는 좋지만, 프로그램의 다음 단계로 넘기기에는 불안정합니다.
+              필드 이름이 바뀌거나, 값이 빠지거나, 숫자가 문자열로 들어오면 다음 코드가 깨질 수 있습니다.
+              Structured output은 모델 답변을 정해진 구조로 받는 방식이고,
+              이번 수업에서는 Pydantic으로 그 구조를 검사합니다.
+            </p>
+            <p>
+              Pydantic은 Python type hint를 사용해 데이터 구조와 validation 규칙을 정의하는 도구입니다.
+              <code>BaseModel</code>은 어떤 필드가 필요한지 정하고, <code>Field</code>는 값의 범위나 설명을 붙입니다.
+              예를 들어 <code>confidence</code>가 0보다 작거나 1보다 크면 validation error가 나야 합니다.
+              이 오류는 실패라기보다 “모델 출력 또는 schema 계약을 다시 봐야 한다”는 디버깅 신호입니다.
+            </p>
+            <p>
+              중요한 구분이 있습니다. Pydantic validation은 형식을 검사하지만 사실성을 검사하지 않습니다.
+              <code>source_id</code>와 <code>quote</code> 모양이 맞더라도, quote가 실제 원문에 없다면 사실성은 틀린 것입니다.
+              Section 2에서는 형식을 안정화하고, Section 3에서 원문 근거를 확인합니다.
+            </p>
+          </div>
+          <div class="lesson-block">
+            <h4>LangChain은 여기서 무엇을 하나요?</h4>
+            <p>
+              LangChain은 LLM application의 부품을 연결하는 프레임워크입니다.
+              이번 Section에서는 LangChain 전체를 깊게 배우지 않고,
+              <code>PromptTemplate</code>, model call, output parser가 각각 어떤 역할을 하는지만 봅니다.
+              <code>PromptTemplate</code>은 입력 문서와 형식 지시문을 합쳐 모델에게 보낼 prompt를 만들고,
+              output parser는 모델이 만든 JSON 문자열을 Pydantic 객체로 바꿉니다.
+            </p>
+            <p>
+              LangChain을 쓴다고 답이 자동으로 좋아지지는 않습니다.
+              연결 도구는 prompt와 parser를 다루기 쉽게 해주지만,
+              여전히 schema 설계, evidence 확인, 답이 없을 때의 정책은 사람이 정해야 합니다.
+            </p>
+          </div>
+          <div class="practice-panel">
+            <h4>ipynb에서 실행할 것</h4>
+            <p>
+              <code>02_structured_output.ipynb</code>를 실행하고, schema 정의, validation 성공/실패, LLM JSON 출력 parse 결과를 순서대로 봅니다.
+              validation 실패 예시는 API를 호출하지 않으므로 비용 없이 실행됩니다.
+            </p>
+            <pre><code>notebooks/02_structured_output.ipynb</code></pre>
+          </div>
+          <details class="result-toggle">
+            <summary>Section 2 결과 확인</summary>
+            <div class="result-toggle-body">
+              <ul>
+                <li>일부러 틀린 <code>bad_output</code>이 validation error를 출력해야 합니다.</li>
+                <li>올바른 예시는 <code>GroundedAnswer</code> 객체로 변환되어야 합니다.</li>
+                <li><code>evidence</code>는 문자열 목록이 아니라 <code>source_id</code>와 <code>quote</code>를 가진 객체 목록이어야 합니다.</li>
+                <li>LLM이 출력한 JSON text와 Pydantic object의 차이를 말할 수 있어야 합니다.</li>
+                <li>“형식 검증은 사실 검증이 아니다”를 예시와 함께 설명할 수 있으면 통과입니다.</li>
+              </ul>
+            </div>
+          </details><nav class="section-nav" aria-label="Section 이동"><a href="01.html">← Section 1</a><a href="03.html">Section 3 →</a></nav></main><script defer src="../analytics.js"></script></body></html>

@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" href="data:,">
+<title>Section 0 | AMSL Agentic AI Study</title><style>
+:root{--bg:#f5f7fb;--panel:#fff;--text:#111827;--muted:#5b6472;--line:#d8dee8;--teal:#0f766e;--blue:#1d4ed8;--soft:#ecfdf5}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;line-height:1.7}
+a{color:var(--blue)}.wrap{width:min(920px,calc(100% - 32px));margin:auto}header{background:#fff;border-bottom:1px solid var(--line);padding:22px 0}.back{font-weight:800;text-decoration:none}
+main{min-width:0;margin:24px auto 56px;padding:clamp(20px,4vw,42px);background:var(--panel);border:1px solid var(--line);border-radius:10px;box-shadow:0 14px 34px rgba(15,23,42,.08);overflow-wrap:anywhere}
+h1{font-size:clamp(28px,4vw,42px);line-height:1.2;margin:0 0 18px}h2{margin:38px 0 12px;font-size:25px}h3{margin:30px 0 10px;font-size:20px}h4{margin:24px 0 8px}p{margin:0 0 15px}li+li{margin-top:6px}
+pre{max-width:100%;overflow:auto;padding:16px;background:#111827;color:#f8fafc;border-radius:8px;overflow-wrap:normal}code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace}p code,li code{background:#eef2f7;padding:2px 5px;border-radius:4px}
+.section-meta{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 18px}.section-meta span{display:inline-flex;align-items:center;min-height:28px;border:1px solid #c7d2fe;border-radius:999px;background:#eef2ff;color:#3730a3;padding:0 10px;font-size:13px;font-weight:800}
+.lesson-block{border-top:1px solid var(--line);padding-top:16px;margin-top:16px}.lesson-block:first-of-type{border-top:0;padding-top:0}.lesson-block h4{margin:0 0 8px;font-size:17px}
+.practice-panel{border:1px solid #bfdbfe;border-radius:8px;background:#f8fbff;padding:16px;margin-top:14px}.practice-panel h4{margin-top:0}
+.result-toggle{border:1px solid #c7d2fe;border-radius:8px;background:#f8faff;margin-top:14px}.result-toggle summary{cursor:pointer;list-style:none;padding:12px 14px;font-weight:900;color:#312e81}.result-toggle summary::-webkit-details-marker{display:none}.result-toggle[open] summary{border-bottom:1px solid #c7d2fe;background:#eef2ff}.result-toggle-body{padding:14px}
+.section-mini-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.mini-block{border:1px solid var(--line);border-radius:8px;background:#fbfcfe;padding:12px}.mini-block h4{margin:0 0 7px;font-size:14px}
+.section-nav{display:flex;justify-content:space-between;gap:12px;margin-top:40px;padding-top:22px;border-top:1px solid var(--line)}.section-nav a{font-weight:800}@media(max-width:640px){.section-nav{flex-direction:column}.section-mini-grid{grid-template-columns:1fr}}
+</style></head>
+<body><header><div class="wrap"><a class="back" href="../index.html#section-0">← 학습 포털</a></div></header>
+<main class="wrap"><h1>Section 0: 처음 보기, 환경 준비, 실행 도구 준비</h1>
+          <div class="section-meta">
+            <span>예상 60-90분</span>
+            <span>웹사이트 정독</span>
+            <span>PowerShell + uv</span>
+            <span>노트북 실행 전 필수</span>
+          </div>
+          <div class="lesson-block">
+            <h4>무엇을 배우나요?</h4>
+            <p>
+              Section 0은 AI 개념을 배우기 전에 모두가 같은 출발선에 서도록 만드는 단계입니다.
+              수업에서 사용할 실행 기준은 Windows PowerShell, uv, Python 3.11, Jupyter Notebook입니다.
+              Python은 브라우저에서 직접 설치하는 것을 기본 경로로 삼지 않습니다.
+              uv가 필요한 Python 실행 환경과 패키지를 준비하고, 우리는 <code>uv run --python 3.11 ...</code> 형식으로 실행합니다.
+            </p>
+            <p>
+              이 방식을 쓰는 이유는 학생마다 이미 설치된 Python, Anaconda, VS Code kernel, PATH 설정이 다를 수 있기 때문입니다.
+              전역 <code>python</code> 명령이 되느냐보다, 수업에서 안내한 uv 명령이 되는지가 기준입니다.
+              따라서 <code>python --version</code>만 실패한다고 바로 Python을 다시 설치하지 않습니다.
+              먼저 <code>uv --version</code>과 <code>uv run --python 3.11 python --version</code>을 확인합니다.
+            </p>
+            <p>
+              API key는 내 코드가 OpenAI 모델을 사용할 수 있게 해주는 비밀번호 같은 값입니다.
+              key는 웹사이트나 채팅에는 입력하지 않습니다. 이번 자료에서는 학생이 열어야 할 파일을 줄이기 위해
+              각 노트북의 API key 입력 셀에 직접 붙여넣습니다.
+              단, key가 들어간 노트북은 그대로 공유하지 않고, 제출하거나 화면 공유하기 전에는 key 문자열을 지웁니다.
+            </p>
+          </div>
+          <div class="practice-panel">
+            <h4>노트북 실습 전에 실행할 것</h4>
+            <p>
+              ZIP을 받은 뒤 압축을 풀고, PowerShell에서 압축을 푼 루트 폴더로 들어갑니다.
+              루트 폴더에는 <code>START_HERE.md</code>, <code>requirements.txt</code>, <code>notebooks/</code>가 보여야 합니다.
+              아래 명령으로 uv가 Python 3.11과 수업용 library를 준비한 Jupyter를 엽니다.
+            </p>
+            <pre><code>cd amsl-internship-study
+uv --version
+uv run --python 3.11 python --version
+uv run --python 3.11 --with-requirements requirements.txt --with notebook jupyter notebook notebooks</code></pre>
+            <p>
+              Jupyter가 열리면 <code>00_start_here.ipynb</code>부터 실행합니다.
+              이 노트북은 루트 <code>requirements.txt</code>를 찾고, 필요한 package import를 확인하고,
+              API key를 붙여넣은 뒤 첫 연결 테스트를 합니다.
+              VS Code에서 직접 열 경우에도 커널이 수업용 uv/Python 3.11 환경인지 확인합니다.
+            </p>
+          </div>
+          <details class="result-toggle">
+            <summary>Section 0 결과 확인</summary>
+            <div class="result-toggle-body">
+              <ul>
+                <li><code>uv --version</code>이 동작합니다.</li>
+                <li><code>uv run --python 3.11 python --version</code>이 Python 3.11 실행 환경을 보여줍니다.</li>
+                <li><code>00_start_here.ipynb</code>가 루트 <code>requirements.txt</code> 위치와 설치 기준 package를 출력합니다.</li>
+                <li>API key 입력 셀에 수업용 key를 붙여넣은 뒤 smoke test가 짧은 한국어 연결 성공 메시지를 출력합니다.</li>
+                <li>key가 들어간 노트북은 채팅, GitHub, 제출물에 그대로 공유하지 않습니다.</li>
+                <li>오류를 질문할 때는 실행한 명령, 현재 폴더, 오류 메시지, 모델명만 공유할 수 있습니다.</li>
+              </ul>
+            </div>
+          </details><nav class="section-nav" aria-label="Section 이동"><a href="../index.html">← 학습 포털</a><a href="01.html">Section 1 →</a></nav></main><script defer src="../analytics.js"></script></body></html>

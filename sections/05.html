@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" href="data:,">
+<title>Section 5 | AMSL Agentic AI Study</title><style>
+:root{--bg:#f5f7fb;--panel:#fff;--text:#111827;--muted:#5b6472;--line:#d8dee8;--teal:#0f766e;--blue:#1d4ed8;--soft:#ecfdf5}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;line-height:1.7}
+a{color:var(--blue)}.wrap{width:min(920px,calc(100% - 32px));margin:auto}header{background:#fff;border-bottom:1px solid var(--line);padding:22px 0}.back{font-weight:800;text-decoration:none}
+main{min-width:0;margin:24px auto 56px;padding:clamp(20px,4vw,42px);background:var(--panel);border:1px solid var(--line);border-radius:10px;box-shadow:0 14px 34px rgba(15,23,42,.08);overflow-wrap:anywhere}
+h1{font-size:clamp(28px,4vw,42px);line-height:1.2;margin:0 0 18px}h2{margin:38px 0 12px;font-size:25px}h3{margin:30px 0 10px;font-size:20px}h4{margin:24px 0 8px}p{margin:0 0 15px}li+li{margin-top:6px}
+pre{max-width:100%;overflow:auto;padding:16px;background:#111827;color:#f8fafc;border-radius:8px;overflow-wrap:normal}code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace}p code,li code{background:#eef2f7;padding:2px 5px;border-radius:4px}
+.section-meta{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 18px}.section-meta span{display:inline-flex;align-items:center;min-height:28px;border:1px solid #c7d2fe;border-radius:999px;background:#eef2ff;color:#3730a3;padding:0 10px;font-size:13px;font-weight:800}
+.lesson-block{border-top:1px solid var(--line);padding-top:16px;margin-top:16px}.lesson-block:first-of-type{border-top:0;padding-top:0}.lesson-block h4{margin:0 0 8px;font-size:17px}
+.practice-panel{border:1px solid #bfdbfe;border-radius:8px;background:#f8fbff;padding:16px;margin-top:14px}.practice-panel h4{margin-top:0}
+.result-toggle{border:1px solid #c7d2fe;border-radius:8px;background:#f8faff;margin-top:14px}.result-toggle summary{cursor:pointer;list-style:none;padding:12px 14px;font-weight:900;color:#312e81}.result-toggle summary::-webkit-details-marker{display:none}.result-toggle[open] summary{border-bottom:1px solid #c7d2fe;background:#eef2ff}.result-toggle-body{padding:14px}
+.section-mini-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.mini-block{border:1px solid var(--line);border-radius:8px;background:#fbfcfe;padding:12px}.mini-block h4{margin:0 0 7px;font-size:14px}
+.section-nav{display:flex;justify-content:space-between;gap:12px;margin-top:40px;padding-top:22px;border-top:1px solid var(--line)}.section-nav a{font-weight:800}@media(max-width:640px){.section-nav{flex-direction:column}.section-mini-grid{grid-template-columns:1fr}}
+</style></head>
+<body><header><div class="wrap"><a class="back" href="../index.html#section-5">← 학습 포털</a></div></header>
+<main class="wrap"><h1>Section 5: Linux/WSL2 개발 환경 입문</h1>
+          <div class="section-meta">
+            <span>예상 90-120분</span>
+            <span>마지막 특강</span>
+            <span>WSL2</span>
+            <span>개발 환경 확장</span>
+          </div>
+          <div class="callout">
+            Section 5는 Section 1-4의 AI 실습을 막지 않기 위해 마지막에 따로 둔 Linux 특강입니다.
+            기본 수업은 Windows PowerShell + uv로 진행하고, Linux/WSL2는 개발 환경을 넓히는 단계로 다룹니다.
+          </div>
+          <div class="lesson-block">
+            <h4>왜 Linux를 배우나요?</h4>
+            <p>
+              많은 연구 코드, 서버 배포, 오픈소스 예제가 Linux 환경을 기준으로 설명됩니다.
+              Windows만 써도 이번 AI 실습은 진행할 수 있지만, 이후 프로젝트에서 서버에 접속하거나,
+              GitHub README의 bash 명령을 따라 하거나, Docker와 원격 개발 환경을 다루려면 Linux shell 감각이 필요합니다.
+            </p>
+            <p>
+              WSL2는 Windows 안에서 Ubuntu 같은 Linux 환경을 실행하게 해주는 기능입니다.
+              하지만 처음부터 WSL2를 필수로 넣으면 재부팅, Ubuntu 계정 생성, Windows/Linux 경로 차이,
+              VS Code Remote - WSL 연결 같은 환경 문제가 AI 학습을 방해할 수 있습니다.
+              그래서 Section 5에서 별도로 다룹니다.
+            </p>
+          </div>
+          <div class="lesson-block">
+            <h4>꼭 구분해야 할 것</h4>
+            <p>
+              PowerShell과 WSL Ubuntu shell은 서로 다른 실행 환경입니다.
+              Windows 경로는 보통 <code>C:\Users\...</code>처럼 보이고, Linux 경로는 <code>/home/...</code>처럼 보입니다.
+              WSL 안에서 Windows 파일은 <code>/mnt/c/...</code> 아래에 보일 수 있습니다.
+              같은 컴퓨터라도 어느 shell에서 실행했는지에 따라 Python 위치, 설치된 패키지, 현재 폴더가 달라질 수 있습니다.
+            </p>
+            <p>
+              Linux에서 가장 먼저 익힐 명령은 많지 않습니다.
+              <code>pwd</code>는 현재 위치, <code>ls</code>는 파일 목록, <code>cd</code>는 폴더 이동,
+              <code>mkdir</code>은 폴더 생성입니다.
+              오류가 났을 때는 “무슨 명령을 어디에서 실행했는가”가 중요하므로,
+              습관적으로 <code>pwd</code>와 <code>ls</code>를 확인합니다.
+            </p>
+          </div>
+          <div class="practice-panel">
+            <h4>특강에서 실행할 것</h4>
+            <p>
+              <code>05_linux_wsl.ipynb</code>를 열어 Linux/WSL2 설명을 읽고, Python으로 현재 폴더를 확인하는 셀을 실행합니다.
+              아래 명령은 WSL Ubuntu shell에서 실행하는 예시입니다.
+              Linux package 설치나 <code>sudo</code>, <code>apt</code>가 필요한 경우에는 먼저 이유를 설명하고 별도로 요청합니다.
+              Python library는 Linux에서도 uv로 설치하고 실행합니다.
+            </p>
+            <pre><code>pwd
+ls
+cd ~
+mkdir amsl-test
+curl -LsSf https://astral.sh/uv/install.sh | sh
+uv --version
+uv run --python 3.11 python --version</code></pre>
+          </div>
+          <details class="result-toggle">
+            <summary>Section 5 결과 확인</summary>
+            <div class="result-toggle-body">
+              <ul>
+                <li>PowerShell과 WSL Ubuntu shell이 다른 실행 환경이라는 점을 설명할 수 있어야 합니다.</li>
+                <li><code>pwd</code>, <code>ls</code>, <code>cd</code>가 각각 무엇을 확인하는지 말할 수 있어야 합니다.</li>
+                <li>Windows 경로와 Linux 경로가 다르게 보이는 이유를 이해해야 합니다.</li>
+                <li>VS Code Remote - WSL로 Linux 폴더를 여는 흐름을 설명할 수 있어야 합니다.</li>
+                <li>Linux에서도 uv/Python 실행 환경을 만들 수 있음을 확인하면 통과입니다.</li>
+              </ul>
+            </div>
+          </details><nav class="section-nav" aria-label="Section 이동"><a href="04.html">← Section 4</a><a href="06.html">Section 6 →</a></nav></main><script defer src="../analytics.js"></script></body></html>
