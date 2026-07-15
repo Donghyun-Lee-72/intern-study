@@ -145,9 +145,7 @@ hash bucket에 세어 벡터를 만드는 단순한 장치입니다. 실제 embe
 </ul>
 <p>기본 실행에서는 real API gate가 <code>SKIPPED</code>되므로 비용이 발생하지 않습니다. 담당자가 비용 사용을 승인하고 환경변수에
 key가 준비된 경우에만 다음처럼 명시적으로 실행합니다.</p>
-<pre><code class="language-text">$env:RUN_LIVE_API = &quot;1&quot;
-$env:OPENAI_API_KEY = &quot;수업용_key&quot;
-uv run --python 3.11 --with-requirements requirements.txt --with notebook jupyter notebook notebooks
+<pre><code class="language-text">Jupyter에서 해당 notebook 상단의 API key 설정 셀에 수업용 key를 입력하고 `RUN_LIVE_API = True`로 변경합니다.
 </code></pre>
 <p>공유 notebook이나 shell history에 key를 직접 입력하지 말고, 실제 수업에서는 승인된 secret 주입 방식을 사용합니다.
 코드는 key의 존재만 확인하며 값을 출력하거나 저장하지 않습니다. 실행 전에 다음 계획을 먼저 출력합니다.</p>

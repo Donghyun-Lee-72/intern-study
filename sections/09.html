@@ -158,9 +158,7 @@ retrieval_query    검색을 위해 맥락을 보완한 문자열
 예상 예산을 출력합니다. key는 환경변수에서만 읽고 notebook, 출력, trace 파일에 저장하거나 표시하지 않습니다.</p>
 <p>실행 방법은 다음과 같습니다. 두 환경변수 중 하나라도 없으면 프로그램은 성공을 가장하지 않고 live 검사를
 <code>NOT COMPLETED</code>로 보고합니다.</p>
-<pre><code class="language-bash">$env:RUN_LIVE_API = &quot;1&quot;
-$env:OPENAI_API_KEY = &quot;수업용_key&quot;
-uv run --python 3.11 --with-requirements requirements.txt --with notebook jupyter notebook notebooks
+<pre><code class="language-bash">Jupyter에서 해당 notebook 상단의 API key 설정 셀에 수업용 key를 입력하고 `RUN_LIVE_API = True`로 변경합니다.
 </code></pre>
 <p>세 응답 모두 Pydantic schema, 의도한 answerability 상태, retrieved chunk ID, 원문과 글자까지 같은 exact quote 검사를
 통과해야 <code>COMPLETED</code>입니다. API가 반환한 input/output token usage가 있으면 실제 사용량과 가격표 기반 추정 비용도
