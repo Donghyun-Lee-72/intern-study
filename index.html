@@ -327,6 +327,44 @@
       text-decoration: none;
     }
 
+    .patch-selector {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 8px;
+      margin: 16px 0 22px;
+    }
+
+    .patch-selector button {
+      min-height: 46px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfcfe;
+      color: var(--text);
+      padding: 10px;
+      font: inherit;
+      font-size: 14px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .patch-selector button:hover,
+    .patch-selector button:focus,
+    .patch-selector button[aria-selected="true"] {
+      border-color: var(--blue);
+      background: var(--soft-blue);
+      color: #1e3a8a;
+    }
+
+    .patch-entry {
+      border-top: 1px solid var(--line);
+      padding-top: 22px;
+    }
+
+    .patch-entry h3 {
+      margin-top: 0;
+      font-size: 24px;
+    }
+
     .learning-section {
       border: 1px solid var(--line);
       border-radius: 8px;
@@ -555,7 +593,7 @@
       <button class="tab" type="button" data-tab="materials" aria-selected="true">학습 섹션</button>
       <button class="tab" type="button" data-tab="cost" aria-selected="false">API 키와 비용</button>
       <button class="tab" type="button" data-tab="trouble" aria-selected="false">오류 해결</button>
-      <a class="tab tab-link" href="patch-notes.html">패치노트</a>
+      <button class="tab" type="button" data-tab="patches" aria-selected="false">패치노트</button>
     </nav>
 
     <main>
@@ -768,6 +806,58 @@ output 비용 = 1,500 / 1,000,000 × 0.80달러 = 0.0012달러
           </div>
         </div>
       </section>
+
+      <section id="patches" hidden>
+        <h2>패치노트</h2>
+        <p>확인할 패치를 선택하면 변경사항과 검증 내용을 볼 수 있습니다.</p>
+        <div class="patch-selector" aria-label="패치 선택">
+          <button type="button" data-patch="patch-1" aria-selected="true">패치 1 — 학습자료 확장</button>
+        </div>
+
+        <article class="patch-entry" id="patch-1">
+          <h3>패치 1 — 학습자료 확장</h3>
+          <p><strong>배포일: 2026년 7월 15일</strong></p>
+          <p>기존 Section 0~5를 보완하고, 이후 학습을 위한 Section 6~12와 실습 파일을 추가했습니다.</p>
+
+          <h3>기존 Section 0~5 변경사항</h3>
+          <ul>
+            <li>API key와 모델 설정 방식을 Section별로 통일했습니다.</li>
+            <li>Section 3의 JSON 응답을 Structured Output으로 변경해 필드 누락으로 인한 오류를 줄였습니다.</li>
+            <li>Section 4의 Workflow 출력과 상태 검증을 보완했습니다.</li>
+            <li>기존 Notebook에 저장되어 있던 실행 결과를 정리했습니다.</li>
+            <li>학습 내용과 진행 순서는 변경하지 않았으므로 완료한 Section을 다시 진행할 필요는 없습니다.</li>
+          </ul>
+
+          <h3>사이트와 실습 파일</h3>
+          <h4>새로 추가된 Section</h4>
+          <ul>
+            <li><strong>Section 6:</strong> 문서를 검색 가능한 Chunk로 나누고 출처 정보를 유지합니다.</li>
+            <li><strong>Section 7:</strong> Embedding과 VectorStore를 이용한 의미 검색을 학습합니다.</li>
+            <li><strong>Section 8:</strong> 평가 질문을 이용해 Retriever의 검색 성능을 확인합니다.</li>
+            <li><strong>Section 9:</strong> 검색 근거와 인용을 검증하는 Vector RAG를 구성합니다.</li>
+            <li><strong>Section 10:</strong> Retrieval과 Generation을 나누어 평가하고 개선합니다.</li>
+            <li><strong>Section 11:</strong> Tool을 사용하는 Agent와 실행 흐름 제어를 학습합니다.</li>
+            <li><strong>Section 12:</strong> 앞에서 학습한 내용을 연결해 미니 프로젝트를 진행합니다.</li>
+          </ul>
+
+          <h4>사이트 및 파일 변경사항</h4>
+          <ul>
+            <li>메인 학습 지도와 Section별 페이지에 Section 6~12를 추가했습니다.</li>
+            <li>다운로드 ZIP에 Notebook 00~12와 새 실습 데이터를 포함했습니다.</li>
+            <li>각 Notebook 상단에 API key 필요 여부를 표시하고, 필요한 파일에는 입력 셀을 추가했습니다.</li>
+            <li>Section 페이지에 이전·다음 이동과 참고자료 안내를 추가하고 모바일 화면을 정리했습니다.</li>
+          </ul>
+
+          <h3>검증</h3>
+          <ul>
+            <li>최신 ZIP을 새 폴더에 풀어 Notebook 00~12를 순서대로 실행했습니다.</li>
+            <li>API가 필요한 실습은 수업용 프로젝트 key로 실제 호출해 확인했습니다.</li>
+            <li>구조화 출력, 상태 분기, 검색 근거와 인용 검증을 확인했습니다.</li>
+            <li>사이트 링크, 모바일 화면, 다운로드 파일과 공개 파일의 개인정보·API key 포함 여부를 점검했습니다.</li>
+          </ul>
+          <p>기존 자료를 내려받아 사용하고 있다면 Section 6을 시작하기 전에 최신 ZIP을 다시 받아주세요. API key는 ZIP에 포함되지 않으므로 필요한 Notebook의 상단 셀에 다시 입력해야 합니다.</p>
+        </article>
+      </section>
     </main>
   </div>
 
@@ -781,6 +871,8 @@ output 비용 = 1,500 / 1,000,000 × 0.80달러 = 0.0012달러
     const buttons = Array.from(document.querySelectorAll(".tab"));
     const sections = Array.from(document.querySelectorAll("main section"));
     const tabIds = new Set(buttons.map((button) => button.dataset.tab));
+    const patchButtons = Array.from(document.querySelectorAll("[data-patch]"));
+    const patchEntries = Array.from(document.querySelectorAll(".patch-entry"));
 
     function activate(id, options = {}) {
       const updateHash = options.updateHash !== false;
@@ -811,6 +903,19 @@ output 비용 = 1,500 / 1,000,000 × 0.80달러 = 0.0012달러
 
     buttons.forEach((button) => {
       button.addEventListener("click", () => activate(button.dataset.tab));
+    });
+
+    function showPatch(id) {
+      patchButtons.forEach((button) => {
+        button.setAttribute("aria-selected", String(button.dataset.patch === id));
+      });
+      patchEntries.forEach((entry) => {
+        entry.hidden = entry.id !== id;
+      });
+    }
+
+    patchButtons.forEach((button) => {
+      button.addEventListener("click", () => showPatch(button.dataset.patch));
     });
 
     const initial = location.hash.replace("#", "");
