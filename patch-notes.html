@@ -14,26 +14,31 @@ blockquote{margin:18px 0;padding:14px 18px;border-left:4px solid var(--teal);bac
 <body><header><div class="wrap"><a class="back" href="index.html">← 학습 포털</a></div></header>
 <main class="wrap"><h1>패치 1 — 학습자료 확장</h1>
 <p><strong>배포일: 2026년 7월 15일</strong></p>
-<p>Section 6~12가 새로 추가되었습니다. 기존의 LLM API, 구조화 출력, 간단한 RAG와 Workflow 실습에서 이어서 문서 분할, Vector 검색, RAG 평가, Tool과 Agent까지 학습할 수 있습니다.</p>
-<blockquote>기존 Section 0~5를 완료했다면 다시 진행할 필요가 없습니다. 최신 실습 파일을 내려받은 뒤 Section 6부터 이어서 진행하면 됩니다.</blockquote>
-<h2>기존 Section 0~5</h2>
-<p>학습 주제와 진행 순서는 그대로입니다. API key와 모델 설정 방식을 통일하고, 실습 결과가 모델의 출력 형식에 따라 간헐적으로 달라지지 않도록 Section 3~4의 구조화 출력을 보완했습니다. Notebook에 남아 있던 이전 실행 결과도 정리했습니다.</p>
-<p>기존 Section을 이미 정상적으로 완료했다면 다시 실행할 필요는 없습니다. 이전에 Section 3이나 4에서 JSON 형식 또는 필드 누락 문제로 실행이 중단되었다면 최신 파일로 해당 Section만 다시 실행해보면 됩니다.</p>
-<h2>새로 추가된 Section 6~12</h2>
+<p>기존 Section 0~5를 보완하고, 이후 학습을 위한 Section 6~12와 실습 파일을 추가했습니다.</p>
+<h2>기존 Section 0~5 변경사항</h2>
 <ul>
-<li><strong>Section 6 — 문서와 chunk:</strong> 긴 문서를 나누고 <code>source_id</code>, <code>chunk_id</code>, 원문 위치를 보존합니다.</li>
-<li><strong>Section 7 — Embedding과 VectorStore:</strong> lexical 검색과 의미 검색을 비교하고 실제 embedding을 선택적으로 검증합니다.</li>
-<li><strong>Section 8 — Retriever 평가:</strong> 작은 gold set으로 Recall@k, threshold, filter와 실패 원인을 점검합니다.</li>
-<li><strong>Section 9 — 추적 가능한 Vector RAG:</strong> 검색·생성·검증을 분리하고 <code>answered</code>, <code>not_answered</code>, <code>needs_review</code> 정책과 exact citation을 검사합니다.</li>
-<li><strong>Section 10 — RAG 평가:</strong> retrieval과 generation을 따로 측정하고 한 설정만 바꾼 baseline/candidate 실험을 수행합니다.</li>
-<li><strong>Section 11 — Tool과 Agent:</strong> tool schema, routing, 종료 조건, 정책 차단과 오류 처리를 통해 제어 가능한 agent 흐름을 학습합니다.</li>
-<li><strong>Section 12 — 미니 프로젝트:</strong> 공통 corpus와 평가 계약으로 baseline을 만든 뒤 각자 한 가지 개선을 측정합니다.</li>
+<li>API key와 모델 설정 방식을 Section별로 통일했습니다.</li>
+<li>Section 3의 JSON 응답을 Structured Output으로 변경해 필드 누락으로 인한 오류를 줄였습니다.</li>
+<li>Section 4의 Workflow 출력과 상태 검증을 보완했습니다.</li>
+<li>기존 Notebook에 저장되어 있던 실행 결과를 정리했습니다.</li>
+<li>학습 내용과 진행 순서는 변경하지 않았으므로 완료한 Section을 다시 진행할 필요는 없습니다.</li>
 </ul>
 <h2>사이트와 실습 파일</h2>
+<h3>새로 추가된 Section</h3>
 <ul>
-<li>메인 학습 지도와 Section별 학습 페이지에 Section 6~12를 연결했습니다.</li>
+<li><strong>Section 6:</strong> 문서를 검색 가능한 Chunk로 나누고 출처 정보를 유지합니다.</li>
+<li><strong>Section 7:</strong> Embedding과 VectorStore를 이용한 의미 검색을 학습합니다.</li>
+<li><strong>Section 8:</strong> 평가 질문을 이용해 Retriever의 검색 성능을 확인합니다.</li>
+<li><strong>Section 9:</strong> 검색 근거와 인용을 검증하는 Vector RAG를 구성합니다.</li>
+<li><strong>Section 10:</strong> Retrieval과 Generation을 나누어 평가하고 개선합니다.</li>
+<li><strong>Section 11:</strong> Tool을 사용하는 Agent와 실행 흐름 제어를 학습합니다.</li>
+<li><strong>Section 12:</strong> 앞에서 학습한 내용을 연결해 미니 프로젝트를 진행합니다.</li>
+</ul>
+<h3>사이트 및 파일 변경사항</h3>
+<ul>
+<li>메인 학습 지도와 Section별 페이지에 Section 6~12를 추가했습니다.</li>
 <li>다운로드 ZIP에 Notebook 00~12와 새 실습 데이터를 포함했습니다.</li>
-<li>각 Notebook 상단에서 API key 필요 여부를 확인할 수 있습니다. API를 사용하는 파일에는 key 입력 셀을 두었습니다.</li>
+<li>각 Notebook 상단에 API key 필요 여부를 표시하고, 필요한 파일에는 입력 셀을 추가했습니다.</li>
 <li>Section 페이지에 이전·다음 이동과 참고자료 안내를 추가하고 모바일 화면을 정리했습니다.</li>
 </ul>
 <h2>검증</h2>
