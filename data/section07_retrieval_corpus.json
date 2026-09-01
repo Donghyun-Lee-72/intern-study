@@ -3,7 +3,7 @@
     "source_id": "security-guide",
     "title": "가상 프로젝트 보안 안내",
     "category": "security",
-    "text": "수업용 API key와 access token은 비밀 인증정보다. 공개 저장소, 채팅방, 발표 화면에 올리지 않는다. 노출이 의심되면 담당자에게 알리고 기존 키의 폐기와 재발급 여부를 확인한다."
+    "text": "개인 API key와 access token은 비밀 인증정보다. 공개 저장소, 채팅방, 발표 화면에 올리지 않는다. 노출이 의심되면 즉시 폐기하고 새 key를 발급한 뒤 노출 범위를 확인한다."
   },
   {
     "source_id": "debug-guide",

@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" href="data:,">
 <link rel="stylesheet" href="../section-menu.css"><script defer src="../section-menu.js"></script>
-<title>Section 8 | AMSL Agentic AI Study</title><style>
+<title>Section 8 | Agentic AI Study Materials</title><style>
 :root{--bg:#f5f7fb;--panel:#fff;--text:#111827;--muted:#5b6472;--line:#d8dee8;--teal:#0f766e;--blue:#1d4ed8;--soft:#ecfdf5}
 *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;line-height:1.7}
 a{color:var(--blue)}.wrap{width:min(920px,calc(100% - 32px));margin:auto}header{background:#fff;border-bottom:1px solid var(--line);padding:22px 0}.back{font-weight:800;text-decoration:none}
@@ -113,7 +113,7 @@ Recall@k는 다음과 같이 계산합니다.</p>
   <button type="button" class="source-info" aria-label="정보 검색 평가 참고자료 보기">ⓘ</button>
   <div class="source-card" hidden>
     평가 개념 확인: Manning, Raghavan, Schütze, Introduction to Information Retrieval,
-    Evaluation in information retrieval (접속일: 2026-07-14). 수업용 계산 예시는 독자적으로 작성했습니다.
+    Evaluation in information retrieval (접속일: 2026-07-14). 실습용 계산 예시는 독자적으로 작성했습니다.
   </div>
 </aside>
 
@@ -228,7 +228,7 @@ results = store.similarity_search_with_score(
 <p>고급 retriever를 추가하기 전에 단순 baseline의 실패가 무엇인지 먼저 기록합니다. 새 구성요소가 metric 또는 명확한 실패
 사례를 개선하지 못하면 필수 pipeline에 넣지 않습니다.</p>
 <h2>참고자료 및 저작권 안내</h2>
-<p>이 페이지의 설명, 구성 및 실습 예제는 AMSL 인턴 학습을 위해 독자적으로 작성했습니다. 학습 범위 선정에는
+<p>이 페이지의 설명, 구성 및 실습 예제는 개인 학습을 위해 독자적으로 작성했습니다. 학습 범위 선정에는
 테디노트의 <em>&lt;랭체인LangChain 노트&gt; - LangChain 한국어 튜토리얼</em>을 참고했으며, 원문 문장·도표·예제 설명을
 전재하거나 변형하지 않았습니다. 해당 자료의 저작권과 이용 조건은 원 저작자에게 있습니다.</p>
 <ul>
@@ -248,4 +248,4 @@ results = store.similarity_search_with_score(
 <p>이 학습자료와 실습 corpus에는 외부 저장소에서 복사·수정한 코드나 실제 개인정보·비공개 연구자료가 없습니다.</p><nav class="section-nav" aria-label="Section 이동"><a href="07.html">← Section 7</a><a href="09.html">Section 9 →</a></nav></main><script>
 document.querySelectorAll('.source-info').forEach((button)=>{button.addEventListener('click',()=>{const card=button.nextElementSibling;const opening=card.hidden;document.querySelectorAll('.source-card').forEach((item)=>item.hidden=true);card.hidden=!opening;button.setAttribute('aria-expanded',String(opening));});});
 document.addEventListener('keydown',(event)=>{if(event.key==='Escape'){document.querySelectorAll('.source-card').forEach((item)=>item.hidden=true);document.querySelectorAll('.source-info').forEach((item)=>item.setAttribute('aria-expanded','false'));}});
-</script><script defer src="../analytics.js"></script></body></html>
+</script></body></html>

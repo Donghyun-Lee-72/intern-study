@@ -24,9 +24,9 @@ class Utf8StaticHandler(SimpleHTTPRequestHandler):
 
 
 def main():
-    host = os.environ.get("AMSL_STUDY_HOST", "127.0.0.1")
-    port = int(os.environ.get("AMSL_STUDY_PORT", "8767"))
-    root = Path(os.environ.get("AMSL_STUDY_ROOT", Path(__file__).resolve().parent)).resolve()
+    host = os.environ.get("STUDY_SITE_HOST", "127.0.0.1")
+    port = int(os.environ.get("STUDY_SITE_PORT", "8767"))
+    root = Path(os.environ.get("STUDY_SITE_ROOT", Path(__file__).resolve().parent)).resolve()
     handler = lambda *args, **kwargs: Utf8StaticHandler(*args, directory=str(root), **kwargs)
     server = ThreadingHTTPServer((host, port), handler)
     print(f"Serving {root} on http://{host}:{port}/", flush=True)

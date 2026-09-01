@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" href="data:,">
 <link rel="stylesheet" href="../section-menu.css"><script defer src="../section-menu.js"></script>
-<title>Section 7 | AMSL Agentic AI Study</title><style>
+<title>Section 7 | Agentic AI Study Materials</title><style>
 :root{--bg:#f5f7fb;--panel:#fff;--text:#111827;--muted:#5b6472;--line:#d8dee8;--teal:#0f766e;--blue:#1d4ed8;--soft:#ecfdf5}
 *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;line-height:1.7}
 a{color:var(--blue)}.wrap{width:min(920px,calc(100% - 32px));margin:auto}header{background:#fff;border-bottom:1px solid var(--line);padding:22px 0}.back{font-weight:800;text-decoration:none}
@@ -67,7 +67,7 @@ lexical retrieval이 놓친 표현 차이를 semantic retrieval이 찾을 수 �
   <button type="button" class="source-info" aria-label="Embedding 참고자료 보기">ⓘ</button>
   <div class="source-card" hidden>
     개념 및 API 확인: OpenAI 공식 문서, Embeddings guide와 API reference (접속일: 2026-07-14).
-    설명과 실습 문장은 AMSL 학습자료용으로 독자적으로 작성했습니다.
+    설명과 실습 문장은 개인 학습자료용으로 독자적으로 작성했습니다.
   </div>
 </aside>
 
@@ -121,7 +121,7 @@ print(cosine_similarity(query, different_direction))
 <p>질문마다 필요한 것은 query embedding과 검색입니다. 실습에서 같은 문서를 매번 다시 embedding하면 비용과 시간이
 불필요하게 늘어납니다.</p>
 <h2>5. 먼저 offline 모형으로 데이터 흐름 확인하기</h2>
-<p>제공된 실습은 <code>ConceptEmbedding</code>이라는 결정론적 수업용 모형을 사용합니다. 동의어 일부를 같은 대표 개념으로 바꾸고
+<p>제공된 실습은 <code>ConceptEmbedding</code>이라는 결정론적 실습용 모형을 사용합니다. 동의어 일부를 같은 대표 개념으로 바꾸고
 hash bucket에 세어 벡터를 만드는 단순한 장치입니다. 실제 embedding model의 언어 이해나 일반화 성능을 흉내 내지
 않습니다. 이 모형을 쓰는 목적은 API key, 비용, 네트워크 상태와 관계없이 아래 사항을 먼저 검증하는 것입니다.</p>
 <ul>
@@ -138,14 +138,14 @@ hash bucket에 세어 벡터를 만드는 단순한 장치입니다. 실제 embe
 <p>필수 실습의 <code>ConceptEmbedding</code> 통과는 interface와 데이터 흐름의 재현성만 확인합니다. 실제 embedding model이 한국어
 표현 변경을 적절히 검색하는지는 증명하지 않습니다. 이를 혼동하지 않도록 notebook은 다음 두 상태를 따로 출력합니다.</p>
 <ul>
-<li><code>offline fixture gate: PASS</code>: 비용 없는 수업용 모형과 metadata 검사가 통과함</li>
+<li><code>offline fixture gate: PASS</code>: 비용 없는 실습용 모형과 metadata 검사가 통과함</li>
 <li><code>real API gate: PASS</code>: 실제 <code>text-embedding-3-small</code>로 direct/paraphrase 검색 검사가 통과함</li>
 </ul>
 <p>기본 실행에서는 real API gate가 <code>SKIPPED</code>되므로 비용이 발생하지 않습니다. 담당자가 비용 사용을 승인하고 환경변수에
 key가 준비된 경우에만 다음처럼 명시적으로 실행합니다.</p>
-<pre><code class="language-text">Jupyter에서 해당 notebook 상단의 API key 설정 셀에 수업용 key를 입력하고 `RUN_LIVE_API = True`로 변경합니다.
+<pre><code class="language-text">Jupyter를 시작하기 전에 OPENAI_API_KEY와 RUN_LIVE_API=1을 안전한 환경변수로 주입합니다.
 </code></pre>
-<p>공유 notebook이나 shell history에 key를 직접 입력하지 말고, 실제 수업에서는 승인된 secret 주입 방식을 사용합니다.
+<p>공유 notebook이나 shell history에 key를 직접 입력하지 말고, 실제 프로젝트에서는 승인된 secret 주입 방식을 사용합니다.
 코드는 key의 존재만 확인하며 값을 출력하거나 저장하지 않습니다. 실행 전에 다음 계획을 먼저 출력합니다.</p>
 <pre><code class="language-text">model: text-embedding-3-small
 document inputs: 최대 5
@@ -199,7 +199,7 @@ algorithm을 직접 구현한 것은 아닙니다. 실제 벡터는 API의 embed
 vector_store = InMemoryVectorStore(embedding=embeddings)
 vector_store.add_documents(chunks)
 </code></pre>
-<p>모델명은 제작 시점의 공식 문서와 수업 계정 지원 여부를 다시 확인한 뒤 고정합니다.</p>
+<p>모델명은 제작 시점의 공식 문서와 사용 계정의 지원 여부를 다시 확인한 뒤 고정합니다.</p>
 <aside class="source-note" data-source="langchain-inmemory-vectorstore">
   <button type="button" class="source-info" aria-label="InMemoryVectorStore 참고자료 보기">ⓘ</button>
   <div class="source-card" hidden>
@@ -280,7 +280,7 @@ embedding model이나 distance 함수가 바뀌면 점수 해석도 달라집니
 <li>Chroma 또는 FAISS는 Section 8 이후 프로젝트 필요가 확인될 때 도입</li>
 </ul>
 <h2>참고자료 및 저작권 안내</h2>
-<p>이 페이지의 설명, 구성 및 실습 예제는 AMSL 인턴 학습을 위해 독자적으로 작성했습니다. 학습 범위 선정에는
+<p>이 페이지의 설명, 구성 및 실습 예제는 개인 학습을 위해 독자적으로 작성했습니다. 학습 범위 선정에는
 테디노트의 <em>&lt;랭체인LangChain 노트&gt; - LangChain 한국어 튜토리얼</em>을 참고했으며, 원문 문장·도표·예제 설명을
 전재하거나 변형하지 않았습니다. 해당 자료의 저작권과 이용 조건은 원 저작자에게 있습니다.</p>
 <ul>
@@ -301,4 +301,4 @@ embedding model이나 distance 함수가 바뀌면 점수 해석도 달라집니
 <p>이 학습자료에는 외부 저장소에서 복사·수정한 코드가 없습니다.</p><nav class="section-nav" aria-label="Section 이동"><a href="06.html">← Section 6</a><a href="08.html">Section 8 →</a></nav></main><script>
 document.querySelectorAll('.source-info').forEach((button)=>{button.addEventListener('click',()=>{const card=button.nextElementSibling;const opening=card.hidden;document.querySelectorAll('.source-card').forEach((item)=>item.hidden=true);card.hidden=!opening;button.setAttribute('aria-expanded',String(opening));});});
 document.addEventListener('keydown',(event)=>{if(event.key==='Escape'){document.querySelectorAll('.source-card').forEach((item)=>item.hidden=true);document.querySelectorAll('.source-info').forEach((item)=>item.setAttribute('aria-expanded','false'));}});
-</script><script defer src="../analytics.js"></script></body></html>
+</script></body></html>

@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" href="data:,">
 <link rel="stylesheet" href="../section-menu.css"><script defer src="../section-menu.js"></script>
-<title>Section 9 | AMSL Agentic AI Study</title><style>
+<title>Section 9 | Agentic AI Study Materials</title><style>
 :root{--bg:#f5f7fb;--panel:#fff;--text:#111827;--muted:#5b6472;--line:#d8dee8;--teal:#0f766e;--blue:#1d4ed8;--soft:#ecfdf5}
 *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;line-height:1.7}
 a{color:var(--blue)}.wrap{width:min(920px,calc(100% - 32px));margin:auto}header{background:#fff;border-bottom:1px solid var(--line);padding:22px 0}.back{font-weight:800;text-decoration:none}
@@ -68,7 +68,7 @@ API 비용: 필수 검증은 API 호출 없음. 실제 생성 모델 연결은 �
   <button type="button" class="source-info" aria-label="RAG 구조 참고자료 보기">ⓘ</button>
   <div class="source-card" hidden>
     개념과 현재 API 흐름 확인: LangChain 공식 문서, RAG tutorial (접속일: 2026-07-14).
-    단계 구분, 데이터와 실습 코드는 AMSL 학습자료용으로 독자적으로 작성했습니다.
+    단계 구분, 데이터와 실습 코드는 개인 학습자료용으로 독자적으로 작성했습니다.
   </div>
 </aside>
 
@@ -159,7 +159,7 @@ retrieval_query    검색을 위해 맥락을 보완한 문자열
 예상 예산을 출력합니다. key는 환경변수에서만 읽고 notebook, 출력, trace 파일에 저장하거나 표시하지 않습니다.</p>
 <p>실행 방법은 다음과 같습니다. 두 환경변수 중 하나라도 없으면 프로그램은 성공을 가장하지 않고 live 검사를
 <code>NOT COMPLETED</code>로 보고합니다.</p>
-<pre><code class="language-bash">Jupyter에서 해당 notebook 상단의 API key 설정 셀에 수업용 key를 입력하고 `RUN_LIVE_API = True`로 변경합니다.
+<pre><code class="language-bash">Jupyter를 시작하기 전에 OPENAI_API_KEY와 RUN_LIVE_API=1을 안전한 환경변수로 주입합니다.
 </code></pre>
 <p>세 응답 모두 Pydantic schema, 의도한 answerability 상태, retrieved chunk ID, 원문과 글자까지 같은 exact quote 검사를
 통과해야 <code>COMPLETED</code>입니다. API가 반환한 input/output token usage가 있으면 실제 사용량과 가격표 기반 추정 비용도
@@ -201,7 +201,7 @@ retrieval_query    검색을 위해 맥락을 보완한 문자열
 <li>대화 기록 저장 범위와 개인정보 최소화 정책 설계</li>
 </ul>
 <h2>참고자료 및 저작권 안내</h2>
-<p>이 페이지의 설명, 구성, corpus 및 실습 예제는 AMSL 인턴 학습을 위해 독자적으로 작성했습니다. 학습 범위 선정에는
+<p>이 페이지의 설명, 구성, corpus 및 실습 예제는 개인 학습을 위해 독자적으로 작성했습니다. 학습 범위 선정에는
 테디노트의 <em>&lt;랭체인LangChain 노트&gt; - LangChain 한국어 튜토리얼</em>을 참고했으며, 원문 문장·도표·예제 설명을
 전재하거나 변형하지 않았습니다. 해당 자료의 저작권과 이용 조건은 원 저작자에게 있습니다.</p>
 <ul>
@@ -219,4 +219,4 @@ retrieval_query    검색을 위해 맥락을 보완한 문자열
 <p>이 학습자료에는 외부 저장소에서 복사·수정한 코드가 없습니다.</p><nav class="section-nav" aria-label="Section 이동"><a href="08.html">← Section 8</a><a href="10.html">Section 10 →</a></nav></main><script>
 document.querySelectorAll('.source-info').forEach((button)=>{button.addEventListener('click',()=>{const card=button.nextElementSibling;const opening=card.hidden;document.querySelectorAll('.source-card').forEach((item)=>item.hidden=true);card.hidden=!opening;button.setAttribute('aria-expanded',String(opening));});});
 document.addEventListener('keydown',(event)=>{if(event.key==='Escape'){document.querySelectorAll('.source-card').forEach((item)=>item.hidden=true);document.querySelectorAll('.source-info').forEach((item)=>item.setAttribute('aria-expanded','false'));}});
-</script><script defer src="../analytics.js"></script></body></html>
+</script></body></html>
