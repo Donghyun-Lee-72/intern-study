@@ -1,10 +1,16 @@
 # START HERE
 
 이 저장소는 이동현이 개인적으로 제작한 Agentic AI 학습자료입니다.
-설명은 로컬 학습 페이지에서 읽고, 실습은 Jupyter Notebook으로 진행합니다.
+설명은 공개 학습 사이트에서 읽고, 실습은 Jupyter Notebook으로 진행합니다.
 특정 기관의 공식 자료가 아닙니다. 공개 페이지는 광고 신호를 끈 GA4로 기본 방문 통계만 측정하며, 별도 자체 수집기로 방문 정보를 전송하지 않습니다.
 
-저장소 루트에서 로컬 학습 페이지를 실행합니다.
+공개 학습 사이트:
+
+```text
+https://agentic-ai.donghyunlee.me
+```
+
+필요하면 저장소 루트에서 같은 학습 페이지를 로컬로 실행할 수 있습니다.
 
 ```powershell
 uv run --no-project python serve.py
@@ -14,11 +20,11 @@ uv run --no-project python serve.py
 
 권장 흐름은 다음과 같습니다.
 
-1. 로컬 학습 페이지의 `학습 섹션`에서 Section 0을 읽습니다.
+1. 공개 학습 사이트의 `학습 섹션`에서 Section 0을 읽습니다.
 2. PowerShell에서 clone하거나 압축을 푼 저장소 루트로 이동합니다.
 3. uv로 Python 3.11과 Jupyter를 실행합니다.
 4. `00_start_here.ipynb`에서 `requirements.txt` 확인, package import 확인, API 연결 확인을 합니다.
-5. 로컬 학습 페이지의 설명을 읽으며 `01`부터 `12`까지 노트북을 순서대로 실행합니다.
+5. 공개 학습 사이트의 설명을 읽으며 `01`부터 `12`까지 노트북을 순서대로 실행합니다.
 6. 각 Section 하단의 `결과 확인`과 실행 결과를 비교합니다.
 
 ## 1. 저장소 받기
@@ -81,7 +87,7 @@ uv run --python 3.11 --with-requirements requirements.txt --with notebook jupyte
 
 주의:
 
-- API key는 로컬 학습 페이지, 채팅, GitHub, 제출물에 붙여넣지 않습니다.
+- API key는 학습 사이트, 채팅, GitHub, 제출물에 붙여넣지 않습니다.
 - Notebook source에 key 문자열을 직접 써 넣지 않습니다.
 - 공유하거나 화면을 보여주기 전에는 출력과 환경변수를 다시 확인합니다.
 - 예시 모델을 사용할 수 없으면 최신 공식 문서를 확인한 뒤 `OPENAI_MODEL` 값만 바꿉니다.
@@ -104,7 +110,7 @@ uv run --python 3.11 --with-requirements requirements.txt --with notebook jupyte
 - `notebooks/11_tools_agent_graph.ipynb`: tool, agent, graph 제어
 - `notebooks/12_capstone_starter.ipynb`: 미니 프로젝트 starter와 평가 harness
 
-로컬 학습 페이지에서 해당 Section을 읽고, 같은 번호의 노트북을 실행합니다.
+공개 학습 사이트에서 해당 Section을 읽고, 같은 번호의 노트북을 실행합니다.
 실행 결과는 각 Section 하단의 `결과 확인`과 비교합니다.
 문장이 완전히 같을 필요는 없습니다. 정해진 형식, 근거, 답이 없을 때의 처리 방식이 맞는지 확인합니다.
 

@@ -1,14 +1,16 @@
-# Agentic AI Study Materials
+# Practical Agentic AI
 
 이 저장소는 이동현(Donghyun Lee)이 개인적으로 제작한 Agentic AI 학습자료입니다.
 어떤 기관의 공식 자료도 아니며, 특정 기관의 승인이나 보증을 의미하지 않습니다.
+
+- 공개 학습 사이트: <https://agentic-ai.donghyunlee.me>
 
 ## 구성
 
 - `index.html`, `sections/`: 개념 설명과 단계별 학습 페이지
 - `notebooks/`: Section 0–12 실행용 Jupyter Notebook
 - `data/`: 문서 처리·검색·평가 실습용 가상 데이터
-- `START_HERE.md`: 로컬 실행 안내
+- `START_HERE.md`: 실습 실행 안내
 
 ## 시작하기
 
@@ -18,7 +20,7 @@
 uv run --no-project python serve.py
 ```
 
-브라우저에서 `http://127.0.0.1:8767`을 열고 Section 0부터 진행합니다. Notebook 실행 방법은 `START_HERE.md`를 참고하세요.
+공개 사이트 <https://agentic-ai.donghyunlee.me>에서 Section 0부터 진행할 수 있습니다. 로컬 사본은 브라우저에서 `http://127.0.0.1:8767`을 열면 됩니다. Notebook 실행 방법은 `START_HERE.md`를 참고하세요.
 
 ## 개인정보와 API 키
 
