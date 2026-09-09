@@ -1,0 +1,5 @@
+/*
+  Content-Security-Policy: default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self'; script-src 'self' 'sha256-xuYnfWdSnuofV76A+brvO/cI8aZVETcj4/paO+oFmDw=' https://www.googletagmanager.com https://static.cloudflareinsights.com; style-src 'self' 'sha256-NJueeVrH6ai9/+5VrjSRIGtXJch2xqUrXQ0++OBaWt4='; img-src 'self' data:; font-src 'self'; connect-src 'self' https://www.google-analytics.com https://analytics.google.com https://region1.google-analytics.com https://cloudflareinsights.com; manifest-src 'self'; upgrade-insecure-requests
+  X-Frame-Options: DENY
+  Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=()
+
